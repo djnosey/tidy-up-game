@@ -39,6 +39,9 @@ export class Player {
 
         // Electrocution effect
         this.electrocuteTimer = 0;
+
+        // Debug invincibility (cheat mode)
+        this.cheatInvincible = false;
     }
 
     update(dt, input, platforms) {
@@ -121,6 +124,7 @@ export class Player {
     }
 
     takeDamage(duration) {
+        if (this.cheatInvincible) return false;
         if (this.invincibleTimer > 0 || !this.alive) return false;
         this.health--;
         this.invincibleTimer = duration || INVINCIBILITY_DURATION;

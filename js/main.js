@@ -74,6 +74,50 @@ class Game {
         this.collisionManager = new CollisionManager();
         this.saveManager = new SaveManager();
 
+        // Cheat code panel
+        this._cheatPanelOpen = false;
+        this._cheatInput = '';
+        this._cheatActive = false;
+        this._cheatFeedbackTimer = 0;
+        this._cheatFeedbackMsg = '';
+        this._cheatKeyHandler = (e) => {
+            if (e.key === 'i' || e.key === 'I') {
+                if (!this._cheatPanelOpen) {
+                    this._cheatPanelOpen = true;
+                    this._cheatInput = '';
+                    e.preventDefault();
+                    return;
+                }
+            }
+            if (!this._cheatPanelOpen) return;
+            e.preventDefault();
+            e.stopPropagation();
+            if (e.key === 'Escape') {
+                this._cheatPanelOpen = false;
+                return;
+            }
+            if (e.key === 'Backspace') {
+                this._cheatInput = this._cheatInput.slice(0, -1);
+                return;
+            }
+            if (e.key === 'Enter') {
+                if (this._cheatInput === '1015') {
+                    this._cheatActive = !this._cheatActive;
+                    if (this.player) this.player.cheatInvincible = this._cheatActive;
+                    this._cheatFeedbackMsg = this._cheatActive ? 'ON' : 'OFF';
+                } else {
+                    this._cheatFeedbackMsg = 'INVALID';
+                }
+                this._cheatFeedbackTimer = 1.0;
+                this._cheatPanelOpen = false;
+                return;
+            }
+            if (e.key.length === 1 && this._cheatInput.length < 8) {
+                this._cheatInput += e.key;
+            }
+        };
+        window.addEventListener('keydown', this._cheatKeyHandler, true);
+
         // Preload all sprite assets in the background (non-blocking)
         preloadAll(getAllSpritePaths()).then(() => {
             console.log('Sprite assets loaded');
@@ -104,6 +148,7 @@ class Game {
         this.projectiles = [];
         this.collected = 0;
         this.bossTriggered = false;
+        if (this._cheatActive) this.player.cheatInvincible = true;
         this.camera.reset();
         this.particles = new ParticleSystem();
         this.particleTheme = PARTICLE_THEMES[this.currentLevelIndex] || PARTICLE_THEMES[0];
@@ -213,6 +258,7 @@ class Game {
                 this.updateVictory(dt);
                 break;
         }
+        if (this._cheatFeedbackTimer > 0) this._cheatFeedbackTimer -= dt;
         this.input.endFrame();
     }
 
@@ -562,6 +608,39 @@ class Game {
             case STATE_VICTORY:
                 this.victoryScreen.render(ctx, canvas.width, canvas.height);
                 break;
+        }
+
+        // Cheat code panel overlay
+        if (this._cheatPanelOpen) {
+            ctx.save();
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
+            const pw = 200, ph = 60;
+            const px = (canvas.width - pw) / 2, py = (canvas.height - ph) / 2;
+            ctx.fillRect(px, py, pw, ph);
+            ctx.strokeStyle = '#444';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(px, py, pw, ph);
+            ctx.fillStyle = '#888';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('ENTER CODE', canvas.width / 2, py + 18);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 20px monospace';
+            const masked = '*'.repeat(this._cheatInput.length);
+            ctx.fillText(masked + '_', canvas.width / 2, py + 44);
+            ctx.restore();
+        }
+
+        // Cheat feedback flash
+        if (this._cheatFeedbackTimer > 0) {
+            ctx.save();
+            const alpha = Math.min(1, this._cheatFeedbackTimer * 2);
+            ctx.globalAlpha = alpha;
+            ctx.font = 'bold 14px monospace';
+            ctx.textAlign = 'right';
+            ctx.fillStyle = this._cheatFeedbackMsg === 'INVALID' ? '#FF4444' : '#44FF44';
+            ctx.fillText(this._cheatFeedbackMsg, canvas.width - 10, canvas.height - 10);
+            ctx.restore();
         }
     }
 
