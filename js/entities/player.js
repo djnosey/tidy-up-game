@@ -40,6 +40,10 @@ export class Player {
         // Electrocution effect
         this.electrocuteTimer = 0;
 
+        // Idle animation
+        this.idleTimer = 0;
+        this.isIdle = false;
+
         // Debug invincibility (cheat mode)
         this.cheatInvincible = false;
     }
@@ -56,6 +60,16 @@ export class Player {
         // Lerp squash/stretch back to normal
         this.scaleX += (1 - this.scaleX) * Math.min(1, 8 * dt);
         this.scaleY += (1 - this.scaleY) * Math.min(1, 8 * dt);
+
+        // Idle animation tracking
+        const hasInput = input.left || input.right || input.down || input.jump || input.jumpPressed || input.shoot;
+        if (hasInput || !this.onGround) {
+            this.idleTimer = 0;
+            this.isIdle = false;
+        } else {
+            this.idleTimer += dt;
+            this.isIdle = this.idleTimer >= 5;
+        }
 
         // Horizontal movement
         this.vx = 0;
@@ -171,7 +185,7 @@ export class Player {
         ctx.translate(cx, fy);
         ctx.scale(this.scaleX * (this.facing === -1 ? -1 : 1), this.scaleY);
         ctx.translate(-this.width / 2, -this.height);
-        drawCharacter(ctx, 0, 0, this.width, this.height, this.character, this.facing, this.crouching);
+        drawCharacter(ctx, 0, 0, this.width, this.height, this.character, this.facing, this.crouching, this.isIdle ? this.idleTimer : 0);
         ctx.restore();
 
         // Electrocution effect — skeleton flash with zap bolts
