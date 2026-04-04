@@ -148,7 +148,10 @@ class Game {
         this.projectiles = [];
         this.collected = 0;
         this.bossTriggered = false;
-        if (this._cheatActive) this.player.cheatInvincible = true;
+        this._cheatActive = false;
+        this._cheatPanelOpen = false;
+        this._cheatInput = '';
+        this._cheatFeedbackTimer = 0;
         this.camera.reset();
         this.particles = new ParticleSystem();
         this.particleTheme = PARTICLE_THEMES[this.currentLevelIndex] || PARTICLE_THEMES[0];
