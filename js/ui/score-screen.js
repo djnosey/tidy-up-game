@@ -7,6 +7,7 @@ export class ScoreScreen {
         this.stars = 0;
         this.tidyPercent = 0;
         this.animTimer = 0;
+        this.saveCode = null;
     }
 
     show(levelName, collected, total) {
@@ -84,6 +85,13 @@ export class ScoreScreen {
             ctx.fillText(`Items collected: ${this.collected} / ${this.total}`, w / 2, h * 0.6);
             ctx.fillStyle = '#FFD700';
             ctx.fillText(`Tidiness: ${Math.floor(this.tidyPercent)}%`, w / 2, h * 0.67);
+        }
+
+        // Save code
+        if (this.animTimer > 1.5 && this.saveCode) {
+            ctx.font = '10px monospace';
+            ctx.fillStyle = '#666';
+            ctx.fillText(`Score saved! Code: ${this.saveCode}`, w / 2, h * 0.75);
         }
 
         // Continue prompt

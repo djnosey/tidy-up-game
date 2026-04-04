@@ -20,6 +20,8 @@ import { ParallaxRenderer } from './engine/parallax.js';
 import { LightingRenderer } from './engine/lighting.js';
 import { events } from './engine/events.js';
 import { CollisionManager } from './engine/collision-manager.js';
+import { SaveManager } from './engine/save-manager.js';
+import { CHARACTERS } from './data/characters.js';
 
 const ALL_LEVELS = [level1, level2, level3, level4, level5, level6];
 import { Menu } from './ui/menu.js';
@@ -70,6 +72,7 @@ class Game {
         this.lighting = new LightingRenderer();
         this.audio = new AudioManager();
         this.collisionManager = new CollisionManager();
+        this.saveManager = new SaveManager();
 
         // Preload all sprite assets in the background (non-blocking)
         preloadAll(getAllSpritePaths()).then(() => {
@@ -214,6 +217,13 @@ class Game {
     }
 
     updateMenu() {
+        // Keep completed levels in sync with selected character's save
+        const selectedChar = CHARACTERS[this.menu.selectedIndex];
+        const saved = this.saveManager.getCompletedLevels(selectedChar.name);
+        this.menu.completedLevels = saved;
+        this.menu.saveManager = this.saveManager;
+        this.menu.selectedCharacterName = selectedChar.name;
+
         const result = this.menu.handleInput(this.input);
         if (result && result.action === 'start') {
             this.audio.init();
@@ -449,6 +459,13 @@ class Game {
             // Boss defeated
             if (boss.defeated) {
                 this.scoreScreen.show(level.name, this.collected, level.totalCollectables);
+                this.saveManager.saveLevel(
+                    this.player.character.name,
+                    this.currentLevelIndex,
+                    this.collected,
+                    level.totalCollectables
+                );
+                this.scoreScreen.saveCode = this.saveManager.getSaveCode();
                 this.state = STATE_SCORE;
                 this.audio.playSFX('bossDefeated');
                 this.audio.stopMusic(true);

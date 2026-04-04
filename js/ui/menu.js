@@ -6,9 +6,17 @@ export class Menu {
         this.state = 'title'; // 'title', 'select', 'hub'
         this.completedLevels = [];
         this.enterPressed = false;
+        this.saveManager = null;
+        this.selectedCharacterName = '';
+        this.loadCodeMode = false;
+        this.loadCodeInput = '';
+        this.loadCodeStatus = ''; // '', 'loading', 'success', 'fail'
     }
 
     handleInput(input) {
+        // Load-code mode: handled via raw keyboard listener (see enableLoadCodeInput)
+        if (this.loadCodeMode) return null;
+
         if (input.wasPressed('Enter') || input.wasPressed(' ')) {
             if (this.state === 'title') {
                 this.state = 'select';
@@ -31,11 +39,54 @@ export class Menu {
             }
         }
 
+        // "L" on title screen to enter a save code
+        if (this.state === 'title' && input.wasPressed('l') && this.saveManager) {
+            this.enableLoadCodeInput();
+        }
+
         if (input.wasPressed('Escape') && this.state === 'select') {
             this.state = 'title';
         }
 
         return null;
+    }
+
+    enableLoadCodeInput() {
+        this.loadCodeMode = true;
+        this.loadCodeInput = '';
+        this.loadCodeStatus = '';
+
+        // Temporary raw keyboard handler for typing the code
+        this._loadCodeHandler = (e) => {
+            if (e.key === 'Escape') {
+                this.disableLoadCodeInput();
+            } else if (e.key === 'Enter' && this.loadCodeInput.length > 0) {
+                this.loadCodeStatus = 'loading';
+                this.saveManager.loadFromCode(this.loadCodeInput.trim()).then(ok => {
+                    this.loadCodeStatus = ok ? 'success' : 'fail';
+                    setTimeout(() => this.disableLoadCodeInput(), 1500);
+                });
+            } else if (e.key === 'Backspace') {
+                this.loadCodeInput = this.loadCodeInput.slice(0, -1);
+            } else if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
+                // Allow paste
+                navigator.clipboard.readText().then(text => {
+                    this.loadCodeInput += text.trim();
+                }).catch(() => {});
+            } else if (e.key.length === 1 && /[a-zA-Z0-9-]/.test(e.key)) {
+                this.loadCodeInput += e.key;
+            }
+            e.preventDefault();
+        };
+        window.addEventListener('keydown', this._loadCodeHandler);
+    }
+
+    disableLoadCodeInput() {
+        this.loadCodeMode = false;
+        if (this._loadCodeHandler) {
+            window.removeEventListener('keydown', this._loadCodeHandler);
+            this._loadCodeHandler = null;
+        }
     }
 
     goToHub() {
@@ -97,13 +148,53 @@ export class Menu {
         ctx.strokeText('A Family Platformer', w / 2, h * 0.85);
         ctx.fillText('A Family Platformer', w / 2, h * 0.85);
 
+        // Load code input overlay
+        if (this.loadCodeMode) {
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(w / 2 - 200, h * 0.55, 400, 80);
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(w / 2 - 200, h * 0.55, 400, 80);
+
+            ctx.font = '14px monospace';
+            ctx.fillStyle = '#FFD700';
+            ctx.fillText('Enter Save Code:', w / 2, h * 0.55 + 20);
+
+            // Input field
+            ctx.font = '12px monospace';
+            ctx.fillStyle = '#fff';
+            const cursor = Math.sin(Date.now() / 300) > 0 ? '|' : '';
+            ctx.fillText(this.loadCodeInput + cursor, w / 2, h * 0.55 + 45);
+
+            // Status
+            if (this.loadCodeStatus === 'loading') {
+                ctx.fillStyle = '#aaa';
+                ctx.fillText('Loading...', w / 2, h * 0.55 + 65);
+            } else if (this.loadCodeStatus === 'success') {
+                ctx.fillStyle = '#00FF00';
+                ctx.fillText('Scores loaded!', w / 2, h * 0.55 + 65);
+            } else if (this.loadCodeStatus === 'fail') {
+                ctx.fillStyle = '#FF4444';
+                ctx.fillText('Invalid code', w / 2, h * 0.55 + 65);
+            } else {
+                ctx.fillStyle = '#888';
+                ctx.fillText('ENTER to load  •  ESC to cancel  •  Ctrl+V to paste', w / 2, h * 0.55 + 65);
+            }
+            ctx.restore();
+            return;
+        }
+
         // Prompt
         const blink = Math.sin(Date.now() / 400) > 0;
         if (blink) {
             ctx.font = '16px monospace';
             ctx.fillStyle = '#FFD700';
-            ctx.fillText('Press ENTER to start', w / 2, h * 0.93);
+            ctx.fillText('Press ENTER to start', w / 2, h * 0.88);
         }
+
+        ctx.font = '11px monospace';
+        ctx.fillStyle = '#666';
+        ctx.fillText('Press L to load a save code', w / 2, h * 0.95);
     }
 
     renderSelect(ctx, w, h) {
@@ -204,10 +295,13 @@ export class Menu {
             ctx.strokeRect(wp.x, wp.y, 50, 40);
 
             if (completed) {
+                // Show star rating from save data
+                const lvData = this.saveManager && this.saveManager.getLevel(this.selectedCharacterName, i);
+                const stars = lvData ? lvData.stars : 0;
                 ctx.fillStyle = '#333';
-                ctx.font = '8px monospace';
+                ctx.font = '10px monospace';
                 ctx.textAlign = 'center';
-                ctx.fillText('✓', wp.x + 25, wp.y + 25);
+                ctx.fillText('★'.repeat(stars) + '☆'.repeat(3 - stars), wp.x + 25, wp.y + 25);
             }
         }
 
@@ -246,6 +340,22 @@ export class Menu {
             ctx.font = '16px monospace';
             ctx.fillStyle = '#00FF00';
             ctx.fillText('ALL ROOMS TIDY!', w / 2, h * 0.78);
+        }
+
+        // Overall tidy % for selected character
+        if (this.saveManager) {
+            const overall = this.saveManager.getOverallPercent(this.selectedCharacterName);
+            ctx.font = '14px monospace';
+            ctx.fillStyle = overall >= 90 ? '#00FF00' : overall >= 50 ? '#FFD700' : '#FF6644';
+            ctx.fillText(`${ch.name}'s Tidiness: ${overall}%`, w / 2, h * 0.84);
+
+            // Save code
+            const code = this.saveManager.getSaveCode();
+            if (code) {
+                ctx.font = '9px monospace';
+                ctx.fillStyle = '#666';
+                ctx.fillText(`Save code: ${code}`, w / 2, h * 0.97);
+            }
         }
 
         // Prompt
