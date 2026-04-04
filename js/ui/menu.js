@@ -341,12 +341,7 @@ export class Menu {
 
         // Character at door
         const ch = CHARACTERS[this.selectedIndex];
-        ctx.fillStyle = ch.color;
-        ctx.fillRect(w / 2 - 20, h * 0.45, 40, 55);
-        ctx.fillStyle = '#fff';
-        ctx.font = '10px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(ch.name, w / 2, h * 0.49);
+        drawCharacter(ctx, w / 2 - 20, h * 0.40, 40, 55, ch, 1, false);
 
         // Title
         ctx.font = 'bold 28px sans-serif';
