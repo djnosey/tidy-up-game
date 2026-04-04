@@ -1,5 +1,7 @@
 // ─── Transition screens: Opening intro, Level intros, Boss intros ───
 
+import { Boss } from '../entities/boss.js';
+
 // ─── Story Data ────────────────────────────────────────────────────
 
 const OPENING_STORY = [
@@ -72,6 +74,7 @@ const BOSS_INTROS = [
         glowColor: '#00FF00',
         text: "You've tidied most of the living room — but the Roomba has gone ROGUE. It's sucking up everything in sight, including the stuff you just cleaned!",
         tip: "Shoot it 3 times to overload its motor!",
+        bossConfig: { label: 'MEGA ROOMBA', color: '#555555', width: 96, height: 50 },
     },
     {
         name: 'FRIDGE BEAST',
@@ -80,6 +83,7 @@ const BOSS_INTROS = [
         glowColor: '#00FFAA',
         text: "The kitchen's looking better... but nobody's opened this fridge since before the holiday. Whatever's inside has evolved. It has DOORS now. And it's not happy about the cleaning.",
         tip: "Shoot the doors open, then stomp!",
+        bossConfig: { label: 'FRIDGE BEAST', color: '#4477AA', width: 130, height: 90 },
     },
     {
         name: 'WASHING MACHINE',
@@ -88,6 +92,7 @@ const BOSS_INTROS = [
         glowColor: '#4488FF',
         text: "The bathroom's nearly done — but someone overloaded the washing machine with every sock in the house. It's shaking, rattling, and flooding the floor. And it's looking at you funny.",
         tip: "Wait for the drain cycle!",
+        bossConfig: { label: 'WASHING MACHINE', color: '#AAAACC', width: 120, height: 85 },
     },
     {
         name: 'TOY BOX TERROR',
@@ -96,6 +101,7 @@ const BOSS_INTROS = [
         glowColor: '#FFAA00',
         text: "The room's almost clean... but the Toy Box has had ENOUGH. Years of being stuffed full have given it sentience — and an army. It's calling in reinforcements from under the bed.",
         tip: "Shoot into the open lid, or stomp its minions!",
+        bossConfig: { label: 'TOY BOX TERROR', color: '#CD853F', width: 100, height: 50 },
     },
     {
         name: 'WARDROBE MONSTER',
@@ -104,6 +110,7 @@ const BOSS_INTROS = [
         glowColor: '#FF4444',
         text: "The bedroom's looking great — but the wardrobe has been sealed shut for months. Something inside has been feeding on forgotten scarves and odd socks. It TELEPORTS. It has TEETH.",
         tip: "Catch it during re-opening!",
+        bossConfig: { label: 'WARDROBE MONSTER', color: '#654321', width: 100, height: 60 },
     },
     {
         name: 'BBQ DRAGON',
@@ -112,6 +119,7 @@ const BOSS_INTROS = [
         glowColor: '#FF6600',
         text: "The terrace is nearly spotless — but Steve's beloved barbecue hasn't been cleaned since last summer. Grease, coal, and rage have fused together into something ancient. Something that breathes FIRE.",
         tip: "Cool its heat counter with your shots!",
+        bossConfig: { label: 'BBQ DRAGON', color: '#8B2500', width: 160, height: 80 },
     },
 ];
 
@@ -173,6 +181,7 @@ export class TransitionManager {
         this.timer = 0;
         this.phase = 0;
         this.data = BOSS_INTROS[levelIndex];
+        this._previewBoss = null;
         this.charIndex = 0;
         this.charTimer = 0;
         this.done = false;
@@ -602,11 +611,11 @@ export class TransitionManager {
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, w, h);
 
-        // Animated glow pulse behind boss name
+        // Animated glow pulse behind boss preview area
         const pulse = 0.5 + 0.5 * Math.sin(Date.now() / 300);
-        const glowRad = 200 + pulse * 40;
-        const glowGrd = ctx.createRadialGradient(w / 2, h * 0.28, 0, w / 2, h * 0.28, glowRad);
-        glowGrd.addColorStop(0, d.glowColor + '25');
+        const glowRad = 180 + pulse * 40;
+        const glowGrd = ctx.createRadialGradient(w / 2, h * 0.42, 0, w / 2, h * 0.42, glowRad);
+        glowGrd.addColorStop(0, d.glowColor + '20');
         glowGrd.addColorStop(1, 'transparent');
         ctx.fillStyle = glowGrd;
         ctx.fillRect(0, 0, w, h);
@@ -618,11 +627,11 @@ export class TransitionManager {
 
         ctx.save();
         ctx.globalAlpha = slamAlpha;
-        ctx.translate(w / 2, h * 0.22);
+        ctx.translate(w / 2, h * 0.10);
         ctx.scale(slamScale, slamScale);
 
         // Boss name with glow
-        ctx.font = 'bold 54px sans-serif';
+        ctx.font = 'bold 48px sans-serif';
         ctx.textAlign = 'center';
         ctx.shadowColor = d.glowColor;
         ctx.shadowBlur = 20;
@@ -631,37 +640,101 @@ export class TransitionManager {
         ctx.shadowBlur = 0;
         ctx.restore();
 
-        // Subtitle (phase 0+, fades in after name)
+        // Subtitle (fades in after name)
         if (this.timer > 0.5) {
             const subT = Math.min(1, (this.timer - 0.5) / 0.4);
             ctx.save();
             ctx.globalAlpha = subT;
-            ctx.font = 'italic 20px sans-serif';
+            ctx.font = 'italic 18px sans-serif';
             ctx.fillStyle = d.glowColor;
             ctx.textAlign = 'center';
-            ctx.fillText(`— ${d.subtitle} —`, w / 2, h * 0.30);
+            ctx.fillText(`— ${d.subtitle} —`, w / 2, h * 0.17);
             ctx.restore();
         }
 
-        // Decorative line
+        // ── Boss Preview Rendering ─────────────────────────────────
+        if (this.timer > 0.3 && d.bossConfig) {
+            const previewT = Math.min(1, (this.timer - 0.3) / 0.5);
+            const eased = 1 - Math.pow(1 - previewT, 3);
+
+            ctx.save();
+            ctx.globalAlpha = eased;
+
+            // Scale boss up for dramatic presentation
+            const scale = 2.2;
+            const bossW = d.bossConfig.width;
+            const bossH = d.bossConfig.height;
+            const previewCx = w / 2;
+            const previewCy = h * 0.40;
+
+            // Entrance: slight rise from below
+            const riseOffset = (1 - eased) * 30;
+
+            // Glow circle behind boss
+            const glowPulse = 0.15 + 0.1 * Math.sin(Date.now() / 400);
+            ctx.fillStyle = d.glowColor.slice(0, 7) + Math.round(glowPulse * 255).toString(16).padStart(2, '0');
+            ctx.beginPath();
+            ctx.ellipse(previewCx, previewCy + riseOffset, bossW * scale * 0.6, bossH * scale * 0.6, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Create temporary boss for rendering
+            if (!this._previewBoss || this._previewBoss.label !== d.bossConfig.label) {
+                this._previewBoss = new Boss(0, 0, {
+                    label: d.bossConfig.label,
+                    color: d.bossConfig.color,
+                    width: d.bossConfig.width,
+                    height: d.bossConfig.height,
+                });
+                this._previewBoss.direction = 1;
+            }
+
+            // Position the preview boss so drawBody renders at center of screen
+            const boss = this._previewBoss;
+
+            // Idle animation — subtle breathing/hovering
+            const breathe = Math.sin(Date.now() / 600) * 3;
+
+            ctx.translate(previewCx, previewCy + riseOffset + breathe);
+            ctx.scale(scale, scale);
+
+            // drawBody expects sx, sy relative to canvas — center the boss
+            const sx = -bossW / 2;
+            const sy = -bossH / 2;
+            const cx = 0;
+            const cy = 0;
+
+            // Shadow under boss
+            ctx.fillStyle = 'rgba(0,0,0,0.4)';
+            ctx.beginPath();
+            ctx.ellipse(0, bossH / 2 + 6, bossW / 2 + 6, 10, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Draw the boss body and eyes using the Boss class methods
+            boss.drawBody(ctx, sx, sy, cx, cy, bossW, bossH, d.bossConfig.color);
+            boss.drawEyes(ctx, cx, cy, bossW, bossH);
+
+            ctx.restore();
+        }
+
+        // Decorative line below boss
         if (this.timer > 0.6) {
             const lineT = Math.min(1, (this.timer - 0.6) / 0.3);
             const lineW = 300 * lineT;
             ctx.strokeStyle = d.glowColor + '60';
             ctx.lineWidth = 1;
             ctx.beginPath();
-            ctx.moveTo(w / 2 - lineW / 2, h * 0.34);
-            ctx.lineTo(w / 2 + lineW / 2, h * 0.34);
+            ctx.moveTo(w / 2 - lineW / 2, h * 0.58);
+            ctx.lineTo(w / 2 + lineW / 2, h * 0.58);
             ctx.stroke();
         }
 
         // Story text (phase 1+)
         if (this.phase >= 1) {
             const displayText = d.text.substring(0, Math.min(d.text.length, this.charIndex));
-            ctx.font = '16px monospace';
+            ctx.font = '15px monospace';
             ctx.fillStyle = '#C8C0B0';
             ctx.textAlign = 'center';
-            wrapText(ctx, displayText, w / 2, h * 0.44, w - 160, 24, true);
+            wrapText(ctx, displayText, w / 2, h * 0.62, w - 160, 22, true);
         }
 
         // Tip + continue (phase 2)
@@ -671,20 +744,19 @@ export class TransitionManager {
             ctx.globalAlpha = fadeT;
 
             // Tip box
-            const tipW = ctx.measureText(d.tip).width + 40;
             ctx.font = 'bold 15px monospace';
             const measuredW = ctx.measureText('💡 ' + d.tip).width + 50;
             ctx.fillStyle = 'rgba(255, 215, 0, 0.12)';
-            roundRect(ctx, (w - measuredW) / 2, h * 0.72, measuredW, 36, 8);
+            roundRect(ctx, (w - measuredW) / 2, h * 0.82, measuredW, 36, 8);
             ctx.fill();
             ctx.strokeStyle = 'rgba(255, 215, 0, 0.3)';
             ctx.lineWidth = 1;
-            roundRect(ctx, (w - measuredW) / 2, h * 0.72, measuredW, 36, 8);
+            roundRect(ctx, (w - measuredW) / 2, h * 0.82, measuredW, 36, 8);
             ctx.stroke();
 
             ctx.fillStyle = '#FFD700';
             ctx.textAlign = 'center';
-            ctx.fillText('💡 ' + d.tip, w / 2, h * 0.72 + 24);
+            ctx.fillText('💡 ' + d.tip, w / 2, h * 0.82 + 24);
 
             ctx.restore();
 
@@ -694,13 +766,8 @@ export class TransitionManager {
                 ctx.font = '14px monospace';
                 ctx.fillStyle = d.glowColor;
                 ctx.textAlign = 'center';
-                ctx.fillText('Press ENTER to fight ▸', w / 2, h * 0.90);
+                ctx.fillText('Press ENTER to fight ▸', w / 2, h * 0.93);
             }
-        }
-
-        // Screen shake effect on boss name slam
-        if (this.timer < 0.5 && this.timer > 0.3) {
-            // The shake is handled by returning shake request in update
         }
     }
 }
