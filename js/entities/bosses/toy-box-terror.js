@@ -107,9 +107,9 @@ export const ToyBoxTerrorBehavior = {
         }
     },
     getPhaseAttacks(boss, phase) {
-        if (phase === 1) return ['summon', 'charge', 'snapping', 'shoot'];
-        if (phase === 2) return ['summon', 'charge', 'snapping', 'spin', 'shoot'];
-        return ['summon', 'snapping', 'charge', 'summon', 'spin', 'snapping'];
+        if (phase === 1) return ['snapping', 'charge', 'snapping', 'summon'];
+        if (phase === 2) return ['snapping', 'charge', 'snapping', 'summon', 'shoot'];
+        return ['snapping', 'summon', 'snapping', 'charge', 'snapping', 'spin'];
     },
     customAttack(boss, name) {
         if (name === 'summon') {
