@@ -1,4 +1,5 @@
 import { CHARACTERS } from '../data/characters.js';
+import { drawCharacter } from '../engine/renderers/character-renderer.js';
 
 export class Menu {
     constructor() {
@@ -207,7 +208,7 @@ export class Menu {
         ctx.fillText('CHOOSE YOUR CHARACTER', w / 2, 70);
 
         const cardW = 140;
-        const cardH = 200;
+        const cardH = 240;
         const gap = 30;
         const totalW = CHARACTERS.length * cardW + (CHARACTERS.length - 1) * gap;
         const startX = (w - totalW) / 2;
@@ -215,7 +216,7 @@ export class Menu {
         for (let i = 0; i < CHARACTERS.length; i++) {
             const ch = CHARACTERS[i];
             const cx = startX + i * (cardW + gap);
-            const cy = 120;
+            const cy = 100;
 
             const selected = i === this.selectedIndex;
 
@@ -230,9 +231,8 @@ export class Menu {
                 ctx.strokeRect(cx - 2, cy - 2, cardW + 4, cardH + 4);
             }
 
-            // Character placeholder
-            ctx.fillStyle = ch.color;
-            ctx.fillRect(cx + 30, cy + 20, 80, 100);
+            // Character preview
+            drawCharacter(ctx, cx + 30, cy + 15, 80, 110, ch, 1, false);
 
             // Name
             ctx.fillStyle = '#fff';
@@ -248,6 +248,32 @@ export class Menu {
             ctx.font = '11px monospace';
             ctx.fillStyle = ch.projectileColor;
             ctx.fillText(ch.projectileLabel, cx + cardW / 2, cy + 185);
+
+            // Best score from save data
+            if (this.saveManager) {
+                const overall = this.saveManager.getOverallPercent(ch.name);
+                const completed = this.saveManager.getCompletedLevels(ch.name);
+                if (completed.length > 0) {
+                    // Tidy %
+                    ctx.font = 'bold 14px monospace';
+                    ctx.fillStyle = overall >= 90 ? '#00FF00' : overall >= 50 ? '#FFD700' : '#FF6644';
+                    ctx.fillText(`${overall}% tidy`, cx + cardW / 2, cy + 210);
+
+                    // Stars for each level (compact row)
+                    ctx.font = '10px monospace';
+                    ctx.fillStyle = '#888';
+                    let starLine = '';
+                    for (let lv = 0; lv < 6; lv++) {
+                        const lvData = this.saveManager.getLevel(ch.name, lv);
+                        starLine += lvData ? '★'.repeat(lvData.stars) + ' ' : '· ';
+                    }
+                    ctx.fillText(starLine.trim(), cx + cardW / 2, cy + 228);
+                } else {
+                    ctx.font = '11px monospace';
+                    ctx.fillStyle = '#555';
+                    ctx.fillText('No scores yet', cx + cardW / 2, cy + 215);
+                }
+            }
         }
 
         // Instructions
