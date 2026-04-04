@@ -40,9 +40,16 @@ export class Player {
         // Electrocution effect
         this.electrocuteTimer = 0;
 
+        // Coyote time & jump buffering
+        this.coyoteTimer = 0;
+        this.jumpBufferTimer = 0;
+
         // Idle animation
         this.idleTimer = 0;
         this.isIdle = false;
+
+        // Knockback
+        this.knockbackVx = 0;
 
         // Debug invincibility (cheat mode)
         this.cheatInvincible = false;
@@ -56,6 +63,23 @@ export class Player {
         if (this.invincibleTimer > 0) this.invincibleTimer -= dt;
         if (this.shootCooldown > 0) this.shootCooldown -= dt;
         if (this.electrocuteTimer > 0) this.electrocuteTimer -= dt;
+
+        // Coyote time — track how long since we left the ground
+        if (this.onGround) {
+            this.coyoteTimer = 0.08; // 80ms grace period
+        } else {
+            this.coyoteTimer -= dt;
+        }
+
+        // Jump buffer — remember jump press for a short window
+        if (input.jumpPressed) {
+            this.jumpBufferTimer = 0.1; // 100ms buffer
+        } else {
+            this.jumpBufferTimer -= dt;
+        }
+
+        // Decay knockback
+        this.knockbackVx *= Math.max(0, 1 - 8 * dt);
 
         // Lerp squash/stretch back to normal
         this.scaleX += (1 - this.scaleX) * Math.min(1, 8 * dt);
@@ -92,10 +116,14 @@ export class Player {
             this.height = this.standingHeight;
         }
 
-        // Jump
-        if (input.jumpPressed && this.onGround && !this.crouching) {
+        // Jump (with coyote time + jump buffering)
+        const canCoyoteJump = this.coyoteTimer > 0 && !this.crouching;
+        const wantsJump = input.jumpPressed || this.jumpBufferTimer > 0;
+        if (wantsJump && canCoyoteJump) {
             this.vy = JUMP_VELOCITY;
             this.onGround = false;
+            this.coyoteTimer = 0;     // consume coyote time — prevents double-jump
+            this.jumpBufferTimer = 0; // consume buffer
             this.scaleX = 0.8;
             this.scaleY = 1.3;
         }
@@ -107,8 +135,8 @@ export class Player {
         this.vy += GRAVITY * dt;
         if (this.vy > TERMINAL_VELOCITY) this.vy = TERMINAL_VELOCITY;
 
-        // Apply
-        this.x += this.vx * dt;
+        // Apply movement + knockback
+        this.x += (this.vx + this.knockbackVx) * dt;
         this.y += this.vy * dt;
         if (this.x < 0) this.x = 0;
 
@@ -144,6 +172,12 @@ export class Player {
         this.invincibleTimer = duration || INVINCIBILITY_DURATION;
         if (this.health <= 0) this.alive = false;
         return true;
+    }
+
+    knockback(sourceX) {
+        const dir = this.x + this.width / 2 > sourceX ? 1 : -1;
+        this.knockbackVx = dir * 400;
+        this.vy = Math.min(this.vy, -200); // small upward pop
     }
 
     heal() {

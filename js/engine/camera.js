@@ -22,6 +22,10 @@ export class Camera {
         this.lockTargetX = 0;
         this.lockTargetY = 0;
         this.lockLerping = false;
+
+        // Zoom (for boss intro dramatic effect)
+        this.zoom = 1;
+        this.targetZoom = 1;
     }
 
     follow(player, levelWidth) {
@@ -71,6 +75,8 @@ export class Camera {
                 this.shakeOffsetY = 0;
             }
         }
+        // Lerp zoom toward target
+        this.zoom += (this.targetZoom - this.zoom) * Math.min(1, 4 * dt);
     }
 
     lockTo(x, y) {
@@ -94,6 +100,8 @@ export class Camera {
         this.shakeTimer = 0;
         this.shakeOffsetX = 0;
         this.shakeOffsetY = 0;
+        this.zoom = 1;
+        this.targetZoom = 1;
     }
 
     resize(w, h) {

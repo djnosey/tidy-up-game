@@ -73,6 +73,7 @@ class Game {
         this.audio = new AudioManager();
         this.collisionManager = new CollisionManager();
         this.saveManager = new SaveManager();
+        this._heartbeatTimer = 0;
 
         // Cheat code panel
         this._cheatPanelOpen = false;
@@ -178,6 +179,8 @@ class Game {
                 particles.emit({ x: player.x + player.width / 2, y: player.y + player.height / 2, ...particleTheme.obstacleHit });
                 camera.shake(6, 0.3);
                 audio.playSFX('takeDamage');
+                // Knockback away from obstacle
+                if (obstacle) player.knockback(obstacle.x + (obstacle.width || 0) / 2);
                 // Electrocution effect for plug sockets
                 if (obstacle && obstacle.label === 'PLUG') {
                     player.electrocuteTimer = 0.8;
@@ -199,7 +202,7 @@ class Game {
             audio.playSFX('giveDamage');
         });
 
-        events.on('player-hit', ({ source, player }) => {
+        events.on('player-hit', ({ source, player, sourceX }) => {
             const shakeAmt = source === 'minion' ? 4 : 6;
             const shakeDur = source === 'minion' ? 0.2 : 0.3;
             // Longer invincibility after boss/hazard hits (2.5s vs 1.5s default)
@@ -207,6 +210,10 @@ class Game {
             if (player.takeDamage(invDuration)) {
                 camera.shake(shakeAmt, shakeDur);
                 audio.playSFX('takeDamage');
+                // Knockback away from source
+                if (sourceX !== undefined) {
+                    player.knockback(sourceX);
+                }
             }
         });
 
@@ -310,9 +317,11 @@ class Game {
     }
 
     updateBossIntro(dt) {
+        this.camera.updateShake(dt); // keep zoom lerping during intro
         const done = this.transitions.update(dt, this.input);
         if (done) {
-            // Resume boss fight
+            // Zoom back out for gameplay
+            this.camera.targetZoom = 1;
             this.state = STATE_BOSS;
         }
     }
@@ -481,6 +490,9 @@ class Game {
                 this.projectiles = [];
                 this.audio.playBossMusic();
 
+                // Zoom camera in for dramatic boss reveal
+                camera.targetZoom = 1.15;
+
                 // Show boss intro screen before the fight
                 this.transitions.startBossIntro(this.currentLevelIndex);
                 this.state = STATE_BOSS_INTRO;
@@ -498,6 +510,13 @@ class Game {
             const boss = level.boss;
             boss.update(dt, player, level.bossArena.x);
 
+            // Boss phase transition effects
+            if (boss.phaseChanged) {
+                boss.phaseChanged = false;
+                camera.shake(12, 0.5);
+                audio.playSFX('phaseTransition');
+            }
+
             // All boss collision checks via collision manager + events
             player._slowed = false;
             this.collisionManager.checkBoss(player, boss, this.projectiles);
@@ -505,8 +524,25 @@ class Game {
                 player.x -= player.vx * dt * 0.4;
             }
 
-            // Boss defeated
+            // Boss defeated — celebration!
             if (boss.defeated) {
+                // Confetti particle burst
+                const bx = boss.x + boss.width / 2;
+                const by = boss.y + boss.height / 2;
+                const confettiColors = ['#FFD700', '#FF4444', '#44FF44', '#4488FF', '#FF44FF', '#FFAA00', '#00FFCC'];
+                for (let i = 0; i < 40; i++) {
+                    particles.emit({
+                        x: bx + (Math.random() - 0.5) * 100,
+                        y: by + (Math.random() - 0.5) * 60,
+                        count: 1,
+                        colors: confettiColors,
+                        speedX: 200, speedY: 250,
+                        gravity: 150, life: 1.2,
+                        sizeMin: 3, sizeMax: 7,
+                    });
+                }
+                camera.shake(10, 0.6);
+
                 this.scoreScreen.show(level.name, this.collected, level.totalCollectables);
                 this.saveManager.saveLevel(
                     this.player.character.name,
@@ -532,6 +568,17 @@ class Game {
         if (player.y > level.groundY + 200) {
             player.alive = false;
             this.state = STATE_GAMEOVER;
+        }
+
+        // Low-health heartbeat SFX
+        if (player.alive && player.health === 1) {
+            this._heartbeatTimer -= dt;
+            if (this._heartbeatTimer <= 0) {
+                audio.playSFX('heartbeat');
+                this._heartbeatTimer = 1.0; // every 1 second
+            }
+        } else {
+            this._heartbeatTimer = 0;
         }
 
         // Camera
@@ -650,8 +697,15 @@ class Game {
     renderGameplay() {
         const { ctx, canvas, camera, level, player } = this;
 
-        // Apply screen shake offset
+        // Apply screen shake offset + zoom
         ctx.save();
+        if (camera.zoom !== 1) {
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+            ctx.translate(cx, cy);
+            ctx.scale(camera.zoom, camera.zoom);
+            ctx.translate(-cx, -cy);
+        }
         ctx.translate(camera.shakeOffsetX, camera.shakeOffsetY);
 
         // Background

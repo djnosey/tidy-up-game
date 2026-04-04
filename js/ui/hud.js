@@ -21,11 +21,25 @@ export class HUD {
 
         // Hearts
         const heartStartX = this.padding + 44;
+        const lowHealth = player.health === 1 && player.alive;
         for (let i = 0; i < player.maxHealth; i++) {
             const hx = heartStartX + i * (this.heartSize + 4);
             const hy = this.padding + 4;
             if (i < player.health) {
-                this.drawHeart(ctx, hx, hy, this.heartSize, '#FF2222');
+                // Pulse the last heart when at 1 HP
+                if (lowHealth && i === 0) {
+                    const pulse = 1 + Math.sin(Date.now() / 150) * 0.15;
+                    ctx.save();
+                    const phx = hx + this.heartSize / 2;
+                    const phy = hy + this.heartSize / 2;
+                    ctx.translate(phx, phy);
+                    ctx.scale(pulse, pulse);
+                    ctx.translate(-phx, -phy);
+                    this.drawHeart(ctx, hx, hy, this.heartSize, '#FF2222');
+                    ctx.restore();
+                } else {
+                    this.drawHeart(ctx, hx, hy, this.heartSize, '#FF2222');
+                }
             } else {
                 this.drawHeart(ctx, hx, hy, this.heartSize, '#444');
             }
@@ -74,6 +88,19 @@ export class HUD {
         ctx.font = '10px monospace';
         ctx.fillStyle = '#ccc';
         ctx.fillText('ITEMS', canvasWidth - this.padding, this.padding + 12);
+
+        // Low-health red vignette warning
+        if (lowHealth) {
+            const pulse = 0.08 + Math.sin(Date.now() / 300) * 0.06;
+            const gradient = ctx.createRadialGradient(
+                canvasWidth / 2, 300, canvasWidth * 0.3,
+                canvasWidth / 2, 300, canvasWidth * 0.7
+            );
+            gradient.addColorStop(0, 'rgba(255, 0, 0, 0)');
+            gradient.addColorStop(1, `rgba(255, 0, 0, ${pulse})`);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvasWidth, 600);
+        }
 
         ctx.restore();
     }

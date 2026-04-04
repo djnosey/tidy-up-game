@@ -73,6 +73,8 @@ export class Boss {
         this.toyStompCount = 0;
         this.toyStompTimer = 0;
         this.prevState = null;
+        this.phaseChanged = false;
+        this.phaseFlashTimer = 0;
     }
 
     getPhase() {
@@ -102,6 +104,7 @@ export class Boss {
             this.arenaRight = arenaX + 960 - this.width - 10;
         }
         if (this.flashTimer > 0) this.flashTimer -= dt;
+        if (this.phaseFlashTimer > 0) this.phaseFlashTimer -= dt;
         // Track previous state so we can give grace period after vulnerable ends
         this._prevState = this.state;
         this.stateTimer -= dt;
@@ -112,7 +115,24 @@ export class Boss {
         // Check phase change
         const newPhase = this.getPhase();
         if (newPhase !== this.phase) {
+            const oldPhase = this.phase;
             this.phase = newPhase;
+            this.phaseChanged = true; // signal for main.js to trigger effects
+            this.phaseFlashTimer = 0.6; // white flash duration
+
+            // Big particle burst for phase transition
+            for (let i = 0; i < 20; i++) {
+                this.particles.push({
+                    x: this.x + this.width / 2,
+                    y: this.y + this.height / 2,
+                    vx: (Math.random() - 0.5) * 400,
+                    vy: -Math.random() * 300 - 50,
+                    life: 0.8,
+                    color: newPhase === 3 ? '#FF2222' : '#FFAA00',
+                    size: 4 + Math.random() * 6,
+                });
+            }
+
             // Update attack pattern for new phase
             const behavior = this.getBehavior();
             if (behavior && behavior.getPhaseAttacks) {
@@ -605,6 +625,16 @@ export class Boss {
             ctx.globalAlpha = Math.max(0, p.life / 0.7);
             ctx.fillStyle = p.color;
             ctx.beginPath(); ctx.arc(p.x - camera.x, p.y - camera.y, p.size, 0, Math.PI*2); ctx.fill();
+        }
+
+        // Phase transition flash — white burst that fades out
+        if (this.phaseFlashTimer > 0) {
+            const alpha = Math.min(0.6, this.phaseFlashTimer);
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, w + 30, h + 30, 0, 0, Math.PI * 2);
+            ctx.fill();
         }
 
         ctx.restore();

@@ -27,7 +27,7 @@ export class CollisionManager {
             }
             // Enemy hits player
             else if (e.checkHit(player)) {
-                events.emit('player-hit', { source: 'enemy', enemy: e, player });
+                events.emit('player-hit', { source: 'enemy', enemy: e, player, sourceX: e.x + e.width / 2 });
             }
 
             // Projectile hits enemy
@@ -50,17 +50,17 @@ export class CollisionManager {
         }
         // Boss body/projectiles hit player
         else if (boss.checkHitPlayer(player)) {
-            events.emit('player-hit', { source: 'boss', boss, player });
+            events.emit('player-hit', { source: 'boss', boss, player, sourceX: boss.x + boss.width / 2 });
         }
         // Minion hits player
         else if (boss.checkMinionHit(player)) {
-            events.emit('player-hit', { source: 'minion', boss, player });
+            events.emit('player-hit', { source: 'minion', boss, player, sourceX: boss.x + boss.width / 2 });
         }
 
         // Arena hazards
         const hazardEffect = boss.checkHazards(player);
         if (hazardEffect === 'damage') {
-            events.emit('player-hit', { source: 'hazard', boss, player });
+            events.emit('player-hit', { source: 'hazard', boss, player, sourceX: boss.x + boss.width / 2 });
         } else if (hazardEffect === 'slow') {
             events.emit('player-slowed', { player });
         }
