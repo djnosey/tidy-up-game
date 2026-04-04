@@ -212,7 +212,7 @@ Bosses use a **strategy pattern**:
 
 Shared boss states: `ROAMING`, `CHARGING`, `STUNNED`, `SPINNING`, `SHOOTING`, `VULNERABLE`
 
-Custom states per boss: `suction` (Roomba), `draining` (Washing Machine), `summon`/`lidslam` (Toy Box), `teleport`/`darkness` (Wardrobe), `flight`/`firebeam`/`coalrain` (BBQ Dragon)
+Custom states per boss: `suction` (Roomba), `draining` (Washing Machine), `summon`/`lidslam`/`snapping` (Toy Box), `teleport`/`darkness` (Wardrobe), `flight`/`firebeam`/`coalrain` (BBQ Dragon)
 
 ### CSS Post-Processing
 

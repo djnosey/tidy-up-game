@@ -97,7 +97,7 @@ Tiled backsplash, kitchen shelf items (jars, salt, olive oil, teapots), steam wi
 - **Screen 1 (0-960):** Bathtub and toilet area. Bathtub, toilet, towel racks for vertical climbing, shower shelf, high shelves. Strong vertical emphasis.
 - **Screen 2 (960-1920):** Shower area. Sink, multiple towel racks at increasing heights, shower shelves, highest shelf near ceiling. Full vertical climbing section.
 - **Screen 3 (1920-2880):** Laundry area. Laundry basket, moving towel rack (horizontal), static shelves, crumbling shelves, vertically-moving shower shelf (ride it up), high reward platforms.
-- **Screen 4 (2880-3840):** Boss arena. Six shelves at varying heights for escaping rising water.
+- **Screen 4 (2880-3840):** Boss arena. Eight shelves at varying heights, with platforms accessible from both left and right sides of the arena for escaping rising water.
 
 ### Platforms
 - Bathtub (wide, low), toilet, sink
@@ -357,7 +357,7 @@ Wait for the **drain cycle**. The boss enters a 'draining' state that lowers wat
 1. Survive until the drain cycle (water drops, boss becomes vulnerable)
 2. Jump on top during the green vulnerable window
 3. Shoot it during vulnerability to extend the window
-4. Use the 6 bathroom shelves to escape rising water
+4. Use the 8 bathroom shelves (accessible from both sides) to escape rising water
 5. During spin cycle, find the gaps in projectile rings
 6. Watch the water level — stay above it to avoid slowing
 
@@ -367,10 +367,11 @@ Wait for the **drain cycle**. The boss enters a 'draining' state that lowers wat
 **Level:** Kids' Room | **Health:** 3 | **Size:** 100x50 | **Color:** #CD853F
 
 #### How to Make Vulnerable (Two Methods)
-1. **Shoot into open lid:** When the lid is open (during summon or lid slam), shooting it makes it vulnerable (2.2s window, 1.8s in Phase 3)
+1. **Shoot into open lid:** When the lid is open (during snapping or summon), shooting it makes it vulnerable (3.0s window, 2.5s in Phase 3)
 2. **Stomp 3 minions quickly:** If you stomp 3 toy minions within 4 seconds, the boss has a tantrum and becomes vulnerable (2.2s window)
 
 #### Unique Mechanics
+- **Snapping Lid Attack:** The lid rapidly opens and closes like a mouth for 3 seconds, firing small upward projectile bursts (💥) on each snap. After snapping, the lid stays wide open for 8 seconds — the primary window to shoot into the open lid. This is the most frequent attack in all phases.
 - **Toy Summoning:** Opens lid and spawns 1-2 toy minions (🧸, 🪖, 🤖) that patrol the arena. Max 3 minions active. Speed 80-120 depending on phase.
 - **Lid Slam:** Opens lid, then slams it shut creating a shockwave projectile (💥) that travels horizontally. In Phase 3, sends shockwaves both directions. Also kills nearby minions.
 - **Minion Tracking:** Game tracks how quickly you stomp minions for the tantrum mechanic
@@ -379,17 +380,18 @@ Wait for the **drain cycle**. The boss enters a 'draining' state that lowers wat
 🧸 🚂 🎲 🪀 🧩
 
 #### Attack Patterns
-- **Phase 1:** summon → charge → lidslam → shoot
-- **Phase 2:** summon → charge → lidslam → spin → shoot
-- **Phase 3:** summon → lidslam → charge → summon → spin → lidslam
+- **Phase 1:** snapping → charge → snapping → summon
+- **Phase 2:** snapping → charge → snapping → summon → shoot
+- **Phase 3:** snapping → summon → snapping → charge → snapping → spin
 
 #### How to Beat It
-1. When it opens its lid (summon or lid slam), shoot a projectile in
-2. OR stomp 3 of its toy minions within 4 seconds for a tantrum stun
-3. Jump on its head during vulnerability
-4. During lid slam, jump over the shockwave (💥)
-5. In Phase 3, shockwaves go both ways — use platforms to dodge
-6. Watch for toy minions patrolling — stomp or avoid them
+1. Wait for the snapping attack — after 3 seconds of snapping, the lid stays open for 8 seconds
+2. Shoot a projectile into the open lid to make it vulnerable, then stomp it
+3. OR stomp 3 of its toy minions within 4 seconds for a tantrum stun
+4. Avoid the small upward projectile bursts during the snapping phase
+5. During lid slam, jump over the shockwave (💥)
+6. In Phase 3, shockwaves go both ways — use platforms to dodge
+7. Watch for toy minions patrolling — stomp or avoid them
 
 ---
 

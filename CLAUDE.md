@@ -64,7 +64,7 @@ dereks/
         mega-roomba.js     # Level 1 boss - suction attack, dust trails
         fridge-beast.js    # Level 2 boss - door mechanic, freezer mist
         washing-machine.js # Level 3 boss - rising water, drain cycle, ring projectiles
-        toy-box-terror.js  # Level 4 boss - minion summoning, lid slam shockwave
+        toy-box-terror.js  # Level 4 boss - minion summoning, snapping lid attack, lid slam shockwave
         wardrobe-monster.js# Level 5 boss - teleportation, darkness attack
         bbq-dragon.js      # Level 6 boss - flight, fire beam, coal rain
     levels/                # Level data definitions
