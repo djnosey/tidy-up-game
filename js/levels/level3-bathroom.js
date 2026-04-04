@@ -199,10 +199,14 @@ export const level3 = {
         { x: CANVAS_W * 3 + 60, y: GROUND_Y - 100, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
         // Shelf — mid left
         { x: CANVAS_W * 3 + 180, y: GROUND_Y - 170, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Shelf — low right (stepping stone from right side)
+        { x: CANVAS_W * 3 + 780, y: GROUND_Y - 100, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
         // Shelf — mid right
         { x: CANVAS_W * 3 + 600, y: GROUND_Y - 150, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
         // Shelf — high left
         { x: CANVAS_W * 3 + 200, y: GROUND_Y - 240, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Shelf — high right (reachable from right side platforms)
+        { x: CANVAS_W * 3 + 700, y: GROUND_Y - 250, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
         // Shelf — high center
         { x: CANVAS_W * 3 + 420, y: GROUND_Y - 340, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
         // Shelf — mid right

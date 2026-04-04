@@ -2,7 +2,7 @@ export const ToyBoxTerrorBehavior = {
     onProjectileHit(boss) {
         if (boss.lidOpen) {
             boss.lidOpen = false;
-            boss.enterVulnerable(boss.getPhase() === 3 ? 1.8 : 2.2);
+            boss.enterVulnerable(boss.getPhase() === 3 ? 2.5 : 3.0);
         }
     },
     onUpdate(boss, dt, player) {
@@ -26,6 +26,36 @@ export const ToyBoxTerrorBehavior = {
         if (boss.toyStompTimer > 0) {
             boss.toyStompTimer -= dt;
             if (boss.toyStompTimer <= 0) boss.toyStompCount = 0;
+        }
+
+        // Snapping lid attack — lid opens and closes like a mouth, then stays open
+        if (boss.state === 'snapping') {
+            boss.vx = 0;
+            boss.snapTimer = (boss.snapTimer || 0) + dt;
+            // Snap open/closed every 0.4 seconds for the first 3 seconds
+            if (boss.snapTimer < 3.0) {
+                const snapCycle = boss.snapTimer % 0.4;
+                boss.lidOpen = snapCycle < 0.2;
+                // Damage player if lid closes on them (they're above the boss)
+                if (snapCycle >= 0.19 && snapCycle < 0.22) {
+                    // Create small shockwave on each snap
+                    if (!boss.lastSnapTime || boss.snapTimer - boss.lastSnapTime > 0.35) {
+                        boss.lastSnapTime = boss.snapTimer;
+                        boss.projectiles.push({
+                            x: boss.x + boss.width / 2 - 15, y: boss.y - 10,
+                            width: 30, height: 10, vx: 0, vy: -80,
+                            alive: true, timer: 0.5, emoji: '💥',
+                        });
+                    }
+                }
+            } else {
+                // After snapping, lid stays wide open — vulnerable!
+                boss.lidOpen = true;
+            }
+            if (boss.stateTimer <= 0) {
+                boss.lidOpen = false;
+                boss.enterRoaming();
+            }
         }
 
         // Lid slam shockwave
@@ -77,9 +107,9 @@ export const ToyBoxTerrorBehavior = {
         }
     },
     getPhaseAttacks(boss, phase) {
-        if (phase === 1) return ['summon', 'charge', 'lidslam', 'shoot'];
-        if (phase === 2) return ['summon', 'charge', 'lidslam', 'spin', 'shoot'];
-        return ['summon', 'lidslam', 'charge', 'summon', 'spin', 'lidslam'];
+        if (phase === 1) return ['summon', 'charge', 'snapping', 'shoot'];
+        if (phase === 2) return ['summon', 'charge', 'snapping', 'spin', 'shoot'];
+        return ['summon', 'snapping', 'charge', 'summon', 'spin', 'snapping'];
     },
     customAttack(boss, name) {
         if (name === 'summon') {
@@ -96,6 +126,15 @@ export const ToyBoxTerrorBehavior = {
             boss.vx = 0;
             boss.slamDone = false;
             boss.lidOpen = true;
+            return true;
+        }
+        if (name === 'snapping') {
+            boss.state = 'snapping';
+            boss.stateTimer = 11.0; // 3s snapping + 8s open
+            boss.vx = 0;
+            boss.snapTimer = 0;
+            boss.lastSnapTime = 0;
+            boss.lidOpen = false;
             return true;
         }
         return false;
