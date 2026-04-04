@@ -1,6 +1,7 @@
 import { GameLoop } from './engine/game-loop.js';
 import { Input } from './engine/input.js';
 import { Camera } from './engine/camera.js';
+import { renderBoss } from './engine/renderers/boss-renderer.js';
 import { drawPlatform, drawPlatformSurface, drawBackground, drawDecoration } from './engine/sprites.js';
 import { Player } from './entities/player.js';
 import { loadLevel } from './levels/level-loader.js';
@@ -15,12 +16,15 @@ import { level5 } from './levels/level5-parents.js';
 import { level6 } from './levels/level6-terrace.js';
 import { HUD } from './ui/hud.js';
 import { AudioManager } from './engine/audio.js';
-import { ParticleSystem, PARTICLE_THEMES } from './engine/particles.js';
+import { ParticleSystem } from './engine/particles.js';
+import { PARTICLE_THEMES } from './engine/renderers/level-themes.js';
 import { ParallaxRenderer } from './engine/parallax.js';
 import { LightingRenderer } from './engine/lighting.js';
 import { events } from './engine/events.js';
 import { CollisionManager } from './engine/collision-manager.js';
 import { SaveManager } from './engine/save-manager.js';
+import { CheatManager } from './engine/cheat-manager.js';
+import { updateMovingPlatforms, carryPlayerOnPlatforms, updateCrumblingPlatforms, checkBedBounce } from './engine/platform-physics.js';
 import { CHARACTERS } from './data/characters.js';
 
 const ALL_LEVELS = [level1, level2, level3, level4, level5, level6];
@@ -74,50 +78,7 @@ class Game {
         this.collisionManager = new CollisionManager();
         this.saveManager = new SaveManager();
         this._heartbeatTimer = 0;
-
-        // Cheat code panel
-        this._cheatPanelOpen = false;
-        this._cheatInput = '';
-        this._cheatActive = false;
-        this._cheatFeedbackTimer = 0;
-        this._cheatFeedbackMsg = '';
-        this._cheatKeyHandler = (e) => {
-            if (e.key === 'i' || e.key === 'I') {
-                if (!this._cheatPanelOpen) {
-                    this._cheatPanelOpen = true;
-                    this._cheatInput = '';
-                    e.preventDefault();
-                    return;
-                }
-            }
-            if (!this._cheatPanelOpen) return;
-            e.preventDefault();
-            e.stopPropagation();
-            if (e.key === 'Escape') {
-                this._cheatPanelOpen = false;
-                return;
-            }
-            if (e.key === 'Backspace') {
-                this._cheatInput = this._cheatInput.slice(0, -1);
-                return;
-            }
-            if (e.key === 'Enter') {
-                if (this._cheatInput === '1015') {
-                    this._cheatActive = !this._cheatActive;
-                    if (this.player) this.player.cheatInvincible = this._cheatActive;
-                    this._cheatFeedbackMsg = this._cheatActive ? 'ON' : 'OFF';
-                } else {
-                    this._cheatFeedbackMsg = 'INVALID';
-                }
-                this._cheatFeedbackTimer = 1.0;
-                this._cheatPanelOpen = false;
-                return;
-            }
-            if (e.key.length === 1 && this._cheatInput.length < 8) {
-                this._cheatInput += e.key;
-            }
-        };
-        window.addEventListener('keydown', this._cheatKeyHandler, true);
+        this.cheats = new CheatManager();
 
         // Preload all sprite assets in the background (non-blocking)
         preloadAll(getAllSpritePaths()).then(() => {
@@ -149,10 +110,8 @@ class Game {
         this.projectiles = [];
         this.collected = 0;
         this.bossTriggered = false;
-        this._cheatActive = false;
-        this._cheatPanelOpen = false;
-        this._cheatInput = '';
-        this._cheatFeedbackTimer = 0;
+        this.cheats.reset();
+        this.cheats.syncPlayer(this.player);
         this.camera.reset();
         this.particles = new ParticleSystem();
         this.particleTheme = PARTICLE_THEMES[this.currentLevelIndex] || PARTICLE_THEMES[0];
@@ -268,7 +227,7 @@ class Game {
                 this.updateVictory(dt);
                 break;
         }
-        if (this._cheatFeedbackTimer > 0) this._cheatFeedbackTimer -= dt;
+        this.cheats.update(dt);
         this.input.endFrame();
     }
 
@@ -326,61 +285,6 @@ class Game {
         }
     }
 
-    updateMovingPlatforms(dt) {
-        for (const plat of this.level.platforms) {
-            if (!plat.moveX && !plat.moveY) continue;
-            // Initialize runtime state on first tick
-            if (plat._originX === undefined) {
-                plat._originX = plat.x;
-                plat._originY = plat.y;
-                plat._moveTimer = 0;
-            }
-            plat._prevX = plat.x;
-            plat._prevY = plat.y;
-            plat._moveTimer += dt;
-            const t = Math.sin(plat._moveTimer * (plat.moveSpeed || 1.0));
-            if (plat.moveX) plat.x = plat._originX + t * plat.moveX;
-            if (plat.moveY) plat.y = plat._originY + t * plat.moveY;
-        }
-    }
-
-    updateCrumblingPlatforms(dt) {
-        const { player, particles, particleTheme } = this;
-        for (const plat of this.level.platforms) {
-            if (!plat.crumble) continue;
-            if (plat._crumbleState === undefined) plat._crumbleState = 'solid';
-
-            if (plat._crumbleState === 'solid') {
-                // Check if player is standing on it
-                if (player.onGround &&
-                    player.x + player.width > plat.x && player.x < plat.x + plat.width &&
-                    Math.abs((player.y + player.height) - plat.y) < 4) {
-                    plat._crumbleState = 'shaking';
-                    plat._crumbleTimer = plat.crumbleDelay || 0.6;
-                }
-            } else if (plat._crumbleState === 'shaking') {
-                plat._crumbleTimer -= dt;
-                if (plat._crumbleTimer <= 0) {
-                    plat._crumbleState = 'gone';
-                    plat._crumbleTimer = plat.crumbleRespawn || 3.0;
-                    plat._disabled = true;
-                    // Crumble particles
-                    particles.emit({
-                        x: plat.x + plat.width / 2, y: plat.y,
-                        count: 8, speedX: 60, speedY: 40, life: 0.6,
-                        colors: [plat.color, '#AAA', '#888'],
-                    });
-                }
-            } else if (plat._crumbleState === 'gone') {
-                plat._crumbleTimer -= dt;
-                if (plat._crumbleTimer <= 0) {
-                    plat._crumbleState = 'solid';
-                    plat._disabled = false;
-                }
-            }
-        }
-    }
-
     updateGameplay(dt) {
         const { player, level, camera, input, particles, particleTheme } = this;
         const wasOnGround = player.wasOnGround;
@@ -389,7 +293,7 @@ class Game {
         if (input.mutePressed) this.audio.toggleMute();
 
         // Update moving platforms before player (so collision uses current positions)
-        this.updateMovingPlatforms(dt);
+        updateMovingPlatforms(level.platforms, dt);
 
         // Update player
         player.update(dt, input, level.platforms);
@@ -405,35 +309,13 @@ class Game {
         }
 
         // Carry player on moving platforms
-        if (player.onGround) {
-            for (const plat of level.platforms) {
-                if ((plat.moveX || plat.moveY) && plat._prevX !== undefined &&
-                    player.x + player.width > plat.x && player.x < plat.x + plat.width &&
-                    Math.abs((player.y + player.height) - plat.y) < 4) {
-                    player.x += plat.x - plat._prevX;
-                    player.y += plat.y - plat._prevY;
-                    break;
-                }
-            }
-        }
+        carryPlayerOnPlatforms(player, level.platforms, dt);
 
         // Update crumbling platforms
-        this.updateCrumblingPlatforms(dt);
+        updateCrumblingPlatforms(level.platforms, player, particles, dt);
 
-        // BED bouncy mechanic (Parents' Room) — if player lands on a BED platform, boost jump
-        if (player.onGround) {
-            for (const plat of level.platforms) {
-                if (plat.label === 'BED' &&
-                    player.x + player.width > plat.x && player.x < plat.x + plat.width &&
-                    Math.abs((player.y + player.height) - plat.y) < 4) {
-                    // Player just landed on bed — if they jump, boost it
-                    if (input.jumpPressed) {
-                        player.vy = -900; // super bounce!
-                        player.onGround = false;
-                    }
-                }
-            }
-        }
+        // BED bouncy mechanic (Parents' Room)
+        checkBedBounce(player, level.platforms, input);
 
         // Enforce camera boundary on player (can't go left of camera)
         if (player.x < camera.x) {
@@ -661,37 +543,7 @@ class Game {
         }
 
         // Cheat code panel overlay
-        if (this._cheatPanelOpen) {
-            ctx.save();
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-            const pw = 200, ph = 60;
-            const px = (canvas.width - pw) / 2, py = (canvas.height - ph) / 2;
-            ctx.fillRect(px, py, pw, ph);
-            ctx.strokeStyle = '#444';
-            ctx.lineWidth = 1;
-            ctx.strokeRect(px, py, pw, ph);
-            ctx.fillStyle = '#888';
-            ctx.font = '12px monospace';
-            ctx.textAlign = 'center';
-            ctx.fillText('ENTER CODE', canvas.width / 2, py + 18);
-            ctx.fillStyle = '#fff';
-            ctx.font = 'bold 20px monospace';
-            const masked = '*'.repeat(this._cheatInput.length);
-            ctx.fillText(masked + '_', canvas.width / 2, py + 44);
-            ctx.restore();
-        }
-
-        // Cheat feedback flash
-        if (this._cheatFeedbackTimer > 0) {
-            ctx.save();
-            const alpha = Math.min(1, this._cheatFeedbackTimer * 2);
-            ctx.globalAlpha = alpha;
-            ctx.font = 'bold 14px monospace';
-            ctx.textAlign = 'right';
-            ctx.fillStyle = this._cheatFeedbackMsg === 'INVALID' ? '#FF4444' : '#44FF44';
-            ctx.fillText(this._cheatFeedbackMsg, canvas.width - 10, canvas.height - 10);
-            ctx.restore();
-        }
+        this.cheats.render(ctx, canvas.width, canvas.height);
     }
 
     renderGameplay() {
@@ -768,7 +620,7 @@ class Game {
 
         // Boss
         if (this.bossTriggered) {
-            level.boss.render(ctx, camera);
+            renderBoss(ctx, level.boss, camera);
         }
 
         // Projectiles

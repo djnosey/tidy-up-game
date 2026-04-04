@@ -26,7 +26,10 @@ dereks/
     CREDITS.md             # Asset attribution (CC0 and CC-BY sources)
   js/
     main.js                # Game class - state machine, game loop, event wiring
-    data/characters.js     # 4 playable characters: Steve, Hara, Derek, Juno
+    data/                  # Pure data (no logic)
+      characters.js        # 4 playable characters: Steve, Hara, Derek, Juno
+      story-data.js        # Opening story dialogue, level intros, boss intros
+      credits-data.js      # End credits text and sequence data
     engine/                # Core engine systems
       game-loop.js         # Fixed timestep (60fps) with requestAnimationFrame
       input.js             # Keyboard input (arrows, S=jump, D=shoot, M=mute)
@@ -34,31 +37,52 @@ dereks/
       physics.js           # AABB collision, platform resolution, gravity constants
       collision-manager.js # Decoupled collision checks -> event bus
       events.js            # Simple pub/sub EventBus
-      particles.js         # Particle system with per-level themed palettes
-      parallax.js          # Multi-layer parallax backgrounds (procedural)
+      particles.js         # Particle system (emission + rendering)
+      parallax.js          # Parallax orchestrator (delegates to per-level layers)
+      parallax-layers/     # Per-level procedural background art
+        living-room.js     # Living Room parallax layers
+        kitchen.js         # Kitchen parallax layers
+        bathroom.js        # Bathroom parallax layers
+        kids-room.js       # Kids' Room parallax layers
+        parents-room.js    # Parents' Room parallax layers
+        terrace.js         # Terrace parallax layers
       lighting.js          # Vignette, mood tints, light source glows
-      audio.js             # Web Audio API SFX synthesis + MIDI music via soundfont-player
+      audio.js             # MIDI music playback + SFX dispatch via soundfont-player
+      sfx-recipes.js       # Web Audio API SFX synthesis recipes (chiptune oscillators)
+      cheat-manager.js     # Cheat code panel (press I to open)
+      platform-physics.js  # Moving platforms, crumbling platforms, BED bounce
       asset-loader.js      # Image preloader with fallback to procedural rendering
       sprite-manifest.js   # Maps labels -> sprite file paths (platforms, enemies, decorations)
       sprites.js           # Barrel re-export of all renderers
       renderers/           # Individual procedural renderers
         shared.js          # Utility: roundRect, darken/lighten, emoji drawing
-        level-themes.js    # Per-level color palettes (wood, fabric, metal, ceramic, etc.)
+        level-themes.js    # Per-level color palettes + PARTICLE_THEMES
         character-renderer.js
-        platform-renderer.js
+        boss-renderer.js   # All boss drawing (per-boss body, eyes, hazards, projectiles)
+        platform-renderer.js  # Router -> furniture/ subfolder
         enemy-renderer.js
         collectable-renderer.js
         obstacle-renderer.js
         projectile-renderer.js
-        decoration-renderer.js
+        decoration-renderer.js  # Router -> decorations/ subfolder
         background-renderer.js
+        furniture/         # Per-category furniture drawing
+          seating.js       # Sofa, armchair, cushion, chair, stool
+          tables.js        # Table, TV unit, counter
+          storage.js       # Shelf, bookshelf, drawer, fridge, wardrobe, etc.
+          beds.js          # Bed, bunk bed
+          misc.js          # Frame, lamp, bathtub, toilet, sink, railing, etc.
+        decorations/       # Per-category decoration drawing
+          windows.js       # Window, curtain
+          furnishings.js   # Rug, wall art, photos, lamps, crayons, etc.
+          features.js      # Radiator, skirting, cornice, doorway, puddles, etc.
     entities/              # Game objects
       player.js            # Movement, jumping, crouching, shooting, health, squash/stretch
       enemy.js             # Patrol AI, stomp/projectile/hit detection
       collectable.js       # Bobbing items with collect animation
       obstacle.js          # Hazards with optional timer cycling
       projectile.js        # Player-fired projectiles (slipper/spoon/nerf/crayon)
-      boss.js              # Base boss class - state machine, attacks, phases, rendering
+      boss.js              # Boss state machine, attacks, phases, collision (no rendering)
       bosses/              # Per-boss behavior modules
         boss-states.js     # Shared state constants
         mega-roomba.js     # Level 1 boss - suction attack, dust trails
@@ -76,9 +100,10 @@ dereks/
       level5-parents.js    # Parents' Room (4 screens wide)
       level6-terrace.js    # Outdoor Terrace (5 screens wide)
     ui/                    # User interface
-      menu.js              # Title screen, character select, hub world
+      menu.js              # Title screen + character select
+      hub-world.js         # Hub world (room selection map, level navigation)
       hud.js               # Health hearts, tidy meter, item counter
-      transitions.js       # Opening story, level intros, boss intros (typewriter text)
+      transitions.js       # Transition animations (typewriter text, boss reveal)
       score-screen.js      # Post-boss score with stars
       victory-screen.js    # Credits scroll with falling emoji mess items
 ```

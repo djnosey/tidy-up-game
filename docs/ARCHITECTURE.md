@@ -10,46 +10,67 @@ The game is a vanilla JavaScript application using ES modules. There is no build
 ## Module Dependency Graph
 
 ```
-main.js (Game class)
+main.js (Game class - orchestrator)
   |
-  +-- engine/game-loop.js      (GameLoop - fixed timestep RAF loop)
-  +-- engine/input.js           (Input - keyboard state)
-  +-- engine/camera.js          (Camera - follow, lock, shake)
-  +-- engine/physics.js         (GRAVITY, AABB, platform resolution)
+  +-- engine/game-loop.js       (GameLoop - fixed timestep RAF loop)
+  +-- engine/input.js            (Input - keyboard state)
+  +-- engine/camera.js           (Camera - follow, lock, shake)
+  +-- engine/physics.js          (GRAVITY, AABB, platform resolution)
   +-- engine/collision-manager.js (CollisionManager -> events)
-  +-- engine/events.js          (EventBus - pub/sub)
-  +-- engine/particles.js       (ParticleSystem + PARTICLE_THEMES)
-  +-- engine/parallax.js        (ParallaxRenderer - multi-layer backgrounds)
-  +-- engine/lighting.js        (LightingRenderer - vignette, tints, glows)
-  +-- engine/audio.js           (AudioManager - SFX + MIDI music)
-  +-- engine/asset-loader.js    (Image cache + preloader)
-  +-- engine/sprite-manifest.js (Label -> file path mappings)
-  +-- engine/sprites.js         (Barrel re-export of all renderers)
+  +-- engine/events.js           (EventBus - pub/sub)
+  +-- engine/particles.js        (ParticleSystem - emission + rendering)
+  +-- engine/parallax.js         (ParallaxRenderer - orchestrator)
+  |   +-- engine/parallax-layers/living-room.js
+  |   +-- engine/parallax-layers/kitchen.js
+  |   +-- engine/parallax-layers/bathroom.js
+  |   +-- engine/parallax-layers/kids-room.js
+  |   +-- engine/parallax-layers/parents-room.js
+  |   +-- engine/parallax-layers/terrace.js
+  +-- engine/lighting.js         (LightingRenderer - vignette, tints, glows)
+  +-- engine/audio.js            (AudioManager - MIDI music + SFX dispatch)
+  +-- engine/sfx-recipes.js      (SFX synthesis recipes - Web Audio oscillators)
+  +-- engine/cheat-manager.js    (CheatManager - cheat code panel)
+  +-- engine/platform-physics.js (Moving platforms, crumbling, BED bounce)
+  +-- engine/asset-loader.js     (Image cache + preloader)
+  +-- engine/sprite-manifest.js  (Label -> file path mappings)
+  +-- engine/sprites.js          (Barrel re-export of all renderers)
   |
-  +-- entities/player.js        (Player - movement, health, shooting)
-  +-- entities/enemy.js         (Enemy - patrol, stomp/hit detection)
-  +-- entities/collectable.js   (Collectable - bob, collect animation)
-  +-- entities/obstacle.js      (Obstacle - timed hazards)
-  +-- entities/projectile.js    (Projectile - player-fired)
-  +-- entities/boss.js          (Boss - state machine, attacks, rendering)
+  +-- engine/renderers/boss-renderer.js  (All boss drawing - per-boss visuals)
+  +-- engine/renderers/platform-renderer.js (Router -> furniture/)
+  |   +-- engine/renderers/furniture/seating.js
+  |   +-- engine/renderers/furniture/tables.js
+  |   +-- engine/renderers/furniture/storage.js
+  |   +-- engine/renderers/furniture/beds.js
+  |   +-- engine/renderers/furniture/misc.js
+  +-- engine/renderers/decoration-renderer.js (Router -> decorations/)
+  |   +-- engine/renderers/decorations/windows.js
+  |   +-- engine/renderers/decorations/furnishings.js
+  |   +-- engine/renderers/decorations/features.js
+  +-- engine/renderers/level-themes.js (Color palettes + PARTICLE_THEMES)
+  +-- engine/renderers/{character,enemy,collectable,obstacle,projectile,background}-renderer.js
+  |
+  +-- entities/player.js         (Player - movement, health, shooting)
+  +-- entities/enemy.js          (Enemy - patrol, stomp/hit detection)
+  +-- entities/collectable.js    (Collectable - bob, collect animation)
+  +-- entities/obstacle.js       (Obstacle - timed hazards)
+  +-- entities/projectile.js     (Projectile - player-fired)
+  +-- entities/boss.js           (Boss - state machine, attacks, phases — no rendering)
   |   +-- entities/bosses/boss-states.js
-  |   +-- entities/bosses/mega-roomba.js
-  |   +-- entities/bosses/fridge-beast.js
-  |   +-- entities/bosses/washing-machine.js
-  |   +-- entities/bosses/toy-box-terror.js
-  |   +-- entities/bosses/wardrobe-monster.js
-  |   +-- entities/bosses/bbq-dragon.js
+  |   +-- entities/bosses/{mega-roomba,fridge-beast,washing-machine,toy-box-terror,wardrobe-monster,bbq-dragon}.js
   |
-  +-- levels/level-loader.js    (Factory: data -> entity instances)
+  +-- levels/level-loader.js     (Factory: data -> entity instances)
   +-- levels/level1-living.js through level6-terrace.js
   |
-  +-- ui/menu.js                (Menu - title, select, hub)
-  +-- ui/hud.js                 (HUD - hearts, tidy meter, items)
-  +-- ui/transitions.js         (TransitionManager - story, intros)
-  +-- ui/score-screen.js        (ScoreScreen - post-boss results)
-  +-- ui/victory-screen.js      (VictoryScreen - credits scroll)
+  +-- ui/menu.js                 (Menu - title screen, character select)
+  +-- ui/hub-world.js            (HubWorld - room selection map)
+  +-- ui/hud.js                  (HUD - hearts, tidy meter, items)
+  +-- ui/transitions.js          (TransitionManager - animations, boss reveal)
+  +-- ui/score-screen.js         (ScoreScreen - post-boss results)
+  +-- ui/victory-screen.js       (VictoryScreen - credits scroll)
   |
-  +-- data/characters.js        (CHARACTERS array)
+  +-- data/characters.js         (CHARACTERS array)
+  +-- data/story-data.js         (OPENING_STORY, LEVEL_INTROS, BOSS_INTROS)
+  +-- data/credits-data.js       (CREDITS, MESS_ITEMS)
 ```
 
 ## Core Systems
@@ -79,7 +100,7 @@ STATE_GAMEOVER   -> Death screen (retry with Enter)
 STATE_VICTORY    -> Credits scroll (after final boss)
 ```
 
-The `update(dt)` method switches on state. Each state has its own update and render path.
+The `update(dt)` method switches on state. Each state has its own update and render path. Platform physics (moving, crumbling, BED bounce) are delegated to `engine/platform-physics.js`. Cheat code handling is delegated to `engine/cheat-manager.js`.
 
 ### Input System (`engine/input.js`)
 
@@ -139,13 +160,13 @@ Events used:
 | `player-slowed` | player | Set _slowed flag for friction effect |
 | `boss-projectile-hit` | boss, projectile | Boss-specific projectile response |
 
-### Particle System (`engine/particles.js`)
+### Particle System (`engine/particles.js` + `engine/renderers/level-themes.js`)
 
 Pool-based particle system with configurable emission:
 
 - **Max particles:** 300 (oldest recycled)
 - **Emission params:** x, y, count, colors[], speedX, speedY, gravity, friction, sizeMin, sizeMax, life
-- **Per-level themes:** Each level has themed palettes for jumpDust, landImpact, enemyHit, collect, obstacleHit
+- **Per-level themes:** `PARTICLE_THEMES` in `level-themes.js` — each level has themed palettes for jumpDust, landImpact, enemyHit, collect, obstacleHit
 
 ### Rendering Pipeline
 
@@ -157,7 +178,7 @@ Render order in `renderGameplay()`:
 5. **Collectables** - Bobbing items
 6. **Obstacles** - Hazards (with ghosted preview for timed ones)
 7. **Enemies** - Patrol entities
-8. **Boss** - When triggered (includes hazards, projectiles, minions)
+8. **Boss** - When triggered (via `renderBoss()` from `boss-renderer.js` — includes hazards, projectiles, minions)
 9. **Player projectiles**
 10. **Player** - With squash/stretch and invincibility flash
 11. **Particles** - On top of game world
@@ -200,9 +221,10 @@ Levels are plain JavaScript objects (not JSON) with this structure:
 
 ### Boss Architecture
 
-Bosses use a **strategy pattern**:
+Bosses use a **strategy pattern** with rendering separated:
 
-- `Boss` class (`entities/boss.js`) handles shared state machine, movement, projectiles, particles, rendering, and collision detection
+- `Boss` class (`entities/boss.js`) handles state machine, movement, projectiles, particles, and collision detection
+- `renderBoss()` function (`engine/renderers/boss-renderer.js`) handles all boss drawing: per-boss body shapes, eyes, hazard overlays, projectiles, minions, and effects (darkness, fire, frost)
 - Per-boss behavior modules (`entities/bosses/*.js`) export objects with hooks:
   - `onUpdate(boss, dt, player)` - Custom per-frame logic
   - `onProjectileHit(boss)` - Response to player shots
@@ -242,8 +264,10 @@ Material-drawing helpers use the active theme: `drawWoodGrain()`, `drawFabricTex
 ## Key Design Patterns
 
 1. **Data-driven levels:** Level files are pure data; `level-loader.js` instantiates all entities
-2. **Strategy pattern for bosses:** Behavior modules are plugged into the base Boss class
+2. **Strategy pattern for bosses:** Behavior modules plugged into Boss class; rendering separated into `boss-renderer.js`
 3. **Event-driven collision:** CollisionManager detects, EventBus delivers, Game responds
 4. **Graceful degradation:** Sprite system falls back to procedural rendering if images fail
 5. **Fixed timestep:** Deterministic physics decoupled from render rate
 6. **Barrel exports:** `sprites.js` re-exports all renderer functions for a clean import API
+7. **Router pattern for renderers:** `platform-renderer.js` and `decoration-renderer.js` dispatch to per-category sub-modules in `furniture/` and `decorations/`
+8. **Data/logic separation:** Story text, credits, and character data are in `data/` files, separate from animation/rendering code

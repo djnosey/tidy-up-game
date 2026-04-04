@@ -1,6 +1,6 @@
 # UI & Audio
 
-## Menu System (`js/ui/menu.js`)
+## Menu System (`js/ui/menu.js` + `js/ui/hub-world.js`)
 
 ### Menu States
 
@@ -26,7 +26,7 @@ The menu has three states:
 - **Instructions:** Arrow keys to choose, Enter to play, Escape to go back
 - **Controls reminder:** Shows all game controls at bottom
 
-#### 3. Hub World (`state: 'hub'`)
+#### 3. Hub World (`state: 'hub'`) — rendered by `js/ui/hub-world.js`
 - **Background:** Same street scene as title but larger house
 - **House:** 6 windows representing rooms (2 rows: 4 upper, 2 lower)
   - Completed rooms: Yellow lit windows with checkmark
@@ -78,9 +78,9 @@ Rendered on top of gameplay, unaffected by camera shake.
 - **Label:** "ITEMS" in 10px grey monospace
 - **Count:** "12 / 24" in bold 14px gold monospace
 
-## Transition Screens (`js/ui/transitions.js`)
+## Transition Screens (`js/ui/transitions.js` + `js/data/story-data.js`)
 
-Three types of transition screens, all managed by `TransitionManager`:
+Three types of transition screens, all managed by `TransitionManager`. Story text data (OPENING_STORY, LEVEL_INTROS, BOSS_INTROS) is in `js/data/story-data.js`; animation/rendering logic stays in `transitions.js`.
 
 ### Opening Story (first play only)
 
@@ -191,7 +191,7 @@ Simple overlay rendered in `Game.renderGameOver()`:
 
 Player can retry the current level with Enter or Space.
 
-## Victory / Credits Screen (`js/ui/victory-screen.js`)
+## Victory / Credits Screen (`js/ui/victory-screen.js` + `js/data/credits-data.js`)
 
 Shown after defeating the BBQ Dragon (final boss).
 
@@ -235,7 +235,7 @@ Begins scrolling 2 seconds after start at 35 px/s.
 
 ---
 
-## Audio System (`js/engine/audio.js`)
+## Audio System (`js/engine/audio.js` + `js/engine/sfx-recipes.js`)
 
 ### Architecture
 
@@ -255,7 +255,7 @@ AudioContext
 
 ### Sound Effects (SFX)
 
-All SFX are synthesized in real-time using Web Audio API oscillators. No audio files needed.
+All SFX are synthesized in real-time using Web Audio API oscillators. No audio files needed. SFX recipe functions are in `js/engine/sfx-recipes.js`; `audio.js` dispatches to them via `SFX_RECIPES[name]`.
 
 | SFX | Waveform | Technique | Duration |
 |-----|----------|-----------|----------|
