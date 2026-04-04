@@ -1,0 +1,33 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: #111;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    font-family: monospace;
+}
+
+#game-canvas {
+    display: block;
+    /* Fill viewport while keeping 960:600 aspect ratio */
+    width: min(100vw, 160vh);
+    height: min(100vh, 62.5vw);
+    image-rendering: auto;
+    border-radius: 4px;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Per-level post-processing filters */
+#game-canvas.level-living   { filter: saturate(1.05) contrast(1.02); }
+#game-canvas.level-kitchen  { filter: saturate(1.08) brightness(1.02) sepia(0.03); }
+#game-canvas.level-bathroom { filter: saturate(0.9) brightness(1.05) hue-rotate(-5deg); }
+#game-canvas.level-kids     { filter: saturate(1.15) brightness(1.03); }
+#game-canvas.level-parents  { filter: saturate(0.95) brightness(0.97) sepia(0.05); }
+#game-canvas.level-terrace  { filter: saturate(1.1) brightness(1.08); }

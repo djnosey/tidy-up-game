@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIDI Mixer — Tidy Up!</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        h1 { text-align: center; margin-bottom: 6px; color: #FFD700; font-size: 24px; }
+        .subtitle { text-align: center; color: #888; margin-bottom: 20px; font-size: 13px; }
+
+        .file-tabs {
+            display: flex; gap: 6px; flex-wrap: wrap;
+            justify-content: center; margin-bottom: 20px;
+        }
+        .file-tab {
+            padding: 8px 16px; border-radius: 6px;
+            background: #2a2a4a; border: 2px solid #444;
+            cursor: pointer; font-size: 13px; color: #ccc;
+            transition: all 0.15s;
+        }
+        .file-tab:hover { border-color: #FFD700; color: #FFD700; }
+        .file-tab.active { background: #3a3a6a; border-color: #FFD700; color: #FFD700; font-weight: bold; }
+
+        .transport {
+            display: flex; gap: 10px; justify-content: center;
+            align-items: center; margin-bottom: 20px;
+        }
+        .transport button {
+            padding: 10px 24px; border-radius: 8px; border: none;
+            font-size: 15px; font-weight: bold; cursor: pointer;
+            transition: all 0.15s;
+        }
+        #btn-play { background: #4CAF50; color: white; }
+        #btn-play:hover { background: #5CBF60; }
+        #btn-play.playing { background: #f44336; }
+        #btn-play.playing:hover { background: #f55a4e; }
+        #btn-stop { background: #555; color: white; }
+        #btn-stop:hover { background: #666; }
+
+        .master-vol {
+            display: flex; align-items: center; gap: 8px;
+            background: #2a2a4a; padding: 4px 12px; border-radius: 6px;
+        }
+        .master-vol label { font-size: 12px; color: #aaa; }
+        .master-vol input[type=range] { width: 100px; }
+
+        #channel-panel {
+            max-width: 900px; margin: 0 auto;
+        }
+        .no-channels {
+            text-align: center; color: #666; padding: 40px;
+            font-style: italic;
+        }
+
+        .channel-row {
+            display: grid;
+            grid-template-columns: 50px 1fr 200px 60px 40px;
+            align-items: center; gap: 12px;
+            background: #2a2a4a; border-radius: 8px;
+            padding: 10px 16px; margin-bottom: 6px;
+        }
+        .ch-label {
+            font-weight: bold; font-size: 14px;
+            color: #FFD700; text-align: center;
+        }
+        .ch-slider-wrap {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .ch-slider-wrap input[type=range] {
+            flex: 1; height: 6px;
+            accent-color: #FFD700;
+        }
+        .ch-slider-wrap .vol-val {
+            font-size: 12px; color: #aaa; min-width: 36px; text-align: right;
+        }
+        .ch-instrument select {
+            width: 100%; padding: 4px 6px; border-radius: 4px;
+            background: #1a1a2e; color: #ccc; border: 1px solid #555;
+            font-size: 12px;
+        }
+        .ch-mute button {
+            width: 36px; height: 28px; border-radius: 4px;
+            border: 1px solid #555; background: #333; color: #aaa;
+            cursor: pointer; font-size: 11px; font-weight: bold;
+        }
+        .ch-mute button.muted { background: #f44336; color: white; border-color: #f44336; }
+        .ch-solo button {
+            width: 36px; height: 28px; border-radius: 4px;
+            border: 1px solid #555; background: #333; color: #aaa;
+            cursor: pointer; font-size: 11px; font-weight: bold;
+        }
+        .ch-solo button.soloed { background: #FFD700; color: #000; border-color: #FFD700; }
+
+        .actions {
+            display: flex; gap: 10px; justify-content: center;
+            margin-top: 24px; padding-bottom: 40px;
+        }
+        .actions button {
+            padding: 10px 28px; border-radius: 8px; border: 2px solid #FFD700;
+            background: transparent; color: #FFD700; font-size: 14px;
+            font-weight: bold; cursor: pointer; transition: all 0.15s;
+        }
+        .actions button:hover { background: #FFD700; color: #1a1a2e; }
+
+        #status {
+            text-align: center; color: #4CAF50; margin-top: 12px;
+            font-size: 13px; min-height: 20px;
+        }
+
+        /* Meter bars */
+        .ch-meter {
+            width: 100%; height: 4px; background: #111;
+            border-radius: 2px; margin-top: 4px; overflow: hidden;
+        }
+        .ch-meter-fill {
+            height: 100%; width: 0%; background: #4CAF50;
+            transition: width 0.08s;
+        }
+    </style>
+</head>
+<body>
+    <h1>MIDI Mixer</h1>
+    <p class="subtitle">Adjust channel volumes & instruments, then save back to the game</p>
+
+    <div class="file-tabs" id="file-tabs"></div>
+
+    <div class="transport">
+        <button id="btn-play">&#9654; Play</button>
+        <button id="btn-stop">&#9632; Stop</button>
+        <div class="master-vol">
+            <label>Master</label>
+            <input type="range" id="master-vol" min="0" max="100" value="80">
+        </div>
+    </div>
+
+    <div id="channel-panel">
+        <div class="no-channels">Select a MIDI file above to begin</div>
+    </div>
+
+    <div class="actions">
+        <button id="btn-save">Save Settings to Game</button>
+        <button id="btn-export">Export JSON</button>
+    </div>
+    <div id="status"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/midi-player-js@2.0.16/browser/midiplayer.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+    <script>
+    // ── GM Instrument list (subset relevant to game) ──
+    const GM_INSTRUMENTS = [
+        [0, 'acoustic_grand_piano', 'Grand Piano'],
+        [1, 'bright_acoustic_piano', 'Bright Piano'],
+        [2, 'electric_piano_1', 'Electric Piano 1'],
+        [3, 'electric_piano_2', 'Electric Piano 2'],
+        [4, 'honkytonk_piano', 'Honky-tonk Piano'],
+        [5, 'electric_grand_piano', 'Electric Grand'],
+        [10, 'vibraphone', 'Vibraphone'],
+        [11, 'marimba', 'Marimba'],
+        [12, 'xylophone', 'Xylophone'],
+        [13, 'tubular_bells', 'Tubular Bells'],
+        [24, 'acoustic_guitar_nylon', 'Nylon Guitar'],
+        [25, 'acoustic_guitar_steel', 'Steel Guitar'],
+        [26, 'electric_guitar_jazz', 'Jazz Guitar'],
+        [27, 'electric_guitar_clean', 'Clean Guitar'],
+        [29, 'overdriven_guitar', 'Overdriven Guitar'],
+        [30, 'distortion_guitar', 'Distortion Guitar'],
+        [32, 'electric_bass_finger', 'Finger Bass'],
+        [33, 'electric_bass_pick', 'Pick Bass'],
+        [34, 'fretless_bass', 'Fretless Bass'],
+        [36, 'slap_bass_1', 'Slap Bass'],
+        [38, 'synth_bass_1', 'Synth Bass 1'],
+        [39, 'synth_bass_2', 'Synth Bass 2'],
+        [40, 'violin', 'Violin'],
+        [42, 'cello', 'Cello'],
+        [46, 'orchestral_harp', 'Harp'],
+        [48, 'string_ensemble_1', 'Strings'],
+        [52, 'choir_aahs', 'Choir Aahs'],
+        [53, 'voice_oohs', 'Voice Oohs'],
+        [56, 'trumpet', 'Trumpet'],
+        [57, 'trombone', 'Trombone'],
+        [60, 'brass_section', 'Brass Section'],
+        [61, 'french_horn', 'French Horn'],
+        [62, 'synth_brass_1', 'Synth Brass'],
+        [73, 'flute', 'Flute'],
+        [71, 'clarinet', 'Clarinet'],
+        [78, 'whistle', 'Whistle'],
+        [79, 'ocarina', 'Ocarina'],
+        [80, 'lead_1_square', 'Lead Square'],
+        [81, 'lead_2_sawtooth', 'Lead Sawtooth'],
+        [82, 'lead_3_calliope', 'Lead Calliope'],
+        [85, 'lead_6_voice', 'Lead Voice'],
+        [88, 'pad_2_warm', 'Pad Warm'],
+        [89, 'pad_3_polysynth', 'Pad Polysynth'],
+        [90, 'pad_4_choir', 'Pad Choir'],
+        [91, 'pad_5_bowed', 'Pad Bowed'],
+        [95, 'pad_8_sweep', 'Pad Sweep'],
+        [107, 'koto', 'Koto'],
+        [114, 'steel_drums', 'Steel Drums'],
+        [118, 'synth_drum', 'Synth Drum'],
+    ];
+
+    // The game's program-to-instrument map (from audio.js)
+    const GAME_PROGRAM_MAP = {
+        0: 'acoustic_grand_piano', 1: 'acoustic_grand_piano',
+        2: 'electric_piano_1', 3: 'electric_piano_1',
+        4: 'electric_piano_1', 5: 'electric_piano_1',
+        10: 'vibraphone', 11: 'vibraphone',
+        24: 'acoustic_guitar_nylon', 25: 'acoustic_guitar_nylon',
+        26: 'acoustic_guitar_nylon', 27: 'acoustic_guitar_nylon',
+        28: 'acoustic_guitar_nylon',
+        29: 'overdriven_guitar', 30: 'distortion_guitar', 31: 'distortion_guitar',
+        32: 'electric_bass_finger', 33: 'electric_bass_finger',
+        34: 'electric_bass_finger', 35: 'electric_bass_finger',
+        36: 'slap_bass_1', 37: 'slap_bass_1',
+        38: 'synth_bass_1', 39: 'synth_bass_1',
+        48: 'string_ensemble_1', 49: 'string_ensemble_1',
+        50: 'string_ensemble_1', 51: 'string_ensemble_1',
+        52: 'choir_aahs', 53: 'choir_aahs', 54: 'choir_aahs',
+        56: 'trumpet', 57: 'trumpet',
+        60: 'brass_section', 61: 'brass_section',
+        62: 'synth_brass_1', 63: 'synth_brass_1',
+        80: 'lead_1_square', 81: 'lead_2_sawtooth',
+        82: 'lead_1_square', 83: 'lead_2_sawtooth',
+        88: 'pad_2_warm', 89: 'pad_2_warm',
+        90: 'pad_2_warm', 91: 'pad_2_warm',
+        107: 'koto', 118: 'synth_drum',
+    };
+
+    const MIDI_FILES = [
+        { path: 'assets/music/level1.mid', label: 'Level 1 — Living Room' },
+        { path: 'assets/music/level2.mid', label: 'Level 2 — Kitchen' },
+        { path: 'assets/music/level3.mid', label: 'Level 3 — Bathroom' },
+        { path: 'assets/music/level4.mid', label: 'Level 4 — Kids Room' },
+        { path: 'assets/music/level5.mid', label: 'Level 5 — Parents Room' },
+        { path: 'assets/music/level6.mid', label: 'Level 6 — Terrace' },
+        { path: 'assets/music/boss.mid',   label: 'Boss Battle' },
+    ];
+
+    // ── State ──
+    let audioCtx = null;
+    let masterGain = null;
+    let musicGain = null;
+    let instruments = {};       // loaded soundfont instruments by name
+    let midiPlayer = null;
+    let activeNotes = {};
+    let currentFile = null;     // { path, arrayBuffer }
+    let channelInfo = {};       // track# -> { program, noteCount, name, instrumentOverride }
+    let channelSettings = {};   // track# -> { volume, muted, soloed, instrument }
+    let allSettings = {};       // path -> channelSettings snapshot
+    let isPlaying = false;
+
+    // ── Init audio ──
+    async function initAudio() {
+        if (audioCtx) return;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0.8;
+        masterGain.connect(audioCtx.destination);
+        musicGain = audioCtx.createGain();
+        musicGain.connect(masterGain);
+        setStatus('Loading instruments...');
+        const names = [...new Set(GM_INSTRUMENTS.map(g => g[1]))];
+        await Promise.all(names.map(loadInstrument));
+        setStatus('Instruments loaded. Pick a MIDI file.');
+    }
+
+    async function loadInstrument(name) {
+        if (instruments[name]) return instruments[name];
+        try {
+            const inst = await Soundfont.instrument(audioCtx, name, {
+                soundfont: 'MusyngKite', destination: musicGain
+            });
+            instruments[name] = inst;
+            return inst;
+        } catch (e) {
+            console.warn('Failed to load:', name);
+            return null;
+        }
+    }
+
+    // ── MIDI file loading & scanning ──
+    async function loadMidiFile(path) {
+        stopPlayback();
+        await initAudio();
+
+        // Restore settings if we had them
+        if (allSettings[path]) {
+            channelSettings = JSON.parse(JSON.stringify(allSettings[path]));
+        } else {
+            channelSettings = {};
+        }
+
+        setStatus(`Loading ${path}...`);
+        const resp = await fetch(path);
+        if (!resp.ok) { setStatus(`Failed to load ${path}`); return; }
+        const arrayBuffer = await resp.arrayBuffer();
+        currentFile = { path, arrayBuffer };
+
+        // Scan the MIDI to discover tracks/channels
+        channelInfo = {};
+        const scanner = new MidiPlayer.Player();
+        scanner.on('midiEvent', (event) => {
+            const track = event.track;
+            if (event.name === 'Program Change') {
+                if (!channelInfo[track]) channelInfo[track] = { program: 0, noteCount: 0, channel: event.channel - 1 };
+                channelInfo[track].program = event.value;
+                channelInfo[track].channel = event.channel - 1;
+            }
+            if (event.name === 'Note on' && event.velocity > 0) {
+                if (!channelInfo[track]) channelInfo[track] = { program: 0, noteCount: 0, channel: event.channel - 1 };
+                channelInfo[track].noteCount++;
+                channelInfo[track].channel = event.channel - 1;
+            }
+            if (event.name === 'Track Name' && event.string) {
+                if (!channelInfo[track]) channelInfo[track] = { program: 0, noteCount: 0, channel: 0 };
+                channelInfo[track].name = event.string;
+            }
+        });
+        scanner.loadArrayBuffer(arrayBuffer.slice(0));
+        // Play through silently to scan
+        const origTempo = scanner.tempo;
+        scanner.tempo = 960; // fast scan
+        await new Promise(resolve => {
+            scanner.on('endOfFile', resolve);
+            scanner.play();
+            // Safety timeout
+            setTimeout(() => { try { scanner.stop(); } catch(e){} resolve(); }, 5000);
+        });
+
+        // Remove tracks with no notes
+        for (const t in channelInfo) {
+            if (channelInfo[t].noteCount === 0) delete channelInfo[t];
+        }
+
+        // Init channel settings for tracks we haven't seen
+        for (const t in channelInfo) {
+            if (!channelSettings[t]) {
+                const info = channelInfo[t];
+                const instName = info.channel === 9 ? 'synth_drum' :
+                    (GAME_PROGRAM_MAP[info.program] || 'acoustic_grand_piano');
+                channelSettings[t] = {
+                    volume: 1.0,
+                    muted: false,
+                    soloed: false,
+                    instrument: instName,
+                    originalProgram: info.program,
+                };
+            }
+        }
+
+        buildChannelUI();
+        setStatus(`Loaded — ${Object.keys(channelInfo).length} tracks found`);
+    }
+
+    // ── Playback ──
+    function startPlayback() {
+        if (!currentFile || !audioCtx) return;
+        stopPlayback();
+
+        const player = new MidiPlayer.Player();
+        midiPlayer = player;
+        const channelPrograms = {};
+
+        player.on('midiEvent', (event) => {
+            if (event.name === 'Program Change') {
+                channelPrograms[event.track] = event.value;
+                return;
+            }
+            if (event.name === 'Note on' && event.velocity > 0) {
+                const track = event.track;
+                const settings = channelSettings[track];
+                if (!settings || settings.muted) return;
+
+                // Solo logic: if any track is soloed, only play soloed tracks
+                const anySoloed = Object.values(channelSettings).some(s => s.soloed);
+                if (anySoloed && !settings.soloed) return;
+
+                const instName = settings.instrument || 'acoustic_grand_piano';
+                const inst = instruments[instName] || instruments['acoustic_grand_piano'];
+                if (!inst) return;
+
+                const gain = (event.velocity / 127) * 1.5 * settings.volume;
+                const note = inst.play(event.noteName, audioCtx.currentTime, {
+                    gain, duration: 2
+                });
+                if (note) {
+                    const key = `${track}-${event.noteNumber}`;
+                    activeNotes[key] = note;
+                }
+
+                // Update meter
+                updateMeter(track, event.velocity / 127);
+            } else if (event.name === 'Note off' || (event.name === 'Note on' && event.velocity === 0)) {
+                const key = `${event.track}-${event.noteNumber}`;
+                if (activeNotes[key]) {
+                    try { activeNotes[key].stop(); } catch(e) {}
+                    delete activeNotes[key];
+                }
+            }
+        });
+
+        player.on('endOfFile', () => {
+            player.stop();
+            setTimeout(() => {
+                if (midiPlayer === player && currentFile) {
+                    player.loadArrayBuffer(currentFile.arrayBuffer.slice(0));
+                    player.play();
+                }
+            }, 200);
+        });
+
+        player.loadArrayBuffer(currentFile.arrayBuffer.slice(0));
+        player.play();
+        isPlaying = true;
+        document.getElementById('btn-play').classList.add('playing');
+        document.getElementById('btn-play').innerHTML = '&#9646;&#9646; Pause';
+    }
+
+    function stopPlayback() {
+        for (const key in activeNotes) {
+            try { activeNotes[key].stop(); } catch(e) {}
+        }
+        activeNotes = {};
+        if (midiPlayer) {
+            midiPlayer.stop();
+            midiPlayer = null;
+        }
+        isPlaying = false;
+        document.getElementById('btn-play').classList.remove('playing');
+        document.getElementById('btn-play').innerHTML = '&#9654; Play';
+        // Reset meters
+        document.querySelectorAll('.ch-meter-fill').forEach(el => el.style.width = '0%');
+    }
+
+    function updateMeter(track, level) {
+        const el = document.getElementById(`meter-${track}`);
+        if (el) {
+            el.style.width = (level * 100) + '%';
+            clearTimeout(el._decay);
+            el._decay = setTimeout(() => { el.style.width = '0%'; }, 150);
+        }
+    }
+
+    // ── UI ──
+    function buildFileTabs() {
+        const container = document.getElementById('file-tabs');
+        MIDI_FILES.forEach((f, i) => {
+            const tab = document.createElement('div');
+            tab.className = 'file-tab';
+            tab.textContent = f.label;
+            tab.onclick = () => {
+                // Save current settings before switching
+                if (currentFile) {
+                    allSettings[currentFile.path] = JSON.parse(JSON.stringify(channelSettings));
+                }
+                document.querySelectorAll('.file-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                loadMidiFile(f.path);
+            };
+            container.appendChild(tab);
+        });
+    }
+
+    function buildChannelUI() {
+        const panel = document.getElementById('channel-panel');
+        panel.innerHTML = '';
+
+        const tracks = Object.keys(channelInfo).sort((a, b) => a - b);
+        if (tracks.length === 0) {
+            panel.innerHTML = '<div class="no-channels">No tracks found in this MIDI file</div>';
+            return;
+        }
+
+        for (const t of tracks) {
+            const info = channelInfo[t];
+            const settings = channelSettings[t];
+            if (!settings) continue;
+
+            const row = document.createElement('div');
+            row.className = 'channel-row';
+
+            // Track label
+            const label = document.createElement('div');
+            label.className = 'ch-label';
+            label.textContent = info.channel === 9 ? 'DR' : `T${t}`;
+            label.title = info.name || `Track ${t} (Ch ${info.channel})`;
+
+            // Slider
+            const sliderWrap = document.createElement('div');
+            sliderWrap.className = 'ch-slider-wrap';
+            const slider = document.createElement('input');
+            slider.type = 'range';
+            slider.min = 0; slider.max = 300; slider.value = Math.round(settings.volume * 100);
+            const volVal = document.createElement('span');
+            volVal.className = 'vol-val';
+            volVal.textContent = `${slider.value}%`;
+            slider.oninput = () => {
+                settings.volume = slider.value / 100;
+                volVal.textContent = `${slider.value}%`;
+            };
+            const meterBar = document.createElement('div');
+            meterBar.className = 'ch-meter';
+            const meterFill = document.createElement('div');
+            meterFill.className = 'ch-meter-fill';
+            meterFill.id = `meter-${t}`;
+            meterBar.appendChild(meterFill);
+
+            const sliderCol = document.createElement('div');
+            sliderCol.appendChild(sliderWrap);
+            sliderWrap.appendChild(slider);
+            sliderWrap.appendChild(volVal);
+            sliderCol.appendChild(meterBar);
+
+            // Instrument selector
+            const instWrap = document.createElement('div');
+            instWrap.className = 'ch-instrument';
+            const select = document.createElement('select');
+            if (info.channel === 9) {
+                const opt = document.createElement('option');
+                opt.value = 'synth_drum'; opt.textContent = 'Drums (Ch 10)';
+                select.appendChild(opt);
+                select.disabled = true;
+            } else {
+                for (const [prog, name, displayName] of GM_INSTRUMENTS) {
+                    const opt = document.createElement('option');
+                    opt.value = name;
+                    opt.textContent = displayName;
+                    if (name === settings.instrument) opt.selected = true;
+                    select.appendChild(opt);
+                }
+            }
+            select.onchange = async () => {
+                settings.instrument = select.value;
+                // Load if not yet loaded
+                if (!instruments[select.value]) {
+                    setStatus(`Loading ${select.value}...`);
+                    await loadInstrument(select.value);
+                    setStatus('Ready');
+                }
+            };
+            instWrap.appendChild(select);
+
+            // Mute
+            const muteWrap = document.createElement('div');
+            muteWrap.className = 'ch-mute';
+            const muteBtn = document.createElement('button');
+            muteBtn.textContent = 'M';
+            muteBtn.title = 'Mute';
+            if (settings.muted) muteBtn.classList.add('muted');
+            muteBtn.onclick = () => {
+                settings.muted = !settings.muted;
+                muteBtn.classList.toggle('muted');
+            };
+            muteWrap.appendChild(muteBtn);
+
+            // Solo
+            const soloWrap = document.createElement('div');
+            soloWrap.className = 'ch-solo';
+            const soloBtn = document.createElement('button');
+            soloBtn.textContent = 'S';
+            soloBtn.title = 'Solo';
+            if (settings.soloed) soloBtn.classList.add('soloed');
+            soloBtn.onclick = () => {
+                settings.soloed = !settings.soloed;
+                soloBtn.classList.toggle('soloed');
+            };
+            soloWrap.appendChild(soloBtn);
+
+            row.appendChild(label);
+            row.appendChild(sliderCol);
+            row.appendChild(instWrap);
+            row.appendChild(muteWrap);
+            row.appendChild(soloWrap);
+            panel.appendChild(row);
+        }
+    }
+
+    function setStatus(msg) {
+        document.getElementById('status').textContent = msg;
+    }
+
+    // ── Save to game's audio.js ──
+    function gatherAllSettings() {
+        // Make sure current file settings are saved
+        if (currentFile) {
+            allSettings[currentFile.path] = JSON.parse(JSON.stringify(channelSettings));
+        }
+
+        // Build the trackGains + instrument overrides format
+        const result = {};
+        for (const path in allSettings) {
+            const tracks = allSettings[path];
+            const trackGains = {};
+            const instrumentOverrides = {};
+            for (const t in tracks) {
+                const s = tracks[t];
+                trackGains[t] = Math.round(s.volume * 100) / 100;
+                if (s.instrument) {
+                    instrumentOverrides[t] = s.instrument;
+                }
+            }
+            result[path] = { trackGains, instrumentOverrides };
+        }
+        return result;
+    }
+
+    function exportJSON() {
+        const data = gatherAllSettings();
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'midi-mixer-settings.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        setStatus('Settings exported as JSON');
+    }
+
+    async function saveToGame() {
+        // Save current state
+        if (currentFile) {
+            allSettings[currentFile.path] = JSON.parse(JSON.stringify(channelSettings));
+        }
+
+        // Build the trackGains object in the same format as audio.js
+        const lines = [];
+        lines.push('        // ── Auto-generated by MIDI Mixer ──');
+        for (const file of MIDI_FILES) {
+            const settings = allSettings[file.path];
+            if (!settings) continue;
+            lines.push(`            '${file.path}': {`);
+            const tracks = Object.keys(settings).sort((a, b) => a - b);
+            for (const t of tracks) {
+                const s = settings[t];
+                const vol = Math.round(s.volume * 100) / 100;
+                const info = channelInfo[t];
+                const label = s.instrument || 'unknown';
+                lines.push(`                ${t}: ${vol},   // ${label}`);
+            }
+            lines.push(`            },`);
+        }
+
+        // Also build instrument override map
+        const overrideLines = [];
+        overrideLines.push('        // ── Instrument overrides from MIDI Mixer ──');
+        let hasOverrides = false;
+        for (const file of MIDI_FILES) {
+            const settings = allSettings[file.path];
+            if (!settings) continue;
+            const overrides = {};
+            for (const t in settings) {
+                if (settings[t].instrument) {
+                    overrides[t] = settings[t].instrument;
+                }
+            }
+            if (Object.keys(overrides).length > 0) {
+                hasOverrides = true;
+            }
+        }
+
+        // Build the full trackGains and instrumentOverrides for audio.js
+        const output = gatherAllSettings();
+        const json = JSON.stringify(output, null, 2);
+
+        // Save as a sidecar JSON that audio.js can load
+        // We'll write it to assets/music/mixer-settings.json
+        try {
+            // Can't write files from browser — copy to clipboard instead
+            await navigator.clipboard.writeText(JSON.stringify(output, null, 2));
+            setStatus('Settings copied to clipboard! Paste into your terminal or see console for instructions.');
+            console.log('=== MIDI Mixer Settings ===');
+            console.log('Replace the trackGains object in js/engine/audio.js with:');
+            console.log('');
+            console.log('this.trackGains = {');
+            for (const file of MIDI_FILES) {
+                const settings = allSettings[file.path];
+                if (!settings) continue;
+                console.log(`    '${file.path}': {`);
+                const tracks = Object.keys(settings).sort((a, b) => a - b);
+                for (const t of tracks) {
+                    const s = settings[t];
+                    const vol = Math.round(s.volume * 100) / 100;
+                    console.log(`        ${t}: ${vol},   // ${s.instrument}`);
+                }
+                console.log(`    },`);
+            }
+            console.log('};');
+            console.log('');
+            console.log('Add this to AudioManager constructor for instrument overrides:');
+            console.log('this.instrumentOverrides = ' + JSON.stringify(
+                Object.fromEntries(
+                    MIDI_FILES.map(f => [f.path, allSettings[f.path] ?
+                        Object.fromEntries(Object.entries(allSettings[f.path])
+                            .filter(([k, v]) => v.instrument)
+                            .map(([k, v]) => [k, v.instrument])) : {}])
+                    .filter(([k, v]) => Object.keys(v).length > 0)
+                ), null, 2));
+        } catch(e) {
+            setStatus('Could not copy to clipboard — check console for output');
+        }
+    }
+
+    // ── Events ──
+    document.getElementById('btn-play').onclick = async () => {
+        await initAudio();
+        if (isPlaying) { stopPlayback(); }
+        else { startPlayback(); }
+    };
+    document.getElementById('btn-stop').onclick = stopPlayback;
+    document.getElementById('master-vol').oninput = (e) => {
+        if (masterGain) masterGain.gain.value = e.target.value / 100;
+    };
+    document.getElementById('btn-save').onclick = saveToGame;
+    document.getElementById('btn-export').onclick = exportJSON;
+
+    // ── Boot ──
+    buildFileTabs();
+    </script>
+</body>
+</html>
