@@ -21,6 +21,7 @@ export class LightingRenderer {
         this._cachedW = 0;
         this._cachedH = 0;
         this._lightGlowCanvas = null; // offscreen canvas for light glows
+        this._lightGlowCtx = null;
         this._lightGlowLastCamX = -Infinity;
     }
 
@@ -43,8 +44,9 @@ export class LightingRenderer {
                 this._lightGlowCanvas = document.createElement('canvas');
                 this._lightGlowCanvas.width = canvasW;
                 this._lightGlowCanvas.height = canvasH;
+                this._lightGlowCtx = this._lightGlowCanvas.getContext('2d');
             }
-            const offCtx = this._lightGlowCanvas.getContext('2d');
+            const offCtx = this._lightGlowCtx;
             offCtx.clearRect(0, 0, canvasW, canvasH);
             offCtx.globalCompositeOperation = 'screen';
             for (const dec of decorations) {

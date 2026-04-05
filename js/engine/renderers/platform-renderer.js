@@ -178,18 +178,14 @@ export function drawPlatformSurface(ctx, x, y, w, h, label, color) {
     }
     ctx.save();
     const theme = getTheme();
-    // Thin surface bar with subtle depth
+    // Thin surface bar with subtle depth (solid fills instead of gradient for performance)
     const surfaceH = Math.min(h, 6);
     const baseColor = color || theme.wood.base;
-    const grad = ctx.createLinearGradient(x, y, x, y + surfaceH);
-    grad.addColorStop(0, lighten(baseColor, 25));
-    grad.addColorStop(0.4, baseColor);
-    grad.addColorStop(1, darken(baseColor, 20));
-    ctx.fillStyle = grad;
+    ctx.fillStyle = baseColor;
     roundRect(ctx, x, y, w, surfaceH, 2);
     // Top highlight
     ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    ctx.fillRect(x + 2, y, w - 4, 1);
+    ctx.fillRect(x + 2, y, w - 4, 2);
     // Bottom shadow
     ctx.fillStyle = 'rgba(0,0,0,0.15)';
     ctx.fillRect(x, y + surfaceH - 1, w, 1);

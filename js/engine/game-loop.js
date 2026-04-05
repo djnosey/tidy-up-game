@@ -7,13 +7,14 @@ export class GameLoop {
         this.fixedDt = 1 / 60; // 60fps fixed timestep
         this.running = false;
         this.rafId = null;
+        this._boundLoop = this.loop.bind(this); // avoid per-frame allocation
     }
 
     start() {
         this.running = true;
         this.lastTime = performance.now();
         this.accumulator = 0;
-        this.rafId = requestAnimationFrame((t) => this.loop(t));
+        this.rafId = requestAnimationFrame(this._boundLoop);
     }
 
     stop() {
@@ -34,6 +35,6 @@ export class GameLoop {
         }
 
         this.render();
-        this.rafId = requestAnimationFrame((t) => this.loop(t));
+        this.rafId = requestAnimationFrame(this._boundLoop);
     }
 }

@@ -23,9 +23,10 @@ export class AudioManager {
         this.loadingMusic = false;
         this.channelPrograms = {};   // tracks program changes per channel
 
-        // Per-file blocked instruments (will not sound)
-        this.blockedInstruments = {
-            'assets/music/level1.mid': ['string_ensemble_1'],
+        // Per-file allowed tracks — only these tracks will sound (others are muted).
+        // Files not listed here allow all tracks by default.
+        this.allowedTracks = {
+            'assets/music/level1.mid': new Set([1, 2, 3]),
         };
 
         // Per-file track gain (configured via MIDI Mixer)
@@ -256,14 +257,6 @@ export class AudioManager {
         return map[program] || 'acoustic_grand_piano';
     }
 
-    _resolveInstrumentName(event) {
-        const ch = event.channel - 1;
-        if (ch === 9) return 'synth_drum';
-        const program = this.channelPrograms[ch];
-        if (program !== undefined) return this._programToInstrument(program);
-        return 'acoustic_grand_piano';
-    }
-
     _getInstrumentForEvent(event) {
         // Channel 9 (10 in 1-indexed) is always drums
         const ch = event.channel - 1; // midi-player-js uses 1-indexed channels
@@ -366,6 +359,10 @@ export class AudioManager {
                 }
 
                 if (event.name === 'Note on' && event.velocity > 0) {
+                    // Skip tracks not in the allowed set (if configured)
+                    const allowed = this.allowedTracks[path];
+                    if (allowed && !allowed.has(event.track)) return;
+
                     // Check per-file instrument override first, then fall back to program map
                     const overrides = this.instrumentOverrides ? this.instrumentOverrides[path] : null;
                     const overrideName = overrides ? overrides[event.track] : null;
@@ -373,13 +370,6 @@ export class AudioManager {
                         ? this.instruments[overrideName]
                         : this._getInstrumentForEvent(event);
                     if (!instrument) return;
-
-                    // Check blocked instruments for this file
-                    const blocked = this.blockedInstruments[path];
-                    if (blocked) {
-                        const instName = overrideName || this._resolveInstrumentName(event);
-                        if (blocked.includes(instName)) return;
-                    }
 
                     const fileGains = this.trackGains[path] || {};
                     const trackMult = fileGains[event.track] !== undefined ? fileGains[event.track] : 1.0;

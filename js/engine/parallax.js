@@ -34,6 +34,7 @@ export class ParallaxRenderer {
         if (!this._cache[levelName]) {
             this._cache[levelName] = layers.map(() => ({
                 canvas: null,
+                ctx: null,
                 lastOffset: -Infinity,
             }));
         }
@@ -50,12 +51,12 @@ export class ParallaxRenderer {
                     entry.canvas = document.createElement('canvas');
                     entry.canvas.width = canvasW;
                     entry.canvas.height = canvasH;
+                    entry.ctx = entry.canvas.getContext('2d');
                 }
-                const offCtx = entry.canvas.getContext('2d');
-                offCtx.clearRect(0, 0, canvasW, canvasH);
-                offCtx.save();
-                layer.draw(offCtx, offset, canvasW, canvasH, levelColor);
-                offCtx.restore();
+                entry.ctx.clearRect(0, 0, canvasW, canvasH);
+                entry.ctx.save();
+                layer.draw(entry.ctx, offset, canvasW, canvasH, levelColor);
+                entry.ctx.restore();
                 entry.lastOffset = offset;
             }
 
