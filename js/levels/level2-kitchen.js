@@ -235,6 +235,9 @@ export const level2 = {
 
         // Health pickup
         { x: 3100, y: GROUND_Y - 300, label: '+HEALTH', color: '#00FF00' },
+
+        // Extra life — on top of the highest kitchen shelf stack, tricky jump chain
+        { x: 2040, y: GROUND_Y - 400, label: '+LIFE', color: '#FF1493' },
     ],
 
     // ========== OBSTACLES ==========

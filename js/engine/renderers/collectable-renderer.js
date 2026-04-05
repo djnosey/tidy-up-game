@@ -5,7 +5,7 @@ import { getTheme } from './level-themes.js';
 const COLLECTABLE_EMOJI = {
     // Living Room
     'REMOTE': '📱', 'CUSHION': '🟫', 'MAGAZINE': '📰', 'BOOK': '📕',
-    'GLASS': '🥃', 'BLANKET': '🧣', 'COASTER': '🟤', '+HEALTH': '🍪',
+    'GLASS': '🥃', 'BLANKET': '🧣', 'COASTER': '🟤', '+HEALTH': '🍪', '+LIFE': '❤️',
     'MUG': '☕', 'KEYS': '🔑', 'GLASSES': '👓', 'PHONE': '📱',
     'SOCKS': '🧦', 'HEADPHONES': '🎧',
     // Kitchen

@@ -235,6 +235,9 @@ export const level1 = {
 
         // Health pickup (on the chair)
         { x: 2550, y: GROUND_Y - 85, label: '+HEALTH', color: '#00FF00' },
+
+        // Extra life — above the crumbling top shelf, requires a well-timed jump
+        { x: 2100, y: GROUND_Y - 400, label: '+LIFE', color: '#FF1493' },
     ],
 
     // ========== OBSTACLES ==========

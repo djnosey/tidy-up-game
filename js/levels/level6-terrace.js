@@ -314,6 +314,9 @@ export const level6 = {
         // === SECTION 5 (3840–4800): Boss arena ===
         { x: 3930, y: GROUND_Y - 95, label: '+HEALTH', color: '#FF0000', width: 20, height: 20 },
         { x: 4140, y: GROUND_Y - 155, label: 'SHOE', color: '#8B4513', width: 22, height: 16 },
+
+        // Extra life — high above the tallest railing, requires a perfect jump
+        { x: 4350, y: GROUND_Y - 220, label: '+LIFE', color: '#FF1493', width: 20, height: 20 },
     ],
 
     // ========== OBSTACLES ==========

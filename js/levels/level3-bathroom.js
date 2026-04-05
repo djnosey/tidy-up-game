@@ -268,6 +268,9 @@ export const level3 = {
         { x: CANVAS_W * 3 + 110, y: GROUND_Y - 138, label: 'SOAP', color: '#C8E8C0' },
         { x: CANVAS_W * 3 + 230, y: GROUND_Y - 268, label: 'SHAMPOO', color: '#80C0E8' },
         { x: CANVAS_W * 3 + 450, y: GROUND_Y - 368, label: 'DUCK', color: '#FFE040' },
+
+        // Extra life — above the high shelf in the laundry area, requires crumbling platform chain
+        { x: CANVAS_W * 2 + 420, y: GROUND_Y - 430, label: '+LIFE', color: '#FF1493' },
     ],
 
     // ========== OBSTACLES ==========

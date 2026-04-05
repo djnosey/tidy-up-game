@@ -246,6 +246,9 @@ export const level5 = {
 
         // Health pickup (reward for tricky jump)
         { x: 2640, y: GROUND_Y - 118, label: '+HEALTH', color: '#00FF00' },
+
+        // Extra life — above the highest shelf in the dressing area, tight jump
+        { x: 2080, y: GROUND_Y - 340, label: '+LIFE', color: '#FF1493' },
     ],
 
     // ========== OBSTACLES ==========

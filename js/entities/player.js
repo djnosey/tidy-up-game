@@ -257,6 +257,11 @@ export class Player {
         if (this.health < this.maxHealth) this.health++;
     }
 
+    addLife() {
+        this.maxHealth++;
+        this.health++;
+    }
+
     canShoot() {
         return this.shootCooldown <= 0 && this.alive;
     }

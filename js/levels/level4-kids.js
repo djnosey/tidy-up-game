@@ -210,6 +210,9 @@ export const level4 = {
         { x: 2780, y: GROUND_Y - 165, label: 'CRAYON', color: '#FF8C00' },
         { x: 2550, y: GROUND_Y - 30, label: '+HEALTH', color: '#00FF00' },
 
+        // Extra life — high above the moving shelf, must ride it up and jump at the peak
+        { x: 2510, y: GROUND_Y - 310, label: '+LIFE', color: '#FF1493' },
+
         // Section 4 — boss arena (4 items)
         { x: 3020, y: GROUND_Y - 140, label: 'STICKER', color: '#FF69B4' },
         { x: 3270, y: GROUND_Y - 170, label: 'ACTION_FIG', color: '#8B008B' },

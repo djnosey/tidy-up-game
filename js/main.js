@@ -131,6 +131,7 @@ class Game {
             particles.emit({ x, y, ...particleTheme.collect });
             audio.playSFX('collect');
             if (label === '+HEALTH') player.heal();
+            if (label === '+LIFE') player.addLife();
         });
 
         events.on('obstacle-hit', ({ obstacle, player }) => {
