@@ -100,6 +100,16 @@ class Game {
     }
 
     startLevel(character, levelIndex) {
+        this._startLevelData(character, levelIndex);
+        this._buildDecoCache();
+        this._buildFurnitureCache();
+        this._buildSurfaceCache();
+        this.audio.playMusic(this.currentLevelIndex);
+        this.state = STATE_PLAYING;
+    }
+
+    // Lightweight level init — entities, player, events (no rendering)
+    _startLevelData(character, levelIndex) {
         if (levelIndex !== undefined) this.currentLevelIndex = levelIndex;
         const levelData = ALL_LEVELS[this.currentLevelIndex];
         this.level = loadLevel(levelData);
@@ -118,37 +128,30 @@ class Game {
         this.particleTheme = PARTICLE_THEMES[this.currentLevelIndex] || PARTICLE_THEMES[0];
         this.canvas.className = LEVEL_CSS[this.currentLevelIndex] || '';
         setActiveTheme(this.currentLevelIndex + 1); // themes are 1-indexed
-        this.state = STATE_PLAYING;
-        this.audio.playMusic(this.currentLevelIndex);
         this.setupEventListeners();
-        this._buildStaticCache();
-    }
 
-    // Pre-render static furniture and decorations to offscreen canvases (drawn once, blitted each frame)
-    _buildStaticCache() {
-        const level = this.level;
-        const groundY = level.groundY;
-
-        // Determine total level width from platforms + boss arena
+        // Compute shared level width for caches
         let maxX = 0;
-        for (const p of level.platforms) {
+        for (const p of this.level.platforms) {
             const right = p.x + p.width;
             if (right > maxX) maxX = right;
         }
-        if (level.bossArena) maxX = Math.max(maxX, level.bossArena.x + level.bossArena.width);
-        const levelW = maxX + 100;
+        if (this.level.bossArena) maxX = Math.max(maxX, this.level.bossArena.x + this.level.bossArena.width);
+        this._cacheLevelW = maxX + 100;
+    }
 
-        // Decorations: split into static (cached) and animated (drawn live each frame)
+    // Stage 1: decoration cache
+    _buildDecoCache() {
         const ANIMATED_TYPES = new Set([
             'paper_airplane', 'dust_bunny', 'dust_motes', 'steam_wisps',
             'water_puddle', 'floating_bubbles', 'grass_tuft', 'butterfly', 'dripping_tap'
         ]);
         this._animatedDecos = [];
         const decCanvas = document.createElement('canvas');
-        decCanvas.width = levelW;
+        decCanvas.width = this._cacheLevelW;
         decCanvas.height = this.canvas.height;
         const decCtx = decCanvas.getContext('2d');
-        for (const dec of level.decorations) {
+        for (const dec of this.level.decorations) {
             if (dec.type && ANIMATED_TYPES.has(dec.type)) {
                 this._animatedDecos.push(dec);
             } else {
@@ -156,25 +159,29 @@ class Game {
             }
         }
         this._decoCache = decCanvas;
+    }
 
-        // Static furniture backdrop cache
+    // Stage 2: furniture backdrop cache
+    _buildFurnitureCache() {
         const furCanvas = document.createElement('canvas');
-        furCanvas.width = levelW;
+        furCanvas.width = this._cacheLevelW;
         furCanvas.height = this.canvas.height;
         const furCtx = furCanvas.getContext('2d');
-        for (const plat of level.platforms) {
+        const groundY = this.level.groundY;
+        for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             drawPlatform(furCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color, groundY);
         }
         this._furnitureCache = furCanvas;
-        this._furnitureCacheCtx = furCtx;
+    }
 
-        // Static platform surfaces cache
+    // Stage 3: platform surface cache
+    _buildSurfaceCache() {
         const surfCanvas = document.createElement('canvas');
-        surfCanvas.width = levelW;
+        surfCanvas.width = this._cacheLevelW;
         surfCanvas.height = this.canvas.height;
         const surfCtx = surfCanvas.getContext('2d');
-        for (const plat of level.platforms) {
+        for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             drawPlatformSurface(surfCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color);
         }
@@ -352,11 +359,35 @@ class Game {
     }
 
     updateLoading() {
-        // Wait 2 frames so the loading screen actually paints before heavy work
+        // Staged loading: each frame does one chunk of work so the bar fills visibly
         this._loadingFrames++;
-        if (this._loadingFrames === 2) {
-            this.startLevel(this._pendingCharacter, this._pendingLevelIndex);
+        switch (this._loadingFrames) {
+            case 1:
+                // Frame 1: just paint the loading screen (no work)
+                break;
+            case 2:
+                // Frame 2: init level data, player, events (lightweight)
+                this._startLevelData(this._pendingCharacter, this._pendingLevelIndex);
+                break;
+            case 3:
+                // Frame 3: build decoration cache
+                this._buildDecoCache();
+                break;
+            case 4:
+                // Frame 4: build furniture backdrop cache
+                this._buildFurnitureCache();
+                break;
+            case 5:
+                // Frame 5: build surface cache
+                this._buildSurfaceCache();
+                break;
+            case 6:
+                // Frame 6: start music + go
+                this.audio.playMusic(this.currentLevelIndex);
+                this.state = STATE_PLAYING;
+                break;
         }
+        this._loadingProgress = Math.min(1, this._loadingFrames / 6);
     }
 
     updateBossIntro(dt) {
@@ -678,7 +709,7 @@ class Game {
         ctx.strokeRect(barX, barY, barW, barH);
 
         // Animated fill
-        const fill = Math.min(1, this._loadingFrames / 2);
+        const fill = this._loadingProgress || 0;
         ctx.fillStyle = '#e0d8c8';
         ctx.fillRect(barX + 1, barY + 1, (barW - 2) * fill, barH - 2);
     }
