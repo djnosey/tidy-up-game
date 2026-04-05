@@ -7,12 +7,13 @@ export class Menu {
         this.selectedIndex = 0;
         this.state = 'title'; // 'title', 'select', 'hub'
         this.enterPressed = false;
-        this.saveManager = null;
-        this.selectedCharacterName = '';
         this.loadCodeMode = false;
         this.loadCodeInput = '';
         this.loadCodeStatus = ''; // '', 'loading', 'success', 'fail'
+        // HubWorld must be created before setting proxied properties
         this.hubWorld = new HubWorld();
+        this.saveManager = null;
+        this.selectedCharacterName = '';
     }
 
     // Proxy shared properties to hubWorld so external code (main.js) can
