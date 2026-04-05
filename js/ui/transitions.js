@@ -26,6 +26,20 @@ export class TransitionManager {
         this.done = false;    // user can advance
         this.canSkip = false;
         this.skipCooldown = 0;
+        this._skipAllRequested = false;
+        this._skipBtnRect = null;
+    }
+
+    // ── Canvas click handler (call from Game with canvas-relative coords) ──
+
+    handleClick(cx, cy) {
+        if (!this.active || this.type !== 'opening') return;
+        if (this._skipBtnRect) {
+            const r = this._skipBtnRect;
+            if (cx >= r.x && cx <= r.x + r.w && cy >= r.y && cy <= r.y + r.h) {
+                this._skipAllRequested = true;
+            }
+        }
     }
 
     // ── Start transitions ──────────────────────────────────────────
@@ -41,6 +55,8 @@ export class TransitionManager {
         this.done = false;
         this.canSkip = false;
         this.skipCooldown = 0.4;
+        this._skipAllRequested = false;
+        this._skipBtnRect = null;
     }
 
     startLevelIntro(levelIndex) {
@@ -85,6 +101,13 @@ export class TransitionManager {
     }
 
     _updateOpening(dt, input) {
+        // Skip entire opening if requested via button click
+        if (this._skipAllRequested) {
+            this.active = false;
+            this._skipAllRequested = false;
+            return true;
+        }
+
         const line = this.data[this.phase];
         const fullText = line.text;
 
@@ -278,6 +301,29 @@ export class TransitionManager {
                     ctx.fillText("Press ENTER — let's get tidying! ▸", w / 2, boxY + boxH - 12);
                 }
             }
+        }
+
+        // Skip button (top-right)
+        {
+            const btnText = 'Skip';
+            ctx.font = 'bold 14px monospace';
+            const btnW = ctx.measureText(btnText).width + 28;
+            const btnH = 30;
+            const btnX = w - btnW - 18;
+            const btnY = 14;
+            this._skipBtnRect = { x: btnX, y: btnY, w: btnW, h: btnH };
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            roundRect(ctx, btnX, btnY, btnW, btnH, 6);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.lineWidth = 1;
+            roundRect(ctx, btnX, btnY, btnW, btnH, 6);
+            ctx.stroke();
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.textAlign = 'center';
+            ctx.fillText(btnText + ' \u25B8', btnX + btnW / 2, btnY + btnH / 2 + 5);
         }
 
         // Progress dots
