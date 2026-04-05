@@ -48,6 +48,26 @@ export class Player {
         this.idleTimer = 0;
         this.isIdle = false;
 
+        // Animation state — passed to renderer each frame
+        this.animState = {
+            walkPhase: 0,
+            isWalking: false,
+            isJumping: false,
+            isFalling: false,
+            isCrouching: false,
+            isLanding: false,
+            isShooting: false,
+            landTimer: 0,
+            shootTimer: 0,
+            blinkTimer: 2 + Math.random() * 3,
+            blinkDuration: 0,
+            breathPhase: 0,
+            expression: 'neutral',
+            velocityX: 0,
+            velocityY: 0,
+            idleTime: 0,
+        };
+
         // Knockback
         this.knockbackVx = 0;
 
@@ -94,6 +114,28 @@ export class Player {
             this.idleTimer += dt;
             this.isIdle = this.idleTimer >= 5;
         }
+
+        // Update animation state
+        const anim = this.animState;
+        anim.velocityX = this.vx;
+        anim.velocityY = this.vy;
+        anim.breathPhase += dt * 2;
+        anim.idleTime = this.isIdle ? this.idleTimer : 0;
+
+        // Blink cycle
+        if (anim.blinkDuration > 0) {
+            anim.blinkDuration -= dt;
+        } else {
+            anim.blinkTimer -= dt;
+            if (anim.blinkTimer <= 0) {
+                anim.blinkDuration = 0.1;
+                anim.blinkTimer = 2 + Math.random() * 4;
+            }
+        }
+
+        // Land/shoot timers
+        if (anim.landTimer > 0) anim.landTimer -= dt;
+        if (anim.shootTimer > 0) anim.shootTimer -= dt;
 
         // Horizontal movement
         this.vx = 0;
@@ -162,7 +204,38 @@ export class Player {
         if (this.onGround && !this.wasOnGround) {
             this.scaleX = 1.3;
             this.scaleY = 0.7;
+            anim.landTimer = 0.2;
         }
+
+        // Finalize animation state booleans
+        anim.isWalking = this.onGround && this.vx !== 0;
+        anim.isJumping = !this.onGround && this.vy < 0;
+        anim.isFalling = !this.onGround && this.vy >= 0;
+        anim.isCrouching = this.crouching;
+        anim.isLanding = anim.landTimer > 0;
+        anim.isShooting = anim.shootTimer > 0;
+
+        // Walk cycle phase
+        if (anim.isWalking) {
+            anim.walkPhase += (Math.abs(this.vx) / MOVE_SPEED) * dt * 12;
+        } else {
+            anim.walkPhase = 0;
+        }
+
+        // Expression
+        if (anim.isShooting) {
+            anim.expression = 'determined';
+        } else if (anim.isJumping) {
+            anim.expression = 'surprised';
+        } else if (anim.isLanding) {
+            anim.expression = 'neutral';
+        } else {
+            anim.expression = 'neutral';
+        }
+
+        // Update velocity for renderer eye tracking
+        anim.velocityX = this.vx;
+        anim.velocityY = this.vy;
     }
 
     takeDamage(duration) {
@@ -190,6 +263,7 @@ export class Player {
 
     shoot() {
         this.shootCooldown = SHOOT_COOLDOWN;
+        this.animState.shootTimer = 0.3;
     }
 
     tryShoot(input) {
@@ -219,7 +293,7 @@ export class Player {
         ctx.translate(cx, fy);
         ctx.scale(this.scaleX * (this.facing === -1 ? -1 : 1), this.scaleY);
         ctx.translate(-this.width / 2, -this.height);
-        drawCharacter(ctx, 0, 0, this.width, this.height, this.character, this.facing, this.crouching, this.isIdle ? this.idleTimer : 0);
+        drawCharacter(ctx, 0, 0, this.width, this.height, this.character, this.facing, this.animState);
         ctx.restore();
 
         // Electrocution effect — skeleton flash with zap bolts

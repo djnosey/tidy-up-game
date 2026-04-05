@@ -381,7 +381,7 @@ export class HubWorld {
 
         // Character at door
         const ch = CHARACTERS[this.selectedIndex];
-        drawCharacter(ctx, w / 2 - 20, h * 0.40, 40, 55, ch, 1, false);
+        drawCharacter(ctx, w / 2 - 20, h * 0.40, 40, 55, ch, 1, null);
 
         // Title
         ctx.font = 'bold 28px sans-serif';

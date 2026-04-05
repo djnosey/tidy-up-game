@@ -263,7 +263,7 @@ export class Menu {
             }
 
             // Character preview
-            drawCharacter(ctx, cx + 30, cy + 15, 80, 110, ch, 1, false);
+            drawCharacter(ctx, cx + 30, cy + 15, 80, 110, ch, 1, null);
 
             // Name
             ctx.fillStyle = '#fff';
