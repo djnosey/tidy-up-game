@@ -728,7 +728,7 @@ class Game {
         if (player.alive && this.state !== STATE_BOSS &&
             player.y + player.height > level.groundY && player.invincibleTimer <= 0) {
             if (player.takeDamage()) {
-                player.vy = -500; // bounce up
+                player.vy = -720; // bounce up (same as full jump, so player can reach platforms)
                 player.y = level.groundY - player.height - 5;
                 camera.shake(4, 0.3);
                 audio.playSFX('takeDamage');
