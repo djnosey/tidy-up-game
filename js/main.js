@@ -726,10 +726,12 @@ class Game {
 
         // Floor hazard — touching the ground damages the player (except during boss fights)
         if (player.alive && this.state !== STATE_BOSS &&
-            player.y + player.height > level.groundY && player.invincibleTimer <= 0) {
-            if (player.takeDamage()) {
-                player.vy = -720; // bounce up (same as full jump, so player can reach platforms)
-                player.y = level.groundY - player.height - 5;
+            player.y + player.height > level.groundY) {
+            // Always bounce off the floor (even during invincibility)
+            player.vy = -720;
+            player.y = level.groundY - player.height - 5;
+            // Only deal damage if not invincible
+            if (player.invincibleTimer <= 0 && player.takeDamage()) {
                 camera.shake(4, 0.3);
                 audio.playSFX('takeDamage');
                 particles.emit({
