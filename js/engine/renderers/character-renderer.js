@@ -773,7 +773,7 @@ export function drawCharacter(ctx, x, y, w, h, character, facing, animState) {
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.font = 'bold 9px monospace';
     ctx.textAlign = 'center';
-    ctx.fillText(character.name.toUpperCase(), localCx, -4);
+    if (character.name) ctx.fillText(character.name.toUpperCase(), localCx, -4);
 
     ctx.restore();
 }
