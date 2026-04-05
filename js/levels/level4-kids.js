@@ -559,7 +559,7 @@ export const level4 = {
         { x: 100, y: 470 - 32, label: 'TEDDY', color: '#8B6914' },
         { x: 160, y: 470 - 32, label: 'TOY_CAR', color: '#FF0000' },
         // On desk (T1, y=475)
-        { x: 320, y: 475 - 32, label: 'PENCIL', color: '#FFD700' },
+        { x: 390, y: 475 - 32, label: 'PENCIL', color: '#FFD700' },
         { x: 400, y: 475 - 32, label: 'CRAYON', color: '#FF4500' },
         // On shelf (T2, y=390)
         { x: 530, y: 390 - 32, label: 'BLOCK', color: '#1E90FF' },
@@ -581,7 +581,7 @@ export const level4 = {
         { x: 1250, y: 475 - 32, label: 'PENCIL', color: '#FFD700' },
         { x: 1310, y: 475 - 32, label: 'STICKER', color: '#FF1493' },
         // On shelf tower climb
-        { x: 1430, y: 390 - 32, label: 'BLOCK', color: '#FF6347' },
+        { x: 1500, y: 390 - 32, label: 'BLOCK', color: '#FF6347' },
         { x: 1570, y: 380 - 32, label: 'CRAYON', color: '#FF8C00' },
         { x: 1440, y: 280 - 32, label: 'ACTION_FIG', color: '#4169E1' },
         { x: 1590, y: 270 - 32, label: 'PUZZLE', color: '#20B2AA' },
@@ -600,7 +600,7 @@ export const level4 = {
         { x: 2010, y: 260 - 32, label: 'PUZZLE', color: '#4682B4' },
         { x: 2090, y: 260 - 32, label: 'ACTION_FIG', color: '#8B008B' },
         // On shelf after bunks (T1, y=470)
-        { x: 2420, y: 470 - 32, label: 'BLOCK', color: '#32CD32' },
+        { x: 2490, y: 470 - 32, label: 'BLOCK', color: '#32CD32' },
         // On toy box (T1, y=475)
         { x: 2600, y: 475 - 32, label: 'TOY_CAR', color: '#FF0000' },
         // On stool (T2, y=390)
@@ -614,7 +614,7 @@ export const level4 = {
         // LEFT PATH items
         { x: 2960, y: 470 - 32, label: 'TEDDY', color: '#8B6914' },
         { x: 2960, y: 380 - 32, label: 'TOY_CAR', color: '#FF4500' },
-        { x: 3150, y: 390 - 32, label: 'BLOCK', color: '#1E90FF' },
+        { x: 3220, y: 390 - 32, label: 'BLOCK', color: '#1E90FF' },
         { x: 3340, y: 380 - 32, label: 'PENCIL', color: '#FFD700' },
         // CENTER PATH items
         { x: 3020, y: 280 - 32, label: 'CRAYON', color: '#FF8C00' },
@@ -631,11 +631,11 @@ export const level4 = {
         // On moving shelf 1 (T2, y=380)
         { x: 4050, y: 380 - 32, label: 'BLOCK', color: '#FF6347' },
         // On static rest shelf (T2, y=390)
-        { x: 4230, y: 390 - 32, label: 'TOY_CAR', color: '#DC143C' },
+        { x: 4300, y: 390 - 32, label: 'TOY_CAR', color: '#DC143C' },
         // On moving shelf 2 (T3, y=280)
         { x: 4380, y: 280 - 32, label: 'CRAYON', color: '#9400D3' },
         // On static rest (T2, y=380)
-        { x: 4530, y: 380 - 32, label: 'PENCIL', color: '#FFD700' },
+        { x: 4600, y: 380 - 32, label: 'PENCIL', color: '#FFD700' },
         // On moving shelf 3 (T2, y=370)
         { x: 4670, y: 370 - 32, label: 'ACTION_FIG', color: '#8B008B' },
         // On exit toy box (T1, y=470)
@@ -653,13 +653,13 @@ export const level4 = {
         // On crumbling 2 (T2, y=380)
         { x: 5190, y: 380 - 32, label: 'TOY_CAR', color: '#FF0000' },
         // On safe landing mid (T1, y=470)
-        { x: 5310, y: 470 - 32, label: 'BLOCK', color: '#1E90FF' },
+        { x: 5380, y: 470 - 32, label: 'BLOCK', color: '#1E90FF' },
         // On crumbling 3 (T2, y=390)
         { x: 5430, y: 390 - 32, label: 'PENCIL', color: '#FFD700' },
         // On crumbling 4 (T3, y=280)
         { x: 5280, y: 280 - 32, label: 'ACTION_FIG', color: '#4169E1' },
         // On static shelf (T3, y=270)
-        { x: 5450, y: 270 - 32, label: 'STICKER', color: '#FF69B4' },
+        { x: 5520, y: 270 - 32, label: 'STICKER', color: '#FF69B4' },
         // On exit shelf (T1, y=470)
         { x: 5590, y: 470 - 32, label: 'PUZZLE', color: '#20B2AA' },
         // On transition shelf (T2, y=390)
@@ -670,7 +670,7 @@ export const level4 = {
         { x: 5840, y: 470 - 32, label: 'TEDDY', color: '#8B6914' },
         { x: 5900, y: 470 - 32, label: 'TOY_CAR', color: '#FF4500' },
         { x: 6030, y: 480 - 32, label: 'BLOCK', color: '#FF6347' },
-        { x: 6130, y: 390 - 32, label: 'PENCIL', color: '#FFD700' },
+        { x: 6200, y: 390 - 32, label: 'PENCIL', color: '#FFD700' },
         { x: 6700, y: 470 - 32, label: 'CRAYON', color: '#9400D3' },
         // Upper bunk bonus items (T3, y=260)
         { x: 6330, y: 260 - 32, label: 'ACTION_FIG', color: '#8B008B' },
@@ -687,7 +687,7 @@ export const level4 = {
         { x: 6790, y: 470 - 32, label: 'TEDDY', color: '#CD853F' },
         // T2 items
         { x: 6870, y: 390 - 32, label: 'TOY_CAR', color: '#DC143C' },
-        { x: 7060, y: 380 - 32, label: 'CRAYON', color: '#FF4500' },
+        { x: 7130, y: 380 - 32, label: 'CRAYON', color: '#FF4500' },
         { x: 7250, y: 390 - 32, label: 'BLOCK', color: '#32CD32' },
         // T3 items
         { x: 6930, y: 280 - 32, label: 'PENCIL', color: '#FFD700' },
@@ -700,10 +700,10 @@ export const level4 = {
         // On crumbling/moving chain
         { x: 7730, y: 470 - 32, label: 'TEDDY', color: '#DEB887' },
         { x: 7890, y: 390 - 32, label: 'TOY_CAR', color: '#FF0000' },
-        { x: 8060, y: 380 - 32, label: 'CRAYON', color: '#FF8C00' },
+        { x: 8130, y: 380 - 32, label: 'CRAYON', color: '#FF8C00' },
         { x: 8210, y: 390 - 32, label: 'BLOCK', color: '#1E90FF' },
         { x: 8370, y: 380 - 32, label: 'PENCIL', color: '#FFD700' },
-        { x: 8490, y: 470 - 32, label: 'ACTION_FIG', color: '#8B008B' },
+        { x: 8560, y: 470 - 32, label: 'ACTION_FIG', color: '#8B008B' },
         { x: 8590, y: 390 - 32, label: 'STICKER', color: '#FF1493' },
         // High bonus (T3, y=270)
         { x: 8130, y: 270 - 32, label: 'PUZZLE', color: '#4682B4' },
@@ -715,10 +715,10 @@ export const level4 = {
         // === SCREEN 10 (8640-9600): 8 collectables + 1 +HEALTH ===
         // On vertical climb
         { x: 8710, y: 470 - 32, label: 'TEDDY', color: '#8B6914' },
-        { x: 8860, y: 390 - 32, label: 'CRAYON', color: '#9400D3' },
+        { x: 8930, y: 390 - 32, label: 'CRAYON', color: '#9400D3' },
         { x: 9010, y: 280 - 32, label: 'TOY_CAR', color: '#DC143C' },
         { x: 9170, y: 180 - 32, label: 'ACTION_FIG', color: '#4169E1' },
-        { x: 9310, y: 270 - 32, label: 'PUZZLE', color: '#20B2AA' },
+        { x: 9380, y: 270 - 32, label: 'PUZZLE', color: '#20B2AA' },
         { x: 9160, y: 390 - 32, label: 'STICKER', color: '#FF69B4' },
         { x: 9430, y: 470 - 32, label: 'BLOCK', color: '#32CD32' },
         { x: 9480, y: 470 - 32, label: 'PENCIL', color: '#FFD700' },
@@ -727,7 +727,7 @@ export const level4 = {
 
         // === SCREEN 11 (9600-10560): 10 collectables ===
         // On BED (T1, y=470)
-        { x: 9680, y: 470 - 32, label: 'TEDDY', color: '#CD853F' },
+        { x: 9670, y: 470 - 32, label: 'TEDDY', color: '#CD853F' },
         { x: 9760, y: 470 - 32, label: 'TOY_CAR', color: '#FF0000' },
         // From bounce high (T3, y=260)
         { x: 9730, y: 260 - 32, label: 'CRAYON', color: '#FF4500' },
@@ -736,11 +736,11 @@ export const level4 = {
         // On shelf (T2, y=390)
         { x: 9930, y: 390 - 32, label: 'ACTION_FIG', color: '#8B008B' },
         // On crumbling (T2, y=380)
-        { x: 10090, y: 380 - 32, label: 'PUZZLE', color: '#4682B4' },
+        { x: 10160, y: 380 - 32, label: 'PUZZLE', color: '#4682B4' },
         // On moving shelf path
         { x: 10030, y: 270 - 32, label: 'STICKER', color: '#FF1493' },
         // On static shelf (T2, y=390)
-        { x: 10230, y: 390 - 32, label: 'PENCIL', color: '#FFD700' },
+        { x: 10300, y: 390 - 32, label: 'PENCIL', color: '#FFD700' },
         // On stool (T1, y=480)
         { x: 10360, y: 480 - 32, label: 'CRAYON', color: '#FF8C00' },
         // On final landing (T1, y=470)

@@ -532,7 +532,7 @@ export const level5 = {
         { x: 70, y: 470 - 32, label: 'CLOTHES', color: '#6B4470' },
         { x: 120, y: 470 - 32, label: 'PILLOW', color: '#E8D8E0' },
         // On stepping drawer (T1)
-        { x: 260, y: 480 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 330, y: 480 - 32, label: 'CHARGER', color: '#333333' },
         // On BED (T2)
         { x: 420, y: 390 - 32, label: 'PILLOW', color: '#F0E0D0' },
         { x: 500, y: 390 - 32, label: 'CLOTHES', color: '#CD5C5C' },
@@ -560,8 +560,8 @@ export const level5 = {
         // On T2 landing shelf
         { x: 1565, y: 370 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
         // On right island (T1)
-        { x: 1710, y: 475 - 32, label: 'CLOTHES', color: '#8B6914' },
-        { x: 1740, y: 475 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 1780, y: 475 - 32, label: 'CLOTHES', color: '#8B6914' },
+        { x: 1810, y: 475 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On bridge shelf (T2)
         { x: 1860, y: 380 - 32, label: 'CHARGER', color: '#333333' },
         // On BED surface
@@ -582,7 +582,7 @@ export const level5 = {
         // On descent shelf (T3)
         { x: 2305, y: 280 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On wardrobe right (T2)
-        { x: 2430, y: 370 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        { x: 2500, y: 370 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
         // On landing (T1)
         { x: 2590, y: 465 - 32, label: 'PILLOW', color: '#F0E0D0' },
         // On bridge shelf (T2)
@@ -600,7 +600,7 @@ export const level5 = {
         // On basket 2 (T1)
         { x: 3185, y: 475 - 32, label: 'CLOTHES', color: '#6B4470' },
         // On T2 dresser
-        { x: 3330, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 3400, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On basket 3 (T1)
         { x: 3465, y: 470 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
         // On T2 shelf
@@ -610,7 +610,7 @@ export const level5 = {
         // On exit dresser (T1)
         { x: 3750, y: 475 - 32, label: 'PILLOW', color: '#E8D8E0' },
         // On T2 dresser
-        { x: 3350, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 3420, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
         // +HEALTH on T3 high shelf (reward for risky jump)
         { x: 3370, y: 270 - 32, label: '+HEALTH', color: '#00FF00' },
 
@@ -620,11 +620,11 @@ export const level5 = {
         // On entry basket (T1)
         { x: 3890, y: 480 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
         // On moving shelf 1 (T2)
-        { x: 4030, y: 380 - 32, label: 'CLOTHES', color: '#556B2F' },
+        { x: 4100, y: 380 - 32, label: 'CLOTHES', color: '#556B2F' },
         // On T1 landing
         { x: 4195, y: 470 - 32, label: 'PILLOW', color: '#F0E0D0' },
         // On moving shelf 2 (T2)
-        { x: 4345, y: 370 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 4415, y: 370 - 32, label: 'CHARGER', color: '#333333' },
         // On T1 landing
         { x: 4500, y: 475 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On moving shelf 3 (T3)
@@ -642,9 +642,9 @@ export const level5 = {
         // On entry basket (T1)
         { x: 4860, y: 475 - 32, label: 'CLOTHES', color: '#4169E1' },
         // On solid shelf T2
-        { x: 4990, y: 385 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        { x: 5060, y: 385 - 32, label: 'PILLOW', color: '#E0D0E8' },
         // On crumble T2
-        { x: 5125, y: 370 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        { x: 5115, y: 370 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
         // On solid T3
         { x: 4965, y: 280 - 32, label: 'CHARGER', color: '#333333' },
         // On descent shelf T2
@@ -664,7 +664,7 @@ export const level5 = {
         // Lower safe path (5)
         { x: 5830, y: 465 - 32, label: 'CLOTHES', color: '#556B2F' },
         { x: 5985, y: 390 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
-        { x: 6130, y: 470 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        { x: 6200, y: 470 - 32, label: 'PILLOW', color: '#E8D8E0' },
         { x: 6285, y: 385 - 32, label: 'SLIPPER', color: '#D2691E' },
         { x: 6430, y: 470 - 32, label: 'CHARGER', color: '#333333' },
         // High reward path (3 bonus + +HEALTH)
@@ -682,19 +682,19 @@ export const level5 = {
         // On T1 entry
         { x: 6765, y: 470 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
         // On T2 platforms (between timed obstacles)
-        { x: 6900, y: 380 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        { x: 6970, y: 380 - 32, label: 'PILLOW', color: '#E0D0E8' },
         // On T1 landing
         { x: 7045, y: 475 - 32, label: 'CLOTHES', color: '#4169E1' },
         // On T2 platform
-        { x: 7180, y: 370 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 7250, y: 370 - 32, label: 'CHARGER', color: '#333333' },
         // On T1 landing
         { x: 7325, y: 470 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On T2 platform
-        { x: 7460, y: 385 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        { x: 7530, y: 385 - 32, label: 'LAUNDRY', color: '#9370DB' },
         // On T1 safe exit
         { x: 7610, y: 465 - 32, label: 'CLOTHES', color: '#CD5C5C' },
         // On T2 platform
-        { x: 7180, y: 370 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        { x: 7250, y: 370 - 32, label: 'PILLOW', color: '#F0E0D0' },
 
         // =====================================================================
         // SCREEN 9 (7680-8640): 9 collectables + 1 +HEALTH
@@ -706,7 +706,7 @@ export const level5 = {
         // On moving shelf T3
         { x: 7870, y: 270 - 32, label: 'PILLOW', color: '#E8D8E0' },
         // On static T2
-        { x: 8015, y: 390 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 8085, y: 390 - 32, label: 'CHARGER', color: '#333333' },
         // On T1 landing
         { x: 8125, y: 470 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On crumble shelf T2
@@ -716,7 +716,7 @@ export const level5 = {
         // On safe dresser T1
         { x: 8535, y: 465 - 32, label: 'PILLOW', color: '#F0E0D0' },
         // On static T2
-        { x: 8405, y: 385 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 8475, y: 385 - 32, label: 'CHARGER', color: '#333333' },
         // +HEALTH on T3 moving shelf (tricky)
         { x: 8250, y: 260 - 32, label: '+HEALTH', color: '#00FF00' },
 
@@ -726,11 +726,11 @@ export const level5 = {
         // On T1 entry
         { x: 8685, y: 475 - 32, label: 'CLOTHES', color: '#8B6914' },
         // On T2 shelf
-        { x: 8835, y: 380 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        { x: 8905, y: 380 - 32, label: 'LAUNDRY', color: '#9370DB' },
         // On T1 island
         { x: 8995, y: 470 - 32, label: 'PILLOW', color: '#E0D0E8' },
         // On T2 shelf
-        { x: 9155, y: 375 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 9225, y: 375 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On T1 island
         { x: 9315, y: 480 - 32, label: 'CHARGER', color: '#333333' },
         // On moving T2 shelf
@@ -738,7 +738,7 @@ export const level5 = {
         // On T1 exit
         { x: 9575, y: 470 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
         // On T2 shelf
-        { x: 9155, y: 375 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        { x: 9225, y: 375 - 32, label: 'PILLOW', color: '#E8D8E0' },
 
         // =====================================================================
         // SCREEN 11 (9600-10560): 10 collectables
@@ -748,21 +748,21 @@ export const level5 = {
         // On moving shelf T2
         { x: 9790, y: 375 - 32, label: 'CLOTHES', color: '#556B2F' },
         // On T1 drawer
-        { x: 9945, y: 470 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        { x: 10015, y: 470 - 32, label: 'PILLOW', color: '#F0E0D0' },
         // On crumble T2
         { x: 10085, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On static T2
-        { x: 10165, y: 395 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 10235, y: 395 - 32, label: 'CHARGER', color: '#333333' },
         // On T1 dresser
-        { x: 10280, y: 465 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        { x: 10350, y: 465 - 32, label: 'LAUNDRY', color: '#9370DB' },
         // On moving T2
         { x: 10405, y: 370 - 32, label: 'CLOTHES', color: '#CD5C5C' },
         // On T1 final landing
         { x: 10500, y: 475 - 32, label: 'PILLOW', color: '#E8D8E0' },
         // On static T2
-        { x: 10165, y: 395 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        { x: 10235, y: 395 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
         // On T1 dresser
-        { x: 10300, y: 465 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 10370, y: 465 - 32, label: 'SLIPPER', color: '#D2691E' },
 
         // =====================================================================
         // SCREEN 12 (10560-11520): BOSS ARENA — 0 standard collectables

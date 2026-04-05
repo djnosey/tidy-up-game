@@ -502,8 +502,8 @@ export const level2 = {
         { x: 200, y: 428, label: 'UTENSIL', color: '#C0C0C0' },
         { x: 250, y: 428, label: 'SPONGE', color: '#FFD700' },
         // On dining table (y=470, items at 438)
-        { x: 400, y: 438, label: 'PLATE', color: '#E8E8E8' },
-        { x: 470, y: 438, label: 'CUP', color: '#F5F5DC' },
+        { x: 490, y: 388, label: 'PLATE', color: '#E8E8E8' },
+        { x: 540, y: 438, label: 'CUP', color: '#F5F5DC' },
         // On stool (y=475, items at 443)
         { x: 625, y: 443, label: 'TEA_TOWEL', color: '#FF6347' },
         // On shelf (y=400, items at 368)
@@ -518,7 +518,7 @@ export const level2 = {
         { x: 1070, y: 433, label: 'CUP', color: '#87CEEB' },
         // On stepping stones
         { x: 1180, y: 443, label: 'UTENSIL', color: '#C0C0C0' },
-        { x: 1310, y: 368, label: 'POT', color: '#808080' },
+        { x: 1380, y: 368, label: 'POT', color: '#808080' },
         { x: 1440, y: 438, label: 'SPONGE', color: '#FFD700' },
         { x: 1580, y: 358, label: 'PAN', color: '#696969' },
         { x: 1710, y: 438, label: 'SPICE', color: '#D2691E' },
@@ -542,7 +542,7 @@ export const level2 = {
         { x: 2305, y: 248, label: 'SPONGE', color: '#FFD700' },
         { x: 2445, y: 338, label: 'TEA_TOWEL', color: '#FF6347' },
         // On landing counter (y=465)
-        { x: 2600, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 2670, y: 433, label: 'PLATE', color: '#E8E8E8' },
         // On shelf (y=390)
         { x: 2770, y: 358, label: 'SPICE', color: '#8B4513' },
 
@@ -583,7 +583,7 @@ export const level2 = {
         // On crumbling plate stack 1 (y=390)
         { x: 5045, y: 358, label: 'POT', color: '#808080' },
         // On middle counter (y=465)
-        { x: 5190, y: 433, label: 'CUP', color: '#87CEEB' },
+        { x: 5260, y: 433, label: 'CUP', color: '#87CEEB' },
         // On crumbling plate stack 2 (y=380)
         { x: 5335, y: 348, label: 'PAN', color: '#696969' },
         { x: 5365, y: 348, label: 'SPICE', color: '#D2691E' },
@@ -598,7 +598,7 @@ export const level2 = {
         // On counter (y=465)
         { x: 5820, y: 433, label: 'PLATE', color: '#E8E8E8' },
         // Shelf tower climb
-        { x: 5965, y: 358, label: 'CUP', color: '#87CEEB' },
+        { x: 6035, y: 358, label: 'CUP', color: '#87CEEB' },
         { x: 5835, y: 268, label: 'UTENSIL', color: '#C0C0C0' },
         { x: 5985, y: 238, label: 'SPICE', color: '#D2691E' },
         { x: 5855, y: 148, label: 'POT', color: '#808080' },
@@ -613,7 +613,7 @@ export const level2 = {
         // Lower safe path (5 items on counters, y=465)
         { x: 6780, y: 433, label: 'PLATE', color: '#E8E8E8' },
         { x: 6990, y: 433, label: 'CUP', color: '#F5F5DC' },
-        { x: 7180, y: 433, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 7250, y: 433, label: 'UTENSIL', color: '#C0C0C0' },
         { x: 7380, y: 433, label: 'SPONGE', color: '#FFD700' },
         { x: 7560, y: 433, label: 'PLATE', color: '#E8E8E8' },
         // Upper path (4 items on/near pots, T3)
@@ -624,7 +624,7 @@ export const level2 = {
 
         // === Screen 9 (8 collectables) ===
         // On counter (y=465)
-        { x: 7740, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 7810, y: 433, label: 'PLATE', color: '#E8E8E8' },
         // On crumbling plate 1 (y=390)
         { x: 7915, y: 358, label: 'CUP', color: '#87CEEB' },
         // Near hanging pot 1 (y=270)
@@ -641,7 +641,7 @@ export const level2 = {
 
         // === Screen 10 (9 collectables) ===
         // On start counter (y=465)
-        { x: 8700, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 8770, y: 433, label: 'PLATE', color: '#E8E8E8' },
         // On crumbling plates (one per plate)
         { x: 8855, y: 358, label: 'CUP', color: '#87CEEB' },
         { x: 9005, y: 348, label: 'UTENSIL', color: '#C0C0C0' },
@@ -657,18 +657,18 @@ export const level2 = {
 
         // === Screen 11 (8 collectables) ===
         // On counter (y=465)
-        { x: 9660, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 9730, y: 433, label: 'PLATE', color: '#E8E8E8' },
         { x: 9710, y: 433, label: 'CUP', color: '#F5F5DC' },
         // Near hanging pot (y=270)
         { x: 9960, y: 238, label: 'POT', color: '#808080' },
         // On crumbling plate (y=385)
         { x: 10085, y: 353, label: 'PAN', color: '#696969' },
         // On static shelf (y=290)
-        { x: 10205, y: 258, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 10275, y: 258, label: 'UTENSIL', color: '#C0C0C0' },
         // Near second pot (y=270)
         { x: 10340, y: 238, label: 'SPICE', color: '#D2691E' },
         // On landing counter (y=465)
-        { x: 10420, y: 433, label: 'SPONGE', color: '#FFD700' },
+        { x: 10490, y: 433, label: 'SPONGE', color: '#FFD700' },
         { x: 10500, y: 433, label: 'TEA_TOWEL', color: '#FF6347' },
 
         // === Screen 12 (0 standard collectables - boss arena) ===

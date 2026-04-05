@@ -722,7 +722,7 @@ export const level6 = {
         { x: 400, y: 380 - 32, label: 'ROPE', color: '#D2B48C' },
         { x: 460, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         // On planter (T1)
-        { x: 580, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 650, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
         // On chair (T2)
         { x: 720, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         // On railing (T1)
@@ -738,7 +738,7 @@ export const level6 = {
         // On static planter T2
         { x: 1240, y: 395 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         // On railing T1
-        { x: 1365, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 1435, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
         // On planter T2
         { x: 1500, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         // On railing T1
@@ -761,13 +761,13 @@ export const level6 = {
         { x: 2420, y: 280 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 2450, y: 280 - 32, label: 'ROPE', color: '#D2B48C' },
         // On static railing (T2)
-        { x: 2565, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 2635, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
         // On moving clothesline 3 (T2)
         { x: 2720, y: 370 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         // On exit railing (T1)
         { x: 2855, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         // On bridge railing
-        { x: 2570, y: 385 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 2640, y: 385 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
 
         // === SCREEN 4 (8 items) ===
         // On ascending railings
@@ -778,7 +778,7 @@ export const level6 = {
         { x: 3105, y: 190 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         // Descent
         { x: 3255, y: 270 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 3405, y: 380 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 3475, y: 380 - 32, label: 'SHOE', color: '#8B4513' },
         // On landing (T1)
         { x: 3570, y: 470 - 32, label: 'ROPE', color: '#D2B48C' },
         // On exit
@@ -790,7 +790,7 @@ export const level6 = {
         { x: 3970, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 4100, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 4160, y: 380 - 32, label: 'ROPE', color: '#D2B48C' },
-        { x: 4270, y: 470 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 4340, y: 470 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         { x: 4420, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
         { x: 4580, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 4720, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
@@ -805,7 +805,7 @@ export const level6 = {
         { x: 5335, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 5440, y: 385 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 5560, y: 375 - 32, label: 'SHOE', color: '#8B4513' },
-        { x: 5655, y: 390 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 5725, y: 390 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         { x: 5745, y: 470 - 32, label: 'ROPE', color: '#D2B48C' },
 
         // === SCREEN 7 (8 items) ===
@@ -824,20 +824,20 @@ export const level6 = {
         // On vertical climb
         { x: 6780, y: 475 - 32, label: 'SHOE', color: '#4169E1' },
         { x: 6920, y: 380 - 32, label: 'ROPE', color: '#D2B48C' },
-        { x: 7050, y: 280 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 7120, y: 280 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         { x: 7200, y: 180 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 7330, y: 270 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 7470, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
         // On T4 bonus railing
         { x: 7225, y: 150 - 32, label: 'ROPE', color: '#D2B48C' },
         // On bridge shelf
-        { x: 7525, y: 395 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 7595, y: 395 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
 
         // === SCREEN 9 (8 items + 1 +HEALTH) ===
         // Lower safe path (~4 items)
         { x: 7745, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
         { x: 7910, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 8065, y: 465 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 8135, y: 465 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         { x: 8230, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
         // Upper path (4 items + 1 +HEALTH)
         { x: 7905, y: 280 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
@@ -863,7 +863,7 @@ export const level6 = {
         // BBQ area
         { x: 9665, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
         { x: 9805, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 9945, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 10015, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
         { x: 10065, y: 370 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 10085, y: 260 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 10285, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
@@ -872,14 +872,14 @@ export const level6 = {
         // === SCREEN 12 (10 items + 1 +LIFE) ===
         // Hardest section — every collectable is a challenge
         { x: 10615, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
-        { x: 10755, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 10825, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 10965, y: 280 - 32, label: 'ROPE', color: '#D2B48C' },
-        { x: 11115, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 11185, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         { x: 11245, y: 385 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 11365, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
         { x: 11465, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 10845, y: 395 - 32, label: 'ROPE', color: '#D2B48C' },
-        { x: 11115, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 11185, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         { x: 10620, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 11300, y: 280 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         // +LIFE on T4 high moving clothesline — hardest grab in the game!

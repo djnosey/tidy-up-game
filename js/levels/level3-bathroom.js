@@ -446,7 +446,7 @@ export const level3 = {
         // On bathtub (T1, y=490)
         { x: 100, y: 490 - 32, label: 'DUCK', color: '#FFE040' },
         { x: 170, y: 490 - 32, label: 'BATH_TOY', color: '#FF80A0' },
-        { x: 230, y: 490 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 300, y: 490 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On toilet (T1, y=480)
         { x: 385, y: 480 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         // On towel rack (T2, y=390)
@@ -463,7 +463,7 @@ export const level3 = {
 
         // === SCREEN 2 (960-1920): 10 collectables ===
         // On bathtub (T1, y=480)
-        { x: 1020, y: 480 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 1110, y: 398, label: 'SOAP', color: '#C8E8C0' },
         // On towel rack ladder (one per rack)
         { x: 1060, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
         { x: 1280, y: 370 - 32, label: 'SHAMPOO', color: '#80C0E8' },
@@ -474,17 +474,17 @@ export const level3 = {
         // On transition shelf (T2, y=380)
         { x: 1550, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // On sink (T1, y=470)
-        { x: 1730, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 1800, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On crumbling (T3, y=280)
         { x: 1475, y: 280 - 32, label: 'DUCK', color: '#FFE040' },
         // On bathtub
-        { x: 1080, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 1150, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
 
         // === SCREEN 3 (1920-2880): 10 collectables ===
         // On entry shelf (T1, y=480)
         { x: 1970, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On static shelf (T2, y=390)
-        { x: 2090, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 2160, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On crumbling soaps (grab fast!)
         { x: 2250, y: 380 - 32, label: 'TOWEL', color: '#F0D8C0' },
         { x: 2410, y: 370 - 32, label: 'DUCK', color: '#FFE040' },
@@ -497,14 +497,14 @@ export const level3 = {
         // High path items
         { x: 2130, y: 270 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         { x: 2345, y: 260 - 32, label: 'DUCK', color: '#FFE040' },
-        { x: 2550, y: 270 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        { x: 2620, y: 270 - 32, label: 'TOWEL', color: '#E8C8B0' },
 
         // === SCREEN 4 (2880-3840): 10 collectables ===
         // On sink left (T1, y=470)
         { x: 2960, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On bathtub center (T1, y=480)
-        { x: 3180, y: 480 - 32, label: 'TOWEL', color: '#F0D8C0' },
-        { x: 3260, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 3270, y: 398, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 3330, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On toilet (T1, y=475)
         { x: 3445, y: 475 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         // On sink right (T1, y=470)
@@ -523,11 +523,11 @@ export const level3 = {
         // On entry bathtub (T1, y=480)
         { x: 3920, y: 480 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On static shelf (T2, y=390)
-        { x: 4050, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 4120, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
         // On moving towel rack 1 (T3, y=280)
         { x: 4190, y: 280 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On static rest shelf (T2, y=380)
-        { x: 4370, y: 380 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 4440, y: 380 - 32, label: 'DUCK', color: '#FFE040' },
         // On moving towel rack 2 (T3, y=270)
         { x: 4490, y: 270 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         // On static rest shelf (T2, y=390)
@@ -544,13 +544,13 @@ export const level3 = {
         // On base bathtub (T1, y=480)
         { x: 4900, y: 480 - 32, label: 'TOWEL', color: '#F0D8C0' },
         // On static shelf (T2, y=390)
-        { x: 5070, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 5140, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On crumbling soap T2
         { x: 5230, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On crumbling soap T3
         { x: 5090, y: 280 - 32, label: 'DUCK', color: '#FFE040' },
         // On static shelf T3
-        { x: 5270, y: 270 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        { x: 5340, y: 270 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // On static T4 alternative
         { x: 5310, y: 180 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         // On towel rack side (T2, y=380)
@@ -572,7 +572,7 @@ export const level3 = {
         // On towel rack (T2, y=380)
         { x: 5920, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On sink center (T1, y=470)
-        { x: 6235, y: 470 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        { x: 6305, y: 470 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         // On bathtub right (T1, y=480)
         { x: 6440, y: 480 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // On shelf right (T2, y=390)
@@ -589,13 +589,13 @@ export const level3 = {
         // On crumbling T2 (y=390)
         { x: 6950, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
         // On static T3 (y=280)
-        { x: 7080, y: 280 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 7150, y: 280 - 32, label: 'DUCK', color: '#FFE040' },
         // On crumbling T3 (y=270)
         { x: 6910, y: 270 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On static T4 (y=180)
         { x: 7030, y: 180 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // Descent items
-        { x: 7310, y: 260 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        { x: 7380, y: 260 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         { x: 7455, y: 380 - 32, label: 'TOWEL', color: '#E8C8B0' },
         { x: 7590, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On T4 crumbling
@@ -612,13 +612,13 @@ export const level3 = {
         // On crumbling soap (T2, y=390)
         { x: 8090, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On static towel rack (T2, y=380)
-        { x: 8235, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 8305, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On moving towel rack (T3, y=270)
         { x: 8380, y: 270 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // On crumbling soap (T2, y=390)
         { x: 8550, y: 390 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         // On exit bathtub (T1, y=470)
-        { x: 8615, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 8685, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
         // Upper shelf bonus (T3, y=260)
         { x: 8130, y: 260 - 32, label: 'DUCK', color: '#FFE040' },
         { x: 8170, y: 260 - 32, label: 'TOWEL', color: '#E8C8B0' },
@@ -634,18 +634,18 @@ export const level3 = {
         // On crumbling soap (T2, y=390)
         { x: 9030, y: 390 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         // On static towel rack (T2, y=370)
-        { x: 9190, y: 370 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 9260, y: 370 - 32, label: 'TOWEL', color: '#F0D8C0' },
         // On moving shelf (T3, y=270)
         { x: 9340, y: 270 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         // On crumbling soap (T2, y=380)
         { x: 9470, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // On landing shelf (T1, y=470)
-        { x: 9555, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 9625, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On high bonus (T3, y=260)
-        { x: 9130, y: 260 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 9200, y: 260 - 32, label: 'DUCK', color: '#FFE040' },
         { x: 9170, y: 260 - 32, label: 'TOWEL', color: '#E8C8B0' },
         // On landing
-        { x: 9595, y: 470 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 9665, y: 470 - 32, label: 'SHAMPOO', color: '#80C0E8' },
 
         // === SCREEN 11 (9600-10560): 0 standard collectables (boss arena) ===
 

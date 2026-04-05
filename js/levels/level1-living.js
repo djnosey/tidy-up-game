@@ -431,7 +431,7 @@ export const level1 = {
         { x: 140, y: 428, label: 'MUG', color: '#8B4513' },
         { x: 200, y: 428, label: 'MAGAZINE', color: '#4682B4' },
         // On table (y=470, items at 438)
-        { x: 440, y: 438, label: 'GLASSES', color: '#C0C0C0' },
+        { x: 510, y: 438, label: 'GLASSES', color: '#C0C0C0' },
         { x: 510, y: 438, label: 'COASTER', color: '#D2691E' },
         { x: 560, y: 438, label: 'PHONE', color: '#333' },
         // On armchair (y=460, items at 428)
@@ -452,7 +452,7 @@ export const level1 = {
         { x: 1320, y: 448, label: 'GLASSES', color: '#C0C0C0' },
         { x: 1400, y: 448, label: 'COASTER', color: '#D2691E' },
         // On armchair (y=465, items at 433)
-        { x: 1560, y: 433, label: 'CUSHION', color: '#CD853F' },
+        { x: 1630, y: 433, label: 'CUSHION', color: '#CD853F' },
         { x: 1640, y: 433, label: 'BLANKET', color: '#FFB6C1' },
         // On crumble/shelf at end (y=470/460)
         { x: 1800, y: 438, label: 'SOCKS', color: '#4169E1' },
@@ -490,7 +490,7 @@ export const level1 = {
         // On T2 chair (y=390)
         { x: 3200, y: 358, label: 'KEYS', color: '#FFD700' },
         // On T2 shelf (y=380)
-        { x: 3360, y: 348, label: 'BOOK', color: '#006400' },
+        { x: 3430, y: 348, label: 'BOOK', color: '#006400' },
         // On T3 moving frame (y=270)
         { x: 3320, y: 238, label: 'HEADPHONES', color: '#333' },
         // On T4 bonus shelf (y=170)
@@ -507,11 +507,11 @@ export const level1 = {
         { x: 3895, y: 438, label: 'COASTER', color: '#D2691E' },
         // On T2 gauntlet platforms
         { x: 4070, y: 358, label: 'BOOK', color: '#8B0000' },
-        { x: 4250, y: 348, label: 'REMOTE', color: '#333' },
+        { x: 4320, y: 348, label: 'REMOTE', color: '#333' },
         { x: 4560, y: 358, label: 'MUG', color: '#8B4513' },
         // On T1 TV unit (y=470)
         { x: 4720, y: 438, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 4800, y: 438, label: 'PHONE', color: '#333' },
+        { x: 4870, y: 438, label: 'PHONE', color: '#333' },
         // High path items (T3/T4)
         { x: 4090, y: 248, label: 'BLANKET', color: '#FFB6C1' },
         { x: 4270, y: 168, label: 'KEYS', color: '#FFD700' },
@@ -522,7 +522,7 @@ export const level1 = {
         // On T1 armchair (y=465)
         { x: 4890, y: 433, label: 'GLASSES', color: '#C0C0C0' },
         // Lower safe path
-        { x: 5090, y: 358, label: 'REMOTE', color: '#333' },
+        { x: 5080, y: 358, label: 'REMOTE', color: '#333' },
         { x: 5290, y: 368, label: 'COASTER', color: '#D2691E' },
         { x: 5450, y: 358, label: 'MAGAZINE', color: '#4682B4' },
         { x: 5710, y: 438, label: 'MUG', color: '#8B4513' },
@@ -549,9 +549,9 @@ export const level1 = {
         // On static T4 (y=170)
         { x: 6020, y: 138, label: 'GLASSES', color: '#C0C0C0' },
         // Descent and landing
-        { x: 6160, y: 338, label: 'CUSHION', color: '#CD853F' },
+        { x: 6230, y: 338, label: 'CUSHION', color: '#CD853F' },
         { x: 6340, y: 358, label: 'REMOTE', color: '#333' },
-        { x: 6520, y: 438, label: 'MUG', color: '#8B4513' },
+        { x: 6590, y: 438, label: 'MUG', color: '#8B4513' },
         { x: 6730, y: 428, label: 'KEYS', color: '#FFD700' },
         // +LIFE on hardest T4 crumbling shelf
         { x: 5870, y: 158, label: '+LIFE', color: '#FF1493' },
@@ -566,7 +566,7 @@ export const level1 = {
         { x: 7200, y: 258, label: 'BOOK', color: '#4682B4' },
         { x: 7340, y: 328, label: 'MAGAZINE', color: '#4682B4' },
         { x: 7480, y: 248, label: 'KEYS', color: '#FFD700' },
-        { x: 7580, y: 368, label: 'GLASS', color: '#87CEEB' },
+        { x: 7650, y: 368, label: 'GLASS', color: '#87CEEB' },
         { x: 7650, y: 438, label: 'CUSHION', color: '#CD853F' },
 
         // === SCREEN 9 (8 items) ===
@@ -575,7 +575,7 @@ export const level1 = {
         // Along crumble sprint
         { x: 7895, y: 368, label: 'MUG', color: '#8B4513' },
         { x: 8045, y: 358, label: 'BLANKET', color: '#FFB6C1' },
-        { x: 8200, y: 353, label: 'SOCKS', color: '#228B22' },
+        { x: 8270, y: 353, label: 'SOCKS', color: '#228B22' },
         { x: 8355, y: 363, label: 'BOOK', color: '#8B0000' },
         { x: 8505, y: 358, label: 'GLASSES', color: '#C0C0C0' },
         // On T1 landing (y=470)
@@ -588,13 +588,13 @@ export const level1 = {
         // === SCREEN 10 (10 items) ===
         // Mixed across gauntlet platforms
         { x: 8695, y: 438, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 8860, y: 358, label: 'REMOTE', color: '#333' },
+        { x: 8930, y: 358, label: 'REMOTE', color: '#333' },
         { x: 9010, y: 258, label: 'HEADPHONES', color: '#333' },
         { x: 9110, y: 238, label: 'BLANKET', color: '#FFB6C1' },
         { x: 9160, y: 348, label: 'MUG', color: '#8B4513' },
-        { x: 9310, y: 358, label: 'KEYS', color: '#FFD700' },
+        { x: 9380, y: 358, label: 'KEYS', color: '#FFD700' },
         { x: 9440, y: 248, label: 'SOCKS', color: '#4169E1' },
-        { x: 9540, y: 438, label: 'GLASS', color: '#87CEEB' },
+        { x: 9610, y: 438, label: 'GLASS', color: '#87CEEB' },
         { x: 9600, y: 438, label: 'CUSHION', color: '#CD853F' },
         { x: 9210, y: 138, label: 'BOOK', color: '#006400' },
         // +HEALTH on T4
