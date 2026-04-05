@@ -156,9 +156,7 @@ export class Menu {
             this.modeOptions.push({ id: 'continue', label: 'Continue' });
         }
         this.modeOptions.push({ id: 'new_game', label: 'New Game' });
-        if (completed.length > 0) {
-            this.modeOptions.push({ id: 'level_select', label: 'Level Select' });
-        }
+        this.modeOptions.push({ id: 'level_select', label: 'Level Select' });
         this.modeIndex = 0;
         this.state = 'mode_select';
     }
