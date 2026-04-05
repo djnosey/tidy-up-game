@@ -523,7 +523,7 @@ export const level5 = {
     ],
 
     // ========== COLLECTABLES ==========
-    // 100 standard collectables + 3 +HEALTH + 1 +LIFE = 104 total
+    // 98 standard collectables + 3 +HEALTH + 3 +LIFE = 104 total
     collectables: [
         // =====================================================================
         // SCREEN 1 (0-960): 10 collectables
@@ -577,8 +577,8 @@ export const level5 = {
         { x: 2125, y: 380 - 32, label: 'PILLOW', color: '#E8D8E0' },
         // On T3 shelf left
         { x: 1985, y: 290 - 32, label: 'CHARGER', color: '#333333' },
-        // On T4 shelf right (high reward!)
-        { x: 2145, y: 200 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        // +LIFE on T4 wardrobe top — zigzag climb reward
+        { x: 2145, y: 200 - 32, label: '+LIFE', color: '#FF1493' },
         // On descent shelf (T3)
         { x: 2305, y: 280 - 32, label: 'SLIPPER', color: '#D2691E' },
         // On wardrobe right (T2)
@@ -703,8 +703,8 @@ export const level5 = {
         { x: 7730, y: 475 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
         // On crumble shelf T2
         { x: 7880, y: 380 - 32, label: 'CLOTHES', color: '#6B4470' },
-        // On moving shelf T3
-        { x: 7870, y: 270 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        // +LIFE on T3 moving shelf — must time the jump
+        { x: 7870, y: 270 - 32, label: '+LIFE', color: '#FF1493' },
         // On static T2
         { x: 8085, y: 390 - 32, label: 'CHARGER', color: '#333333' },
         // On T1 landing

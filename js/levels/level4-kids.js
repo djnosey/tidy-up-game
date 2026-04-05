@@ -1,7 +1,7 @@
 // Level 4: Kids' Room
 // 12 screen widths (~11520px at 960px canvas width)
 // Signature: BED bounce (225px!), most vertical "maze-like", dense platform grids
-// 128 standard collectables + 3 +HEALTH + 1 +LIFE
+// 126 standard collectables + 3 +HEALTH + 3 +LIFE
 // ~90 static + ~14 crumbling + ~12 moving platforms
 
 const GROUND_Y = 520;
@@ -551,7 +551,7 @@ export const level4 = {
     ],
 
     // ========== COLLECTABLES ==========
-    // 100 standard + 3 +HEALTH + 1 +LIFE = 104 total
+    // 98 standard + 3 +HEALTH + 3 +LIFE = 104 total
     // Labels: TEDDY, PENCIL, TOY_CAR, BLOCK, CRAYON, STICKER, ACTION_FIG, PUZZLE
     collectables: [
         // === SCREEN 1 (0-960): 10 collectables ===
@@ -621,7 +621,8 @@ export const level4 = {
         { x: 3210, y: 270 - 32, label: 'ACTION_FIG', color: '#4169E1' },
         // HIGH PATH bonus
         { x: 3080, y: 180 - 32, label: 'PUZZLE', color: '#20B2AA' },
-        { x: 3300, y: 170 - 32, label: 'STICKER', color: '#FF69B4' },
+        // +LIFE on T4 right shelf — dense vertical maze reward
+        { x: 3300, y: 170 - 32, label: '+LIFE', color: '#FF1493' },
         // +HEALTH on center path (T3, y=280)
         { x: 3400, y: 280 - 32, label: '+HEALTH', color: '#00FF00' },
 
@@ -717,7 +718,8 @@ export const level4 = {
         { x: 8710, y: 470 - 32, label: 'TEDDY', color: '#8B6914' },
         { x: 8930, y: 390 - 32, label: 'CRAYON', color: '#9400D3' },
         { x: 9010, y: 280 - 32, label: 'TOY_CAR', color: '#DC143C' },
-        { x: 9170, y: 180 - 32, label: 'ACTION_FIG', color: '#4169E1' },
+        // +LIFE on T4 peak — vertical climb gauntlet reward
+        { x: 9170, y: 180 - 32, label: '+LIFE', color: '#FF1493' },
         { x: 9380, y: 270 - 32, label: 'PUZZLE', color: '#20B2AA' },
         { x: 9160, y: 390 - 32, label: 'STICKER', color: '#FF69B4' },
         { x: 9430, y: 470 - 32, label: 'BLOCK', color: '#32CD32' },

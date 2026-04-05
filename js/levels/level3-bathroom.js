@@ -1,7 +1,7 @@
 // Level 3: Bathroom
 // 11 screen widths (~10560px at 960px canvas width)
 // Signature: Heaviest on crumbling platforms (soap bars that dissolve), water theme
-// 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// 98 standard collectables + 3 +HEALTH + 3 +LIFE
 // ~80 static + ~16 crumbling + ~10 moving platforms
 
 const GROUND_Y = 520;
@@ -439,7 +439,7 @@ export const level3 = {
     ],
 
     // ========== COLLECTABLES ==========
-    // 100 standard + 3 +HEALTH + 1 +LIFE = 104 total
+    // 98 standard + 3 +HEALTH + 3 +LIFE = 104 total
     // Labels: TOWEL, SHAMPOO, TOOTHBRUSH, SOAP, DUCK, BATH_TOY
     collectables: [
         // === SCREEN 1 (0-960): 10 collectables ===
@@ -469,8 +469,8 @@ export const level3 = {
         { x: 1280, y: 370 - 32, label: 'SHAMPOO', color: '#80C0E8' },
         { x: 1100, y: 280 - 32, label: 'TOWEL', color: '#E8C8B0' },
         { x: 1340, y: 260 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // On high shelf (T4, y=170)
-        { x: 1130, y: 170 - 32, label: 'DUCK', color: '#FFE040' },
+        // +LIFE on T4 high shelf (y=170) — hard climb from towel racks
+        { x: 1130, y: 170 - 32, label: '+LIFE', color: '#FF1493' },
         // On transition shelf (T2, y=380)
         { x: 1550, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // On sink (T1, y=470)
@@ -598,8 +598,8 @@ export const level3 = {
         { x: 7380, y: 260 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
         { x: 7455, y: 380 - 32, label: 'TOWEL', color: '#E8C8B0' },
         { x: 7590, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
-        // On T4 crumbling
-        { x: 7190, y: 170 - 32, label: 'DUCK', color: '#FFE040' },
+        // +LIFE on T4 crumbling soap (y=170) — fast grab before it dissolves
+        { x: 7190, y: 170 - 32, label: '+LIFE', color: '#FF1493' },
         // On static T2
         { x: 6820, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
 

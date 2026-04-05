@@ -1,6 +1,6 @@
 // Level 6: Outdoor Terrace
 // 13 screen widths (12,480px at 960px canvas width)
-// FINAL and HARDEST level — 129 standard collectables + 3 +HEALTH + 1 +LIFE
+// FINAL and HARDEST level — 127 standard collectables + 3 +HEALTH + 3 +LIFE
 // Difficulty: 5% easy, 20% moderate, 40% challenging, 35% expert
 // DEADLY FLOOR — no full-width ground platform. Boss arena gets solid ground only.
 
@@ -710,7 +710,7 @@ export const level6 = {
     ],
 
     // ========== COLLECTABLES ==========
-    // 100 standard items + 3 +HEALTH + 1 +LIFE = 104 total
+    // 98 standard items + 3 +HEALTH + 3 +LIFE = 104 total
     collectables: [
         // === SCREEN 1 (9 items) ===
         // On spawn bench (T1)
@@ -785,8 +785,8 @@ export const level6 = {
         { x: 2935, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
         { x: 3075, y: 385 - 32, label: 'SHOE', color: '#4169E1' },
         { x: 2955, y: 290 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        // On T4 bonus!
-        { x: 3105, y: 190 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // +LIFE on T4 bonus railing — top of zigzag climb
+        { x: 3105, y: 190 - 32, label: '+LIFE', color: '#FF1493' },
         // Descent
         { x: 3255, y: 270 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 3475, y: 380 - 32, label: 'SHOE', color: '#8B4513' },
@@ -854,8 +854,8 @@ export const level6 = {
         { x: 7200, y: 180 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         { x: 7330, y: 270 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 7470, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
-        // On T4 bonus railing
-        { x: 7225, y: 150 - 32, label: 'ROPE', color: '#D2B48C' },
+        // +LIFE on T4 static bonus railing — highest point in screen 8
+        { x: 7225, y: 150 - 32, label: '+LIFE', color: '#FF1493' },
         // On bridge shelf
         { x: 7595, y: 395 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         // Vertical climb air cluster

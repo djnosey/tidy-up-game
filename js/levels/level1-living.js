@@ -1,6 +1,6 @@
 // Level 1: Living Room
 // 11 screen widths (10,560px at 960px canvas width)
-// 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// 98 standard collectables + 3 +HEALTH + 3 +LIFE
 // DEADLY FLOOR — no full-width ground platform
 
 const GROUND_Y = 520;
@@ -423,7 +423,7 @@ export const level1 = {
     ],
 
     // ========== COLLECTABLES ==========
-    // 132 standard items + 3 +HEALTH + 1 +LIFE = 136 total
+    // 130 standard items + 3 +HEALTH + 3 +LIFE = 136 total
     collectables: [
         // === SCREEN 1 (12 items) ===
         // On spawn sofa (y=460, items at 460-32=428)
@@ -504,8 +504,8 @@ export const level1 = {
         { x: 3430, y: 348, label: 'BOOK', color: '#006400' },
         // On T3 moving frame (y=270)
         { x: 3320, y: 238, label: 'HEADPHONES', color: '#333' },
-        // On T4 bonus shelf (y=170)
-        { x: 3280, y: 138, label: 'GLASS', color: '#87CEEB' },
+        // +LIFE on T4 bonus shelf (y=170) — hard to reach from moving frame
+        { x: 3280, y: 138, label: '+LIFE', color: '#FF1493' },
         // On T1 sofa (y=465)
         { x: 3700, y: 433, label: 'MAGAZINE', color: '#4682B4' },
         // On T1 table (y=480)
@@ -552,8 +552,8 @@ export const level1 = {
         { x: 5110, y: 248, label: 'HEADPHONES', color: '#333' },
         { x: 5290, y: 228, label: 'PHONE', color: '#333' },
         { x: 5470, y: 218, label: 'GLASS', color: '#87CEEB' },
-        // T4 bonus
-        { x: 5290, y: 128, label: 'BOOK', color: '#006400' },
+        // +LIFE on T4 bonus platform (y=160) — high risk/reward path
+        { x: 5290, y: 128, label: '+LIFE', color: '#FF1493' },
         // +HEALTH on T3 upper path (risk/reward)
         { x: 5370, y: 218, label: '+HEALTH', color: '#00FF00' },
         // Lower path cluster (exploration reward)

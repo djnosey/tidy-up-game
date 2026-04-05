@@ -1,6 +1,6 @@
 // Level 2: Kitchen (redesigned)
 // 12 screen widths (11,520px at 960px canvas width)
-// 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// 98 standard collectables + 3 +HEALTH + 3 +LIFE
 // DEADLY FLOOR — no full-width ground platform
 
 const GROUND_Y = 520;
@@ -493,7 +493,7 @@ export const level2 = {
     ],
 
     // ========== COLLECTABLES ==========
-    // 100 standard + 3 +HEALTH + 1 +LIFE = 104 total
+    // 98 standard + 3 +HEALTH + 3 +LIFE = 104 total
     collectables: [
         // === Screen 1 (10 collectables) ===
         // On spawn counter (y=460, items at 428)
@@ -535,8 +535,8 @@ export const level2 = {
         { x: 2145, y: 358, label: 'UTENSIL', color: '#C0C0C0' },
         { x: 1995, y: 268, label: 'CUP', color: '#87CEEB' },
         { x: 2165, y: 228, label: 'SPICE', color: '#D2691E' },
-        // On fridge top (y=180, items at 148)
-        { x: 2020, y: 148, label: 'POT', color: '#808080' },
+        // +LIFE on fridge top (y=180) — requires climbing to T4
+        { x: 2020, y: 148, label: '+LIFE', color: '#FF1493' },
         { x: 2060, y: 148, label: 'PAN', color: '#696969' },
         // On descent shelves
         { x: 2305, y: 248, label: 'SPONGE', color: '#FFD700' },
@@ -601,7 +601,8 @@ export const level2 = {
         { x: 6035, y: 358, label: 'CUP', color: '#87CEEB' },
         { x: 5835, y: 268, label: 'UTENSIL', color: '#C0C0C0' },
         { x: 5985, y: 238, label: 'SPICE', color: '#D2691E' },
-        { x: 5855, y: 148, label: 'POT', color: '#808080' },
+        // +LIFE on T4 shelf tower alt — hard climb
+        { x: 5855, y: 148, label: '+LIFE', color: '#FF1493' },
         // Descent
         { x: 6120, y: 248, label: 'PAN', color: '#696969' },
         { x: 6315, y: 268, label: 'SPONGE', color: '#FFD700' },
