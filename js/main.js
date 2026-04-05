@@ -45,6 +45,7 @@ const STATE_BOSS_INTRO = 'boss_intro';
 const STATE_BOSS = 'boss';
 const STATE_SCORE = 'score';
 const STATE_GAMEOVER = 'gameover';
+const STATE_LOADING = 'loading';
 const STATE_VICTORY = 'victory';
 
 class Game {
@@ -270,6 +271,9 @@ class Game {
             case STATE_LEVEL_INTRO:
                 this.updateLevelIntro(dt);
                 break;
+            case STATE_LOADING:
+                this.updateLoading();
+                break;
             case STATE_BOSS_INTRO:
                 this.updateBossIntro(dt);
                 break;
@@ -341,6 +345,16 @@ class Game {
     updateLevelIntro(dt) {
         const done = this.transitions.update(dt, this.input);
         if (done) {
+            // Go to loading screen — heavy cache build happens after it paints
+            this.state = STATE_LOADING;
+            this._loadingFrames = 0;
+        }
+    }
+
+    updateLoading() {
+        // Wait 2 frames so the loading screen actually paints before heavy work
+        this._loadingFrames++;
+        if (this._loadingFrames === 2) {
             this.startLevel(this._pendingCharacter, this._pendingLevelIndex);
         }
     }
@@ -586,7 +600,10 @@ class Game {
     updateGameOver() {
         // Press Enter to retry
         if (this.input.wasPressed('Enter') || this.input.wasPressed(' ')) {
-            this.startLevel(this.player.character);
+            this._pendingCharacter = this.player.character;
+            this._pendingLevelIndex = this.currentLevelIndex;
+            this.state = STATE_LOADING;
+            this._loadingFrames = 0;
         }
     }
 
@@ -602,6 +619,9 @@ class Game {
             case STATE_LEVEL_INTRO:
             case STATE_BOSS_INTRO:
                 this.transitions.render(ctx, canvas.width, canvas.height);
+                break;
+            case STATE_LOADING:
+                this.renderLoading();
                 break;
             case STATE_PLAYING:
             case STATE_BOSS:
@@ -622,6 +642,45 @@ class Game {
 
         // Cheat code panel overlay
         this.cheats.render(ctx, canvas.width, canvas.height);
+    }
+
+    renderLoading() {
+        const { ctx, canvas } = this;
+        const w = canvas.width;
+        const h = canvas.height;
+        const levelNames = ['Living Room', 'Kitchen', 'Bathroom', "Kids' Room", "Parents' Room", 'Terrace'];
+        const name = levelNames[this._pendingLevelIndex] || 'Level';
+
+        // Dark background
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, w, h);
+
+        // Room name
+        ctx.fillStyle = '#e0d8c8';
+        ctx.font = 'bold 28px monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(name, w / 2, h / 2 - 30);
+
+        // Loading text with animated dots
+        const dots = '.'.repeat((this._loadingFrames % 3) + 1);
+        ctx.font = '18px monospace';
+        ctx.fillStyle = '#888';
+        ctx.fillText('Tidying up' + dots, w / 2, h / 2 + 15);
+
+        // Progress bar frame
+        const barW = 200;
+        const barH = 8;
+        const barX = (w - barW) / 2;
+        const barY = h / 2 + 45;
+        ctx.strokeStyle = '#555';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(barX, barY, barW, barH);
+
+        // Animated fill
+        const fill = Math.min(1, this._loadingFrames / 2);
+        ctx.fillStyle = '#e0d8c8';
+        ctx.fillRect(barX + 1, barY + 1, (barW - 2) * fill, barH - 2);
     }
 
     renderGameplay() {
