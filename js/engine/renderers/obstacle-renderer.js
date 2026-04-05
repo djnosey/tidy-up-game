@@ -16,6 +16,41 @@ export function drawObstacle(ctx, x, y, w, h, label, color, animTimer) {
     const pulse = Math.sin(animTimer * 5) * 0.15;
     const theme = getTheme();
 
+    // --- Danger indicators (drawn behind the obstacle) ---
+
+    // 1. Hazard stripe base strip (yellow/black chevrons)
+    const stripeW = w + 12, stripeH = 6;
+    const stripeX = cx - stripeW / 2, stripeY = y + h - 2;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(stripeX, stripeY, stripeW, stripeH);
+    ctx.clip();
+    ctx.fillStyle = '#FFD700';
+    ctx.fillRect(stripeX, stripeY, stripeW, stripeH);
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    for (let si = -stripeH; si < stripeW + stripeH; si += 6) {
+        ctx.beginPath();
+        ctx.moveTo(stripeX + si, stripeY + stripeH);
+        ctx.lineTo(stripeX + si + 3, stripeY + stripeH);
+        ctx.lineTo(stripeX + si + stripeH + 3, stripeY);
+        ctx.lineTo(stripeX + si + stripeH, stripeY);
+        ctx.fill();
+    }
+    ctx.restore();
+
+    // 2. Pulsing diamond outline
+    const dSize = Math.max(w, h) / 2 + 8;
+    const dAlpha = 0.3 + pulse * 2;
+    ctx.strokeStyle = `rgba(255, 60, 30, ${dAlpha})`;
+    ctx.lineWidth = 1.5 + pulse * 3;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - dSize);
+    ctx.lineTo(cx + dSize, cy);
+    ctx.lineTo(cx, cy + dSize);
+    ctx.lineTo(cx - dSize, cy);
+    ctx.closePath();
+    ctx.stroke();
+
     if (label === 'PLUG') {
         // Socket plate — themed ceramic color
         ctx.fillStyle = theme.ceramic.base;
@@ -85,12 +120,17 @@ export function drawObstacle(ctx, x, y, w, h, label, color, animTimer) {
         roundRect(ctx, x, y, w, h, 2);
     }
 
-    // Warning icon — themed accent color
-    ctx.globalAlpha = 0.5 + pulse;
-    ctx.fillStyle = theme.accent1;
-    ctx.font = '10px sans-serif';
+    // Warning icon — bigger, bolder, with dark backdrop for contrast
+    const bobY = Math.sin(animTimer * 3) * 2;
+    const iconY = y - 14 + bobY;
+    ctx.globalAlpha = 0.5;
+    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+    roundRect(ctx, cx - 10, iconY - 9, 20, 14, 7);
+    ctx.globalAlpha = 0.7 + pulse;
+    ctx.fillStyle = '#FFD700';
+    ctx.font = '14px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('⚠️', cx, y - 6);
+    ctx.fillText('⚠️', cx, iconY);
 
     ctx.restore();
 }
