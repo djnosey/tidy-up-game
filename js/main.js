@@ -2,6 +2,7 @@ import { GameLoop } from './engine/game-loop.js';
 import { Input } from './engine/input.js';
 import { Camera } from './engine/camera.js';
 import { renderBoss } from './engine/renderers/boss-renderer.js';
+import { clearCharacterCache } from './engine/renderers/character-renderer.js';
 import { drawPlatform, drawPlatformSurface, drawBackground, drawDecoration } from './engine/sprites.js';
 import { Player } from './entities/player.js';
 import { loadLevel } from './levels/level-loader.js';
@@ -85,6 +86,7 @@ class Game {
         this.collisionManager = new CollisionManager();
         this.saveManager = new SaveManager();
         this._heartbeatTimer = 0;
+        this._frameCount = 0;
         this.cheats = new CheatManager();
 
         // Preload all sprite assets — track completion
@@ -140,6 +142,9 @@ class Game {
         this.canvas.className = LEVEL_CSS[this.currentLevelIndex] || '';
         setActiveTheme(this.currentLevelIndex + 1); // themes are 1-indexed
         this.setupEventListeners();
+
+        // Clear character render cache from previous level
+        clearCharacterCache();
 
         // Compute shared level width for caches
         let maxX = 0;
@@ -279,6 +284,7 @@ class Game {
     }
 
     update(dt) {
+        this._frameCount++;
         switch (this.state) {
             case STATE_MENU:
                 this.updateMenu();
@@ -884,24 +890,32 @@ class Game {
             drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
         }
 
+        // Viewport culling bounds for entities
+        const cullPad = 64;
+        const cullL = camera.x - cullPad;
+        const cullR = camera.x + cw + cullPad;
+
         // Collectables
         for (const c of level.collectables) {
+            if (c.x + c.width < cullL || c.x > cullR) continue;
             c.render(ctx, camera);
         }
 
         // Obstacles
         for (const o of level.obstacles) {
+            if (o.x + o.width < cullL || o.x > cullR) continue;
             o.render(ctx, camera);
         }
 
         // Enemies
         for (const e of level.enemies) {
+            if (e.x + e.width < cullL || e.x > cullR) continue;
             e.render(ctx, camera);
         }
 
         // Boss
         if (this.bossTriggered) {
-            renderBoss(ctx, level.boss, camera);
+            renderBoss(ctx, level.boss, camera, this._frameCount);
         }
 
         // Projectiles

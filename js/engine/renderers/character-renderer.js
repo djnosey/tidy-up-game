@@ -1,6 +1,32 @@
 // Character drawing — high-fidelity procedural player avatar rendering
 import { roundRect, darken, lighten } from './shared.js';
 
+// --- OFFSCREEN CANVAS CACHE ---
+const _charCache = new Map();
+const WALK_QUANTA = 8;
+const CACHE_MAX = 200;
+const CACHE_PAD_TOP = 16; // room for name tag + hair above y=0
+
+function getCacheKey(character, facing, animState) {
+    const state = animState.isShooting ? 'S' :
+                  animState.isLanding ? 'L' :
+                  animState.isCrouching ? 'C' :
+                  animState.isJumping ? 'J' :
+                  animState.isFalling ? 'F' :
+                  animState.isWalking ? 'W' : 'N';
+    const walkQ = state === 'W' ? Math.floor(animState.walkPhase * 4) % WALK_QUANTA : 0;
+    const blink = animState.blinkDuration > 0 ? 1 : 0;
+    // Quantize eye tracking to 3 directions: left(-1), center(0), right(1)
+    const trackDir = animState.velocityX > 50 ? 1 : animState.velocityX < -50 ? -1 : 0;
+    // Quantize idle time to phases (not active / 5s+ / per-second after)
+    const idleQ = animState.idleTime < 5 ? 0 : Math.floor(animState.idleTime * 4) % 60;
+    return `${character.name}_${facing}_${state}${walkQ}_${blink}_${trackDir}_${idleQ}`;
+}
+
+export function clearCharacterCache() {
+    _charCache.clear();
+}
+
 // Default animation state for static rendering (menus, previews)
 function createDefaultAnimState() {
     return {
@@ -733,13 +759,35 @@ export function drawCharacter(ctx, x, y, w, h, character, facing, animState) {
         animState = createDefaultAnimState();
     }
 
-    ctx.save();
-    const cx = x + w / 2;
-    const props = computeProportions(w, h, character);
-    const footY = y + h;
+    const key = getCacheKey(character, facing, animState);
+    let cached = _charCache.get(key);
 
-    // Offset all drawing by y
-    ctx.translate(x, y);
+    if (!cached) {
+        // Evict oldest if cache too large
+        if (_charCache.size >= CACHE_MAX) {
+            const firstKey = _charCache.keys().next().value;
+            _charCache.delete(firstKey);
+        }
+
+        const offCanvas = document.createElement('canvas');
+        offCanvas.width = w + 4;  // +4 for slight overflow from accessories
+        offCanvas.height = h + CACHE_PAD_TOP + 4;
+        const offCtx = offCanvas.getContext('2d');
+
+        // Render full character to offscreen canvas
+        offCtx.translate(2, CACHE_PAD_TOP);  // offset for padding
+        _renderCharacterFull(offCtx, w, h, character, facing, animState);
+
+        cached = offCanvas;
+        _charCache.set(key, cached);
+    }
+
+    // Blit cached canvas — offset by padding
+    ctx.drawImage(cached, x - 2, y - CACHE_PAD_TOP);
+}
+
+function _renderCharacterFull(ctx, w, h, character, facing, animState) {
+    const props = computeProportions(w, h, character);
     const localCx = w / 2;
 
     // Shadow
@@ -774,6 +822,4 @@ export function drawCharacter(ctx, x, y, w, h, character, facing, animState) {
     ctx.font = 'bold 9px monospace';
     ctx.textAlign = 'center';
     if (character.name) ctx.fillText(character.name.toUpperCase(), localCx, -4);
-
-    ctx.restore();
 }

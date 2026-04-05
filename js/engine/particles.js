@@ -7,14 +7,15 @@ export class ParticleSystem {
     constructor() {
         this.particles = [];
         this._alive = 0; // track live count for swap-and-pop
+        this._overwriteIdx = 0; // rotating index for overflow overwrites
     }
 
     emit({ x, y, count = 6, colors = ['#FFD700'], speedX = 100, speedY = 100,
            gravity = 300, friction = 0.98, sizeMin = 2, sizeMax = 5, life = 0.6 }) {
         for (let i = 0; i < count; i++) {
             if (this._alive >= MAX_PARTICLES) {
-                // Overwrite oldest live particle instead of shifting
-                const oldest = this.particles[0];
+                // Overwrite at rotating index — O(1) instead of O(n) shift
+                const oldest = this.particles[this._overwriteIdx];
                 oldest.x = x;
                 oldest.y = y;
                 oldest.vx = (Math.random() - 0.5) * 2 * speedX;
@@ -25,8 +26,7 @@ export class ParticleSystem {
                 oldest.size = sizeMin + Math.random() * (sizeMax - sizeMin);
                 oldest.gravity = gravity;
                 oldest.friction = friction;
-                // Move to end so it's "newest"
-                this.particles.push(this.particles.shift());
+                this._overwriteIdx = (this._overwriteIdx + 1) % MAX_PARTICLES;
             } else {
                 this.particles.push({
                     x,
@@ -62,6 +62,7 @@ export class ParticleSystem {
         }
         this.particles.length = writeIdx;
         this._alive = writeIdx;
+        this._overwriteIdx = 0; // compaction reorders, so reset
     }
 
     render(ctx, camera) {

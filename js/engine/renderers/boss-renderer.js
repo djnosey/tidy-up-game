@@ -5,7 +5,7 @@ import { BbqDragonBehavior } from '../../entities/bosses/bbq-dragon.js';
 // All visual/drawing code for bosses lives here, separated from
 // the Boss entity's state machine, physics, and collision logic.
 
-export function renderBoss(ctx, boss, camera) {
+export function renderBoss(ctx, boss, camera, frame = 0) {
     if (!boss.alive) return;
 
     let sx = boss.x - camera.x;
@@ -14,7 +14,7 @@ export function renderBoss(ctx, boss, camera) {
     ctx.save();
 
     // Render arena hazards behind boss
-    renderHazards(ctx, boss, camera);
+    renderHazards(ctx, boss, camera, frame);
 
     if (boss.flashTimer > 0 && Math.floor(boss.flashTimer * 12) % 2 === 0) {
         ctx.globalAlpha = 0.4;
@@ -50,23 +50,23 @@ export function renderBoss(ctx, boss, camera) {
     ctx.fill();
 
     // Draw body based on boss type
-    drawBossBody(ctx, boss, sx, sy, cx, cy, w, h, stateColor);
+    drawBossBody(ctx, boss, sx, sy, cx, cy, w, h, stateColor, frame);
 
     // Eyes (shared across all bosses)
-    drawBossEyes(ctx, boss, cx, cy, w, h);
+    drawBossEyes(ctx, boss, cx, cy, w, h, frame);
 
     // State indicators — visual only, no hand-holding text
     ctx.textAlign = 'center';
     if (boss.state === STUNNED) {
         ctx.font = '14px sans-serif';
         for (let i = 0; i < 3; i++) {
-            const a = Date.now() / 250 + i * Math.PI * 2 / 3;
+            const a = frame / 15 + i * Math.PI * 2 / 3;
             ctx.fillStyle = '#FFD700';
             ctx.fillText('⭐', cx + Math.cos(a) * (w/2 + 5), sy - 10 + Math.sin(a) * 8);
         }
     } else if (boss.state === VULNERABLE) {
         // Green pulsing glow — visual cue that boss is stompable
-        const pulse = 0.4 + Math.sin(Date.now() / 100) * 0.3;
+        const pulse = 0.4 + Math.sin(frame / 6) * 0.3;
         ctx.fillStyle = `rgba(0, 255, 0, ${pulse})`;
         ctx.beginPath();
         ctx.ellipse(cx, cy, w / 2 + 8, h / 2 + 8, 0, 0, Math.PI * 2);
@@ -74,7 +74,7 @@ export function renderBoss(ctx, boss, camera) {
         // Dizzy swirls
         ctx.font = '14px sans-serif';
         for (let i = 0; i < 3; i++) {
-            const a = Date.now() / 200 + i * Math.PI * 2 / 3;
+            const a = frame / 12 + i * Math.PI * 2 / 3;
             ctx.fillText('💫', cx + Math.cos(a) * (w/2 + 10), sy - 8 + Math.sin(a) * 6);
         }
     }
@@ -110,7 +110,7 @@ export function renderBoss(ctx, boss, camera) {
 
     // Fridge door indicator
     if (boss.label === 'FRIDGE BEAST' && boss.doorsOpen) {
-        const pulse = 0.5 + Math.sin(Date.now() / 100) * 0.3;
+        const pulse = 0.5 + Math.sin(frame / 6) * 0.3;
         ctx.fillStyle = `rgba(0, 255, 100, ${pulse})`;
         ctx.beginPath();
         ctx.ellipse(cx, cy, w / 2 + 5, h / 2 + 5, 0, 0, Math.PI * 2);
@@ -182,7 +182,7 @@ export function renderBoss(ctx, boss, camera) {
 
 // ─── Arena Hazards ───────────────────────────────��──────────────────
 
-function renderHazards(ctx, boss, camera) {
+function renderHazards(ctx, boss, camera, frame) {
     for (const h of boss.arenaHazards) {
         const hx = h.x - camera.x;
         const hy = h.y - camera.y;
@@ -199,7 +199,7 @@ function renderHazards(ctx, boss, camera) {
             ctx.lineWidth = 2;
             ctx.beginPath();
             for (let wx = 0; wx < h.width; wx += 20) {
-                const waveY = hy + Math.sin(Date.now() / 300 + wx * 0.05) * 3;
+                const waveY = hy + Math.sin(frame / 18 + wx * 0.05) * 3;
                 if (wx === 0) ctx.moveTo(hx + wx, waveY);
                 else ctx.lineTo(hx + wx, waveY);
             }
@@ -227,21 +227,21 @@ function renderHazards(ctx, boss, camera) {
 
 // ─── Per-Boss Body Drawing ──────────────────────────────────────────
 
-export function drawBossBody(ctx, boss, sx, sy, cx, cy, w, h, color) {
+export function drawBossBody(ctx, boss, sx, sy, cx, cy, w, h, color, frame) {
     const label = boss.label;
 
     if (label === 'MEGA ROOMBA') {
-        drawMegaRoomba(ctx, boss, sx, sy, cx, cy, w, h, color);
+        drawMegaRoomba(ctx, boss, sx, sy, cx, cy, w, h, color, frame);
     } else if (label === 'FRIDGE BEAST') {
         drawFridgeBeast(ctx, boss, sx, sy, cx, cy, w, h, color);
     } else if (label === 'WASHING MACHINE') {
-        drawWashingMachine(ctx, boss, sx, sy, cx, cy, w, h, color);
+        drawWashingMachine(ctx, boss, sx, sy, cx, cy, w, h, color, frame);
     } else if (label === 'TOY BOX TERROR') {
         drawToyBoxTerror(ctx, boss, sx, sy, cx, cy, w, h, color);
     } else if (label === 'WARDROBE MONSTER') {
         drawWardrobeMonster(ctx, boss, sx, sy, cx, cy, w, h, color);
     } else if (label === 'BBQ DRAGON') {
-        drawBbqDragon(ctx, boss, sx, sy, cx, cy, w, h, color);
+        drawBbqDragon(ctx, boss, sx, sy, cx, cy, w, h, color, frame);
     } else {
         // Generic fallback
         ctx.fillStyle = color;
@@ -251,7 +251,7 @@ export function drawBossBody(ctx, boss, sx, sy, cx, cy, w, h, color) {
     }
 }
 
-function drawMegaRoomba(ctx, boss, sx, sy, cx, cy, w, h, color) {
+function drawMegaRoomba(ctx, boss, sx, sy, cx, cy, w, h, color, frame) {
     // Disc shape
     ctx.fillStyle = color;
     ctx.beginPath(); ctx.ellipse(cx, cy, w/2, h/2, 0, 0, Math.PI*2); ctx.fill();
@@ -266,7 +266,7 @@ function drawMegaRoomba(ctx, boss, sx, sy, cx, cy, w, h, color) {
         ctx.strokeStyle = 'rgba(100,150,255,0.3)';
         ctx.lineWidth = 2;
         for (let i = 0; i < 4; i++) {
-            const r = 30 + i * 25 + Math.sin(Date.now() / 200 + i) * 10;
+            const r = 30 + i * 25 + Math.sin(frame / 12 + i) * 10;
             ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
         }
     }
@@ -299,7 +299,7 @@ function drawFridgeBeast(ctx, boss, sx, sy, cx, cy, w, h, color) {
     roundRect(ctx, sx + 8, sy + 3, w - 16, h - 6, 3);
 }
 
-function drawWashingMachine(ctx, boss, sx, sy, cx, cy, w, h, color) {
+function drawWashingMachine(ctx, boss, sx, sy, cx, cy, w, h, color, frame) {
     // Boxy body
     ctx.fillStyle = color;
     roundRect(ctx, sx + 3, sy, w - 6, h, 6);
@@ -309,7 +309,7 @@ function drawWashingMachine(ctx, boss, sx, sy, cx, cy, w, h, color) {
     ctx.fillStyle = '#667';
     ctx.beginPath(); ctx.arc(cx, cy + 2, h/3 - 4, 0, Math.PI*2); ctx.fill();
     // Spin indicator inside
-    const spin = Date.now() / 200;
+    const spin = frame / 12;
     ctx.strokeStyle = 'rgba(200,220,255,0.5)'; ctx.lineWidth = 2;
     ctx.beginPath(); ctx.arc(cx, cy + 2, h/4, spin, spin + 2); ctx.stroke();
     // Control panel
@@ -378,8 +378,8 @@ function drawWardrobeMonster(ctx, boss, sx, sy, cx, cy, w, h, color) {
     ctx.fillRect(sx, sy - 18, w, 6);
 }
 
-function drawBbqDragon(ctx, boss, sx, sy, cx, cy, w, h, color) {
-    const t = Date.now();
+function drawBbqDragon(ctx, boss, sx, sy, cx, cy, w, h, color, frame) {
+    const t = frame * 16.667; // approximate ms for visual parity with Date.now()
 
     // === HEAT SHIMMER around the boss ===
     if (boss.state !== STUNNED && boss.state !== VULNERABLE) {
@@ -548,7 +548,7 @@ function drawBbqDragon(ctx, boss, sx, sy, cx, cy, w, h, color) {
 
 // ─── Shared Drawing Helpers ─────────────────────────────────────────
 
-export function drawBossEyes(ctx, boss, cx, cy, w, h) {
+export function drawBossEyes(ctx, boss, cx, cy, w, h, frame = 0) {
     const eyeSpread = w * 0.17;
     const eyeY = cy - h * 0.1;
     const eyeSize = boss.state === CHARGING ? 9 : 7;
@@ -567,7 +567,7 @@ export function drawBossEyes(ctx, boss, cx, cy, w, h) {
             }
         } else {
             // Dizzy spiral eyes for vulnerable
-            const t = Date.now() / 200;
+            const t = frame / 12;
             for (const ex of [cx - eyeSpread, cx + eyeSpread]) {
                 ctx.beginPath();
                 for (let a = 0; a < Math.PI * 4; a += 0.3) {
