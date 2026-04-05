@@ -286,7 +286,7 @@ class Game {
     }
 
     updateGameplay(dt) {
-        const { player, level, camera, input, particles, particleTheme } = this;
+        const { player, level, camera, input, particles, particleTheme, audio } = this;
         const wasOnGround = player.wasOnGround;
 
         // Mute toggle
@@ -456,7 +456,7 @@ class Game {
         if (player.alive && player.health === 1) {
             this._heartbeatTimer -= dt;
             if (this._heartbeatTimer <= 0) {
-                audio.playSFX('heartbeat');
+                this.audio.playSFX('heartbeat');
                 this._heartbeatTimer = 1.0; // every 1 second
             }
         } else {
