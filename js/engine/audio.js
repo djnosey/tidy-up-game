@@ -126,8 +126,18 @@ export class AudioManager {
             this.ctx.resume();
         }
 
-        // Preload soundfont instruments
-        this._initSoundfonts();
+        // Preload soundfont instruments — track completion
+        this._ready = false;
+        this._initSoundfonts().then(() => {
+            this._ready = true;
+            console.log('Audio assets loaded');
+        });
+    }
+
+    isReady() {
+        // Before init() is called, audio isn't needed yet — treat as ready
+        if (!this.ctx) return true;
+        return this._ready;
     }
 
     async _loadInstrument(name) {

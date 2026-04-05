@@ -81,8 +81,10 @@ class Game {
         this._heartbeatTimer = 0;
         this.cheats = new CheatManager();
 
-        // Preload all sprite assets in the background (non-blocking)
-        preloadAll(getAllSpritePaths()).then(() => {
+        // Preload all sprite assets — track completion
+        this._spritesReady = false;
+        this._spritesPromise = preloadAll(getAllSpritePaths()).then(() => {
+            this._spritesReady = true;
             console.log('Sprite assets loaded');
         });
 
@@ -355,39 +357,55 @@ class Game {
             // Go to loading screen — heavy cache build happens after it paints
             this.state = STATE_LOADING;
             this._loadingFrames = 0;
+            this._loadingStage = 0;
         }
     }
 
     updateLoading() {
-        // Staged loading: each frame does one chunk of work so the bar fills visibly
+        // Staged loading: each frame does one chunk of work so the bar fills visibly.
+        // Stages that build caches wait for sprites to be loaded first.
         this._loadingFrames++;
-        switch (this._loadingFrames) {
+        const assetsReady = this._spritesReady && this.audio.isReady();
+
+        switch (this._loadingStage || 0) {
+            case 0:
+                // Stage 0: paint loading screen, wait for assets
+                if (this._loadingFrames >= 2 && assetsReady) {
+                    this._loadingStage = 1;
+                }
+                break;
             case 1:
-                // Frame 1: just paint the loading screen (no work)
+                // Stage 1: init level data, player, events (lightweight)
+                this._startLevelData(this._pendingCharacter, this._pendingLevelIndex);
+                this._loadingStage = 2;
                 break;
             case 2:
-                // Frame 2: init level data, player, events (lightweight)
-                this._startLevelData(this._pendingCharacter, this._pendingLevelIndex);
+                // Stage 2: build decoration cache
+                this._buildDecoCache();
+                this._loadingStage = 3;
                 break;
             case 3:
-                // Frame 3: build decoration cache
-                this._buildDecoCache();
+                // Stage 3: build furniture backdrop cache
+                this._buildFurnitureCache();
+                this._loadingStage = 4;
                 break;
             case 4:
-                // Frame 4: build furniture backdrop cache
-                this._buildFurnitureCache();
+                // Stage 4: build surface cache
+                this._buildSurfaceCache();
+                this._loadingStage = 5;
                 break;
             case 5:
-                // Frame 5: build surface cache
-                this._buildSurfaceCache();
-                break;
-            case 6:
-                // Frame 6: start music + go
+                // Stage 5: start music + go
                 this.audio.playMusic(this.currentLevelIndex);
+                this._loadingStage = 0;
                 this.state = STATE_PLAYING;
                 break;
         }
-        this._loadingProgress = Math.min(1, this._loadingFrames / 6);
+        // Progress: stage 0 shows asset loading, stages 1-5 fill the bar
+        const stage = this._loadingStage || 0;
+        this._loadingProgress = stage === 0
+            ? Math.min(0.2, this._loadingFrames * 0.01)  // slow pulse while waiting
+            : Math.min(1, (stage + 1) / 6);
     }
 
     updateBossIntro(dt) {
@@ -635,6 +653,7 @@ class Game {
             this._pendingLevelIndex = this.currentLevelIndex;
             this.state = STATE_LOADING;
             this._loadingFrames = 0;
+            this._loadingStage = 0;
         }
     }
 
@@ -694,10 +713,12 @@ class Game {
         ctx.fillText(name, w / 2, h / 2 - 30);
 
         // Loading text with animated dots
-        const dots = '.'.repeat((this._loadingFrames % 3) + 1);
+        const dots = '.'.repeat((Math.floor(this._loadingFrames / 10) % 3) + 1);
         ctx.font = '18px monospace';
         ctx.fillStyle = '#888';
-        ctx.fillText('Tidying up' + dots, w / 2, h / 2 + 15);
+        const stage = this._loadingStage || 0;
+        const msg = stage === 0 ? 'Loading assets' + dots : 'Tidying up' + dots;
+        ctx.fillText(msg, w / 2, h / 2 + 15);
 
         // Progress bar frame
         const barW = 200;
