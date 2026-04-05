@@ -32,6 +32,8 @@ import { Menu } from './ui/menu.js';
 import { ScoreScreen } from './ui/score-screen.js';
 import { VictoryScreen } from './ui/victory-screen.js';
 import { TransitionManager } from './ui/transitions.js';
+import { MathChallenge } from './ui/math-challenge.js';
+import { Boss } from './entities/boss.js';
 
 // CSS class per level for post-processing filters
 const LEVEL_CSS = ['level-living', 'level-kitchen', 'level-bathroom', 'level-kids', 'level-parents', 'level-terrace'];
@@ -47,6 +49,7 @@ const STATE_SCORE = 'score';
 const STATE_GAMEOVER = 'gameover';
 const STATE_LOADING = 'loading';
 const STATE_VICTORY = 'victory';
+const STATE_BOSS_RETRY = 'boss_retry';
 
 class Game {
     constructor() {
@@ -70,6 +73,9 @@ class Game {
         this.projectiles = [];
         this.collected = 0;
         this.bossTriggered = false;
+        this.bossRetryCount = 0;
+        this._diedDuringBoss = false;
+        this.mathChallenge = null;
         this.currentLevelIndex = 0;
         this.particles = new ParticleSystem();
         this.particleTheme = null;
@@ -123,6 +129,9 @@ class Game {
         this.projectiles = [];
         this.collected = 0;
         this.bossTriggered = false;
+        this.bossRetryCount = 0;
+        this._diedDuringBoss = false;
+        this._bossLevelData = levelData.boss;
         this.cheats.reset();
         this.cheats.syncPlayer(this.player);
         this.camera.reset();
@@ -295,6 +304,9 @@ class Game {
                 break;
             case STATE_GAMEOVER:
                 this.updateGameOver();
+                break;
+            case STATE_BOSS_RETRY:
+                this.updateBossRetry(dt);
                 break;
             case STATE_VICTORY:
                 this.updateVictory(dt);
@@ -582,6 +594,7 @@ class Game {
 
         // Player death
         if (!player.alive) {
+            this._diedDuringBoss = (this.state === STATE_BOSS);
             this.state = STATE_GAMEOVER;
             this.audio.playSFX('playerDeath');
             this.audio.stopMusic();
@@ -590,6 +603,7 @@ class Game {
         // Player fell off screen
         if (player.y > level.groundY + 200) {
             player.alive = false;
+            this._diedDuringBoss = (this.state === STATE_BOSS);
             this.state = STATE_GAMEOVER;
         }
 
@@ -647,14 +661,86 @@ class Game {
     }
 
     updateGameOver() {
-        // Press Enter to retry
-        if (this.input.wasPressed('Enter') || this.input.wasPressed(' ')) {
-            this._pendingCharacter = this.player.character;
-            this._pendingLevelIndex = this.currentLevelIndex;
-            this.state = STATE_LOADING;
-            this._loadingFrames = 0;
-            this._loadingStage = 0;
+        if (this._diedDuringBoss) {
+            // Option 1: Retry Boss
+            if (this.input.wasPressed('1') || this.input.wasPressed('Enter')) {
+                this.bossRetryCount++;
+                if (this.bossRetryCount <= 1) {
+                    // First retry is free
+                    this._retryBoss();
+                } else {
+                    // Subsequent retries require math
+                    this.mathChallenge = new MathChallenge(this.bossRetryCount - 1);
+                    this.state = STATE_BOSS_RETRY;
+                }
+                return;
+            }
+            // Option 2: Restart Level
+            if (this.input.wasPressed('2')) {
+                this._pendingCharacter = this.player.character;
+                this._pendingLevelIndex = this.currentLevelIndex;
+                this.state = STATE_LOADING;
+                this._loadingFrames = 0;
+                this._loadingStage = 0;
+                return;
+            }
+        } else {
+            // Normal (non-boss) death: Enter to restart level
+            if (this.input.wasPressed('Enter') || this.input.wasPressed(' ')) {
+                this._pendingCharacter = this.player.character;
+                this._pendingLevelIndex = this.currentLevelIndex;
+                this.state = STATE_LOADING;
+                this._loadingFrames = 0;
+                this._loadingStage = 0;
+            }
         }
+    }
+
+    updateBossRetry(dt) {
+        const result = this.mathChallenge.update(dt);
+        if (result === 'solved') {
+            this.mathChallenge.destroy();
+            this.mathChallenge = null;
+            this._retryBoss();
+        } else if (result === 'cancelled') {
+            this.mathChallenge.destroy();
+            this.mathChallenge = null;
+            this.state = STATE_GAMEOVER;
+        }
+    }
+
+    _retryBoss() {
+        const { player, level } = this;
+
+        // Reset player
+        player.health = player.maxHealth;
+        player.alive = true;
+        player.x = level.bossArena.x + 60;
+        player.y = level.groundY - player.height;
+        player.vx = 0;
+        player.vy = 0;
+        player.invTimer = 2.0;
+
+        // Re-create boss from original level data
+        const bd = this._bossLevelData;
+        level.boss = new Boss(bd.x, bd.y, bd);
+
+        // Clear projectiles and particles
+        this.projectiles = [];
+        this.particles = new ParticleSystem();
+
+        // Camera stays locked to boss arena
+        this.camera.x = level.bossArena.x;
+        this.camera.y = 0;
+        this.camera.locked = true;
+        this.camera.lockTargetX = level.bossArena.x;
+        this.camera.lockTargetY = 0;
+        this.camera.lockLerping = false;
+        this.camera.targetZoom = 1;
+
+        // Resume boss music and start fighting
+        this.audio.playBossMusic();
+        this.state = STATE_BOSS;
     }
 
     render() {
@@ -684,6 +770,10 @@ class Game {
             case STATE_GAMEOVER:
                 this.renderGameplay();
                 this.renderGameOver();
+                break;
+            case STATE_BOSS_RETRY:
+                this.renderGameplay();
+                this.mathChallenge.render(ctx, canvas.width, canvas.height);
                 break;
             case STATE_VICTORY:
                 this.victoryScreen.render(ctx, canvas.width, canvas.height);
@@ -850,17 +940,36 @@ class Game {
 
         ctx.font = 'bold 48px sans-serif';
         ctx.fillStyle = '#FF4444';
-        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height * 0.4);
+        ctx.fillText('GAME OVER', canvas.width / 2, canvas.height * 0.35);
 
         ctx.font = '18px monospace';
         ctx.fillStyle = '#ccc';
-        ctx.fillText('The mess wins... this time!', canvas.width / 2, canvas.height * 0.5);
+        ctx.fillText('The mess wins... this time!', canvas.width / 2, canvas.height * 0.45);
 
         const blink = Math.sin(Date.now() / 400) > 0;
-        if (blink) {
+
+        if (this._diedDuringBoss) {
+            // Retry boss option
+            const mathCount = this.bossRetryCount; // problems needed for next retry
+            const retryNote = mathCount === 0
+                ? '(Free!)'
+                : `(Solve ${mathCount} maths problem${mathCount > 1 ? 's' : ''})`;
+
+            if (blink) {
+                ctx.font = '14px monospace';
+                ctx.fillStyle = '#FFD700';
+                ctx.fillText(`[1] Retry Boss  ${retryNote}`, canvas.width / 2, canvas.height * 0.58);
+            }
+
             ctx.font = '14px monospace';
-            ctx.fillStyle = '#FFD700';
-            ctx.fillText('Press ENTER to try again', canvas.width / 2, canvas.height * 0.65);
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('[2] Restart Level', canvas.width / 2, canvas.height * 0.66);
+        } else {
+            if (blink) {
+                ctx.font = '14px monospace';
+                ctx.fillStyle = '#FFD700';
+                ctx.fillText('Press ENTER to try again', canvas.width / 2, canvas.height * 0.6);
+            }
         }
 
         ctx.restore();
