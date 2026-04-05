@@ -457,7 +457,11 @@ export class Boss {
                 p.alive = false;
             }
         }
-        this.projectiles = this.projectiles.filter(p => p.alive);
+        let pw = 0;
+        for (let i = 0; i < this.projectiles.length; i++) {
+            if (this.projectiles[i].alive) this.projectiles[pw++] = this.projectiles[i];
+        }
+        this.projectiles.length = pw;
     }
 
     updateParticles(dt) {
@@ -466,14 +470,22 @@ export class Boss {
             p.y += p.vy * dt;
             p.life -= dt;
         }
-        this.particles = this.particles.filter(p => p.life > 0);
+        let ppw = 0;
+        for (let i = 0; i < this.particles.length; i++) {
+            if (this.particles[i].life > 0) this.particles[ppw++] = this.particles[i];
+        }
+        this.particles.length = ppw;
     }
 
     updateHazards(dt) {
         for (const h of this.arenaHazards) {
             h.timer -= dt;
         }
-        this.arenaHazards = this.arenaHazards.filter(h => h.timer > 0);
+        let hw = 0;
+        for (let i = 0; i < this.arenaHazards.length; i++) {
+            if (this.arenaHazards[i].timer > 0) this.arenaHazards[hw++] = this.arenaHazards[i];
+        }
+        this.arenaHazards.length = hw;
     }
 
     getBounds() {

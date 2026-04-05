@@ -9,14 +9,57 @@ import { parentsRoomLayers } from './parallax-layers/parents-room.js';
 import { terraceLayers } from './parallax-layers/terrace.js';
 
 export class ParallaxRenderer {
+    constructor() {
+        this._cache = {};       // levelName -> array of { canvas, lastOffset }
+        this._currentLevel = null;
+        this._threshold = 3;    // pixels of camera-space movement before redraw
+    }
+
+    invalidate() {
+        this._cache = {};
+        this._currentLevel = null;
+    }
+
     render(ctx, cameraX, canvasW, canvasH, levelName, levelColor) {
         const layers = PARALLAX_LAYERS[levelName];
         if (!layers) return;
-        for (const layer of layers) {
+
+        // Invalidate cache on level change
+        if (this._currentLevel !== levelName) {
+            this._currentLevel = levelName;
+            this._cache[levelName] = null;
+        }
+
+        // Lazy-init offscreen canvases per layer
+        if (!this._cache[levelName]) {
+            this._cache[levelName] = layers.map(() => ({
+                canvas: null,
+                lastOffset: -Infinity,
+            }));
+        }
+        const entries = this._cache[levelName];
+
+        for (let i = 0; i < layers.length; i++) {
+            const layer = layers[i];
             const offset = cameraX * layer.speed;
-            ctx.save();
-            layer.draw(ctx, offset, canvasW, canvasH, levelColor);
-            ctx.restore();
+            const entry = entries[i];
+
+            // Only re-render if offset changed enough
+            if (!entry.canvas || Math.abs(offset - entry.lastOffset) > this._threshold) {
+                if (!entry.canvas) {
+                    entry.canvas = document.createElement('canvas');
+                    entry.canvas.width = canvasW;
+                    entry.canvas.height = canvasH;
+                }
+                const offCtx = entry.canvas.getContext('2d');
+                offCtx.clearRect(0, 0, canvasW, canvasH);
+                offCtx.save();
+                layer.draw(offCtx, offset, canvasW, canvasH, levelColor);
+                offCtx.restore();
+                entry.lastOffset = offset;
+            }
+
+            ctx.drawImage(entry.canvas, 0, 0);
         }
     }
 }

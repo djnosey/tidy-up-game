@@ -340,11 +340,14 @@ class Game {
             this.audio.playSFX('shoot');
         }
 
-        // Update projectiles
-        for (const proj of this.projectiles) {
+        // Update projectiles (swap-and-pop to avoid per-frame allocation)
+        let projWrite = 0;
+        for (let i = 0; i < this.projectiles.length; i++) {
+            const proj = this.projectiles[i];
             proj.update(dt);
+            if (proj.alive) this.projectiles[projWrite++] = proj;
         }
-        this.projectiles = this.projectiles.filter(p => p.alive);
+        this.projectiles.length = projWrite;
 
         // Update collectables
         for (const c of level.collectables) c.update(dt);
@@ -357,7 +360,12 @@ class Game {
         // Update enemies
         for (const e of level.enemies) e.update(dt);
         this.collisionManager.checkEnemies(player, level.enemies, this.projectiles);
-        level.enemies = level.enemies.filter(e => !e.shouldRemove);
+        // Swap-and-pop dead enemies
+        let enemyWrite = 0;
+        for (let i = 0; i < level.enemies.length; i++) {
+            if (!level.enemies[i].shouldRemove) level.enemies[enemyWrite++] = level.enemies[i];
+        }
+        level.enemies.length = enemyWrite;
 
         // Boss trigger — player touches the door near the boss arena
         if (!this.bossTriggered) {
@@ -584,32 +592,31 @@ class Game {
             drawDecoration(ctx, dec, camera.x, camera.y);
         }
 
-        // Furniture backdrop — full furniture art for static platforms (behind gameplay layer)
+        // Platforms — single pass: backdrop for static, full art for dynamic
         const screenGroundY = level.groundY - camera.y;
-        for (const plat of level.platforms) {
-            if (plat._disabled) continue;
-            if (plat.moveX || plat.moveY || plat.crumble) continue; // dynamic — drawn on gameplay layer
+        const cameraRight = camera.x + canvas.width;
+        // Pass 1: static furniture backdrops
+        for (let i = 0; i < level.platforms.length; i++) {
+            const plat = level.platforms[i];
+            if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             const sx = plat.x - camera.x;
-            const sy = plat.y - camera.y;
             if (sx + plat.width < -50 || sx > canvas.width + 50) continue;
+            const sy = plat.y - camera.y;
             drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
         }
-
-        // Platforms — gameplay layer: thin surfaces for static, full art for dynamic
-        for (const plat of level.platforms) {
+        // Pass 2: surfaces for static + full art for dynamic (must be separate for layering)
+        for (let i = 0; i < level.platforms.length; i++) {
+            const plat = level.platforms[i];
             if (plat._disabled) continue;
             let sx = plat.x - camera.x;
-            const sy = plat.y - camera.y;
             if (sx + plat.width < -50 || sx > canvas.width + 50) continue;
-            const isDynamic = plat.moveX || plat.moveY || plat.crumble;
-            if (isDynamic) {
-                // Shake effect for crumbling platforms
+            const sy = plat.y - camera.y;
+            if (plat.moveX || plat.moveY || plat.crumble) {
                 if (plat._crumbleState === 'shaking') {
                     sx += (Math.random() - 0.5) * 4;
                 }
                 drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
             } else {
-                // Static furniture: just the walkable surface ledge
                 drawPlatformSurface(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color);
             }
         }

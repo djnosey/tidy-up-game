@@ -20,6 +20,8 @@ export class LightingRenderer {
         this._bossVignetteGrad = null;
         this._cachedW = 0;
         this._cachedH = 0;
+        this._lightGlowCanvas = null; // offscreen canvas for light glows
+        this._lightGlowLastCamX = -Infinity;
     }
 
     render(ctx, canvasW, canvasH, levelName, decorations, cameraX, cameraY, isBoss) {
@@ -34,22 +36,36 @@ export class LightingRenderer {
     }
 
     _drawLightSources(ctx, canvasW, canvasH, decorations, cameraX, cameraY) {
+        // Re-render offscreen glow canvas only when camera moves significantly (>2px)
+        const camDelta = Math.abs(cameraX - this._lightGlowLastCamX);
+        if (!this._lightGlowCanvas || camDelta > 2) {
+            if (!this._lightGlowCanvas) {
+                this._lightGlowCanvas = document.createElement('canvas');
+                this._lightGlowCanvas.width = canvasW;
+                this._lightGlowCanvas.height = canvasH;
+            }
+            const offCtx = this._lightGlowCanvas.getContext('2d');
+            offCtx.clearRect(0, 0, canvasW, canvasH);
+            offCtx.globalCompositeOperation = 'screen';
+            for (const dec of decorations) {
+                if (!LIGHT_TYPES.has(dec.type)) continue;
+                const sx = dec.x - cameraX;
+                const sy = (dec.y || 0) - cameraY;
+                if (sx < -150 || sx > canvasW + 150) continue;
+
+                const radius = dec.type === 'ceiling_light' ? 120 : 80;
+                const glow = offCtx.createRadialGradient(sx, sy + 10, 0, sx, sy + 10, radius);
+                glow.addColorStop(0, 'rgba(255, 240, 200, 0.08)');
+                glow.addColorStop(0.5, 'rgba(255, 220, 160, 0.03)');
+                glow.addColorStop(1, 'rgba(255, 220, 160, 0)');
+                offCtx.fillStyle = glow;
+                offCtx.fillRect(sx - radius, sy + 10 - radius, radius * 2, radius * 2);
+            }
+            this._lightGlowLastCamX = cameraX;
+        }
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
-        for (const dec of decorations) {
-            if (!LIGHT_TYPES.has(dec.type)) continue;
-            const sx = dec.x - cameraX;
-            const sy = (dec.y || 0) - cameraY;
-            if (sx < -150 || sx > canvasW + 150) continue;
-
-            const radius = dec.type === 'ceiling_light' ? 120 : 80;
-            const glow = ctx.createRadialGradient(sx, sy + 10, 0, sx, sy + 10, radius);
-            glow.addColorStop(0, 'rgba(255, 240, 200, 0.08)');
-            glow.addColorStop(0.5, 'rgba(255, 220, 160, 0.03)');
-            glow.addColorStop(1, 'rgba(255, 220, 160, 0)');
-            ctx.fillStyle = glow;
-            ctx.fillRect(sx - radius, sy + 10 - radius, radius * 2, radius * 2);
-        }
+        ctx.drawImage(this._lightGlowCanvas, 0, 0);
         ctx.restore();
     }
 
