@@ -1,7 +1,8 @@
 // Level 3: Bathroom
 // 11 screen widths (~10560px at 960px canvas width)
-// Signature: Heavy VERTICAL platforming, narrow towel racks, water theme
-// Difficulty: 15% easy, 40% moderate, 45% challenging
+// Signature: Heaviest on crumbling platforms (soap bars that dissolve), water theme
+// 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// ~80 static + ~16 crumbling + ~10 moving platforms
 
 const GROUND_Y = 520;
 const CANVAS_W = 960;
@@ -12,7 +13,7 @@ export const level3 = {
     width: LEVEL_W,
     groundY: GROUND_Y,
     backgroundColor: '#E8F0F0',
-    playerStart: { x: 80, y: GROUND_Y - 72 },
+    playerStart: { x: 100, y: 490 - 72 }, // On first Tier 1 bathtub
 
     bossDoor: { x: CANVAS_W * 10 - 80, y: GROUND_Y - 120 },
 
@@ -102,7 +103,7 @@ export const level3 = {
         { x: CANVAS_W * 4 + 700, y: GROUND_Y - 160, type: 'wall_socket', w: 16, h: 16 },
         { x: CANVAS_W * 4 + 500, y: GROUND_Y - 5, type: 'water_puddle', w: 20, h: 5 },
 
-        // === SCREEN 6 (4800-5760): Challenge - crumbling shelf tower ===
+        // === SCREEN 6 (4800-5760): Challenge - crumbling soap tower ===
         { x: CANVAS_W * 5 + 480, y: 55, type: 'ceiling_light', size: 44, color: '#FFFDE0' },
         { x: CANVAS_W * 5 + 700, y: GROUND_Y - 380, type: 'window', w: 70, h: 60 },
         { x: CANVAS_W * 5 + 685, y: GROUND_Y - 385, type: 'curtain', w: 22, h: 200, color: '#C8DFE8' },
@@ -184,495 +185,609 @@ export const level3 = {
     ],
 
     // ========== PLATFORMS ==========
+    // Tier 1 (Floor): y=460-490   Tier 2 (Low): y=360-400
+    // Tier 3 (Mid): y=250-300     Tier 4 (High): y=140-200
+    // ~80 static, ~16 crumbling (SOAP), ~10 moving = ~106 total
     platforms: [
-        // Ground
-        { x: 0, y: GROUND_Y, width: LEVEL_W, height: 80, label: '', color: '#B8D0D8' },
+        // Boss arena ground (solid, full collision)
+        { x: CANVAS_W * 10, y: GROUND_Y, width: CANVAS_W, height: 80, label: '', color: '#B8D0D8' },
 
         // === SCREEN 1 (0-960): TEACH - Bathtub intro ===
-        // Bathtub - wide, low platform for easy intro
-        { x: 160, y: GROUND_Y - 60, width: 220, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
-        // Toilet - small platform to the right
-        { x: 600, y: GROUND_Y - 55, width: 70, height: 20, label: 'TOILET', color: '#F0F0F0' },
-        // Towel rack - first vertical step above bathtub
-        { x: 250, y: GROUND_Y - 170, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        // Shelf - higher up left side
-        { x: 80, y: GROUND_Y - 280, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Shower shelf - mid-height right side
-        { x: 500, y: GROUND_Y - 160, width: 100, height: 14, label: 'SHOWER_SHELF', color: '#C8D8E0' },
-        // Shelf near exit
-        { x: 780, y: GROUND_Y - 100, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Pattern: gentle zigzag, wide platforms, easy gaps (~100px)
+        // Tier 1 - bathtub island (player spawn)
+        { x: 60, y: 490, width: 200, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 1 - toilet stepping stone
+        { x: 360, y: 480, width: 80, height: 20, label: 'TOILET', color: '#F0F0F0' },
+        // Tier 2 - towel rack above bathtub
+        { x: 140, y: 390, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 2 - shelf mid-screen
+        { x: 500, y: 380, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 1 - sink near exit
+        { x: 680, y: 470, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
+        // Tier 2 - cabinet right side
+        { x: 830, y: 400, width: 100, height: 16, label: 'CABINET', color: '#B0C0C8' },
+        // Tier 3 - high shelf for bonus
+        { x: 300, y: 280, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
 
-        // === SCREEN 2 (960-1920): TEST - Towel rack ladder ===
-        // Sink at ground level
-        { x: CANVAS_W + 600, y: GROUND_Y - 55, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
-        // 4 towel racks stacking up in zigzag: left, right, left, right
-        { x: CANVAS_W + 100, y: GROUND_Y - 100, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        { x: CANVAS_W + 350, y: GROUND_Y - 170, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        { x: CANVAS_W + 120, y: GROUND_Y - 240, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        { x: CANVAS_W + 380, y: GROUND_Y - 310, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        // Shelf at top for reward
-        { x: CANVAS_W + 150, y: GROUND_Y - 380, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Shelf right side mid-height for transition
-        { x: CANVAS_W + 750, y: GROUND_Y - 140, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // === SCREEN 2 (960-1920): TEST - Towel rack zigzag climb ===
+        // Pattern: zigzag climb up towel racks
+        // Tier 1 - entry bathtub
+        { x: 980, y: 480, width: 160, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 2 - towel rack left
+        { x: 1020, y: 390, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 2 - towel rack right
+        { x: 1240, y: 370, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 3 - towel rack left
+        { x: 1060, y: 280, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 3 - towel rack right
+        { x: 1300, y: 260, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 4 - shelf at top for reward
+        { x: 1100, y: 170, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - transition shelf right
+        { x: 1520, y: 380, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 1 - sink near exit
+        { x: 1700, y: 470, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
+        // Crumbling soap 1 (alternative shortcut)
+        { x: 1450, y: 280, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
 
-        // === SCREEN 3 (1920-2880): VERTICAL CLIMB - Shower shelf climb ===
-        // Ground level entry shelf
-        { x: CANVAS_W * 2 + 80, y: GROUND_Y - 60, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Zigzag climb up to y~150
-        { x: CANVAS_W * 2 + 280, y: GROUND_Y - 130, width: 100, height: 14, label: 'SHOWER_SHELF', color: '#C8D8E0' },
-        { x: CANVAS_W * 2 + 100, y: GROUND_Y - 210, width: 90, height: 14, label: 'SHOWER_SHELF', color: '#C8D8E0' },
-        { x: CANVAS_W * 2 + 340, y: GROUND_Y - 280, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 2 + 140, y: GROUND_Y - 340, width: 90, height: 14, label: 'SHOWER_SHELF', color: '#C8D8E0' },
-        { x: CANVAS_W * 2 + 380, y: GROUND_Y - 390, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Shelf to the right for descent / continuation
-        { x: CANVAS_W * 2 + 600, y: GROUND_Y - 280, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 2 + 780, y: GROUND_Y - 160, width: 100, height: 14, label: 'SHOWER_SHELF', color: '#C8D8E0' },
+        // === SCREEN 3 (1920-2880): CRUMBLE SPRINT - Soap bar gauntlet ===
+        // Pattern: horizontal gauntlet with heavy crumbling, static alternatives
+        // Tier 1 - entry shelf
+        { x: 1940, y: 480, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - static shelf
+        { x: 2060, y: 390, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - crumbling soap 1
+        { x: 2220, y: 380, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
+          crumble: true, crumbleDelay: 0.7, crumbleRespawn: 3.0 },
+        // Tier 2 - crumbling soap 2
+        { x: 2380, y: 370, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
+          crumble: true, crumbleDelay: 0.7, crumbleRespawn: 3.0 },
+        // Tier 2 - static shelf (safe landing)
+        { x: 2530, y: 390, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - crumbling soap 3
+        { x: 2690, y: 380, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
+          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
+        // Tier 1 - bathtub exit
+        { x: 2800, y: 470, width: 120, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 3 - alternate high path
+        { x: 2100, y: 270, width: 90, height: 16, label: 'CABINET', color: '#B0C0C8' },
+        // Tier 3 - crumbling soap high
+        { x: 2320, y: 260, width: 70, height: 14, label: 'SHELF', color: '#C8E8C0',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.5 },
+        // Tier 3 - static shelf high
+        { x: 2520, y: 270, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
 
         // === SCREEN 4 (2880-3840): REST - Sink rest area ===
-        // Low, comfortable platforms - easy horizontal progression
-        { x: CANVAS_W * 3 + 60, y: GROUND_Y - 55, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
-        { x: CANVAS_W * 3 + 250, y: GROUND_Y - 65, width: 130, height: 24, label: 'LAUNDRY_BASKET', color: '#C8B898' },
-        { x: CANVAS_W * 3 + 480, y: GROUND_Y - 55, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 3 + 680, y: GROUND_Y - 60, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
-        // One slightly raised platform for mild interest
-        { x: CANVAS_W * 3 + 350, y: GROUND_Y - 140, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        { x: CANVAS_W * 3 + 860, y: GROUND_Y - 55, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Pattern: wide comfortable platforms, easy horizontal
+        // Tier 1 - sink left
+        { x: 2920, y: 470, width: 130, height: 20, label: 'SINK', color: '#E8ECF0' },
+        // Tier 1 - bathtub center
+        { x: 3140, y: 480, width: 180, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 1 - toilet right
+        { x: 3420, y: 475, width: 80, height: 20, label: 'TOILET', color: '#F0F0F0' },
+        // Tier 1 - sink right
+        { x: 3590, y: 470, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
+        // Tier 2 - towel rack for mild vertical interest
+        { x: 3050, y: 380, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 2 - shelf
+        { x: 3350, y: 390, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 1 - exit platform
+        { x: 3780, y: 470, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 3 - bonus cabinet
+        { x: 3250, y: 270, width: 100, height: 16, label: 'CABINET', color: '#B0C0C8' },
+        // Tier 2 - moving towel rack (gentle, rest area variety)
+        { x: 3650, y: 390, width: 100, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+          moveX: 60, moveSpeed: 0.8 },
 
         // === SCREEN 5 (3840-4800): CHALLENGE - Moving towel gauntlet ===
-        // Static landing zone at start
-        { x: CANVAS_W * 4 + 40, y: GROUND_Y - 80, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Moving towel rack 1
-        { x: CANVAS_W * 4 + 200, y: GROUND_Y - 160, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+        // Pattern: moving towel racks at Tier 3, static shelves at Tier 2
+        // Tier 1 - entry bathtub
+        { x: 3880, y: 480, width: 120, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 2 - static shelf
+        { x: 4020, y: 390, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 3 - moving towel rack 1
+        { x: 4150, y: 280, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
           moveX: 80, moveSpeed: 1.0 },
-        // Static rest shelf
-        { x: CANVAS_W * 4 + 450, y: GROUND_Y - 100, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Moving towel rack 2
-        { x: CANVAS_W * 4 + 540, y: GROUND_Y - 200, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+        // Tier 2 - static rest shelf
+        { x: 4340, y: 380, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 3 - moving towel rack 2
+        { x: 4450, y: 270, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
           moveX: 100, moveSpeed: 1.2 },
-        // Static rest shelf
-        { x: CANVAS_W * 4 + 700, y: GROUND_Y - 120, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Moving towel rack 3
-        { x: CANVAS_W * 4 + 780, y: GROUND_Y - 240, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+        // Tier 2 - static rest shelf
+        { x: 4610, y: 390, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 3 - moving towel rack 3
+        { x: 4720, y: 260, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
           moveX: 90, moveSpeed: 1.4 },
-        // Landing shelf at end
-        { x: CANVAS_W * 4 + 860, y: GROUND_Y - 60, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 1 - exit bathtub
+        { x: 4810, y: 470, width: 120, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 4 - bonus shelf (reachable from moving Tier 3)
+        { x: 4400, y: 170, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
 
-        // === SCREEN 6 (4800-5760): CHALLENGE - Crumbling shelf tower ===
-        // 5-tier tower: bottom 2 static, top 3 crumble
-        // Tier 1 (static) - base
-        { x: CANVAS_W * 5 + 300, y: GROUND_Y - 80, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Tier 2 (static)
-        { x: CANVAS_W * 5 + 450, y: GROUND_Y - 170, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Tier 3 (crumble)
-        { x: CANVAS_W * 5 + 280, y: GROUND_Y - 260, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // === SCREEN 6 (4800-5760): CHALLENGE - Crumbling soap tower ===
+        // Pattern: vertical tower with lots of crumbling, static alternatives
+        // Tier 1 - base bathtub
+        { x: 4860, y: 480, width: 130, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 2 - static shelf base
+        { x: 5040, y: 390, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - crumbling soap
+        { x: 5200, y: 380, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.7, crumbleRespawn: 3.0 },
-        // Tier 4 (crumble)
-        { x: CANVAS_W * 5 + 460, y: GROUND_Y - 320, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 3 - crumbling soap
+        { x: 5060, y: 280, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Tier 5 (crumble) - top of tower, +LIFE here
-        { x: CANVAS_W * 5 + 320, y: GROUND_Y - 390, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 3 - static shelf
+        { x: 5240, y: 270, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 4 - crumbling soap (top of tower, +LIFE here)
+        { x: 5100, y: 170, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.5 },
-        // Side platforms for continuation rightward
-        { x: CANVAS_W * 5 + 650, y: GROUND_Y - 140, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        { x: CANVAS_W * 5 + 830, y: GROUND_Y - 60, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Ground level laundry basket
-        { x: CANVAS_W * 5 + 80, y: GROUND_Y - 65, width: 130, height: 24, label: 'LAUNDRY_BASKET', color: '#C8B898' },
+        // Tier 4 - static alternative
+        { x: 5280, y: 180, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Side continuation
+        // Tier 2 - towel rack
+        { x: 5420, y: 380, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 1 - sink exit
+        { x: 5600, y: 470, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
 
-        // === SCREEN 7 (5760-6720): REST -> RISK/REWARD - Laundry basket section ===
-        // Safe ground path
-        { x: CANVAS_W * 6 + 60, y: GROUND_Y - 65, width: 130, height: 24, label: 'LAUNDRY_BASKET', color: '#C8B898' },
-        { x: CANVAS_W * 6 + 280, y: GROUND_Y - 80, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        { x: CANVAS_W * 6 + 500, y: GROUND_Y - 55, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
-        { x: CANVAS_W * 6 + 720, y: GROUND_Y - 65, width: 130, height: 24, label: 'LAUNDRY_BASKET', color: '#C8B898' },
-        // Vertical moving shower shelf for high path (risk/reward)
-        { x: CANVAS_W * 6 + 350, y: GROUND_Y - 180, width: 100, height: 14, label: 'SHOWER_SHELF', color: '#C8D8E0',
+        // === SCREEN 7 (5760-6720): REST -> RISK/REWARD ===
+        // Pattern: safe Tier 1/2 path with optional vertical risk/reward
+        // Tier 1 - bathtub left
+        { x: 5800, y: 480, width: 140, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 1 - toilet
+        { x: 6030, y: 475, width: 80, height: 20, label: 'TOILET', color: '#F0F0F0' },
+        // Tier 2 - towel rack
+        { x: 5880, y: 380, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 1 - sink center
+        { x: 6200, y: 470, width: 110, height: 20, label: 'SINK', color: '#E8ECF0' },
+        // Tier 1 - bathtub right
+        { x: 6400, y: 480, width: 130, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 2 - shelf right
+        { x: 6580, y: 390, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Risk/reward vertical path (from Tier 2 towel rack up)
+        // Tier 3 - moving shelf (vertical)
+        { x: 6100, y: 280, width: 100, height: 14, label: 'SHELF', color: '#C8D8E0',
           moveY: -80, moveSpeed: 1.0 },
-        // High platform with bonus items + health
-        { x: CANVAS_W * 6 + 550, y: GROUND_Y - 300, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Exit shelf
-        { x: CANVAS_W * 6 + 860, y: GROUND_Y - 55, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 4 - high bonus shelf (+HEALTH here)
+        { x: 6200, y: 160, width: 100, height: 16, label: 'CABINET', color: '#B0C0C8' },
+        // Tier 2 - crumbling soap shortcut
+        { x: 6300, y: 380, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
+          crumble: true, crumbleDelay: 0.7, crumbleRespawn: 3.0 },
 
-        // === SCREEN 8 (6720-7680): ESCALATE - Pipe climb + crumble ===
-        // Alternating static and crumbling narrow shelves
-        // Static 1
-        { x: CANVAS_W * 7 + 80, y: GROUND_Y - 80, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Crumble 1
-        { x: CANVAS_W * 7 + 260, y: GROUND_Y - 160, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // === SCREEN 8 (6720-7680): ESCALATE - Alternating crumble + static climb ===
+        // Pattern: zigzag climb with alternating static/crumble
+        // Tier 1 - entry shelf
+        { x: 6760, y: 480, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - crumbling soap
+        { x: 6920, y: 390, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Static 2
-        { x: CANVAS_W * 7 + 100, y: GROUND_Y - 240, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Crumble 2
-        { x: CANVAS_W * 7 + 300, y: GROUND_Y - 310, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 2 - static shelf (alternative)
+        { x: 6790, y: 380, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 3 - static shelf
+        { x: 7050, y: 280, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 3 - crumbling soap
+        { x: 6880, y: 270, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Static 3
-        { x: CANVAS_W * 7 + 120, y: GROUND_Y - 380, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        // Crumble 3
-        { x: CANVAS_W * 7 + 340, y: GROUND_Y - 420, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 4 - static shelf
+        { x: 7000, y: 180, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 4 - crumbling soap
+        { x: 7160, y: 170, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.5 },
-        // Descent platforms on right side
-        { x: CANVAS_W * 7 + 550, y: GROUND_Y - 300, width: 90, height: 14, label: 'SHOWER_SHELF', color: '#C8D8E0' },
-        { x: CANVAS_W * 7 + 720, y: GROUND_Y - 180, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        { x: CANVAS_W * 7 + 850, y: GROUND_Y - 70, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Descent right side
+        // Tier 3 - shelf
+        { x: 7280, y: 260, width: 90, height: 16, label: 'CABINET', color: '#B0C0C8' },
+        // Tier 2 - towel rack
+        { x: 7420, y: 380, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 1 - exit bathtub
+        { x: 7560, y: 470, width: 100, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
 
-        // === SCREEN 9 (7680-8640): ESCALATE - Moving + crumbling ===
-        // Moving towel rack leading to crumbling shelves
-        { x: CANVAS_W * 8 + 60, y: GROUND_Y - 100, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+        // === SCREEN 9 (7680-8640): ESCALATE - Moving + crumbling combo ===
+        // Pattern: horizontal gauntlet mixing moving and crumbling
+        // Tier 1 - entry shelf
+        { x: 7720, y: 480, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - moving towel rack
+        { x: 7860, y: 380, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
           moveX: 80, moveSpeed: 1.2 },
-        // Crumbling shelf 1 (180px gap manageable)
-        { x: CANVAS_W * 8 + 320, y: GROUND_Y - 160, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 2 - crumbling soap
+        { x: 8060, y: 390, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Static towel rack
-        { x: CANVAS_W * 8 + 500, y: GROUND_Y - 100, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        // Moving towel rack 2
-        { x: CANVAS_W * 8 + 620, y: GROUND_Y - 200, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+        // Tier 2 - static towel rack (safe landing)
+        { x: 8200, y: 380, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 3 - moving towel rack
+        { x: 8340, y: 270, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
           moveX: 90, moveSpeed: 1.0 },
-        // Crumbling shelf 2
-        { x: CANVAS_W * 8 + 820, y: GROUND_Y - 140, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 2 - crumbling soap
+        { x: 8520, y: 390, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Upper shelf for items
-        { x: CANVAS_W * 8 + 350, y: GROUND_Y - 300, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 1 - exit bathtub
+        { x: 8580, y: 470, width: 100, height: 24, label: 'BATHTUB', color: '#E0E8F0' },
+        // Tier 3 - upper shelf for bonus items
+        { x: 8100, y: 260, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
 
-        // === SCREEN 10 (8640-9600): GAUNTLET - Pre-boss ===
-        // Everything combined: moving, crumbling, tight gaps
-        // Moving towel rack
-        { x: CANVAS_W * 9 + 60, y: GROUND_Y - 120, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+        // === SCREEN 10 (8640-9600): GAUNTLET - Pre-boss everything combined ===
+        // Pattern: mixed challenge, every mechanic
+        // Tier 1 - entry shelf
+        { x: 8680, y: 480, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 2 - moving towel rack
+        { x: 8820, y: 380, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
           moveX: 80, moveSpeed: 1.3 },
-        // Crumbling shelf
-        { x: CANVAS_W * 9 + 250, y: GROUND_Y - 200, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 2 - crumbling soap
+        { x: 9000, y: 390, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Static towel rack
-        { x: CANVAS_W * 9 + 400, y: GROUND_Y - 130, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
-        // Moving towel rack
-        { x: CANVAS_W * 9 + 550, y: GROUND_Y - 220, width: 110, height: 14, label: 'TOWEL_RACK', color: '#C0A880',
+        // Tier 2 - static towel rack
+        { x: 9150, y: 370, width: 120, height: 14, label: 'TOWEL_RACK', color: '#C0A880' },
+        // Tier 3 - moving shelf
+        { x: 9300, y: 270, width: 110, height: 14, label: 'SHELF', color: '#C8D8E0',
           moveX: 70, moveSpeed: 1.4 },
-        // Crumbling shelf
-        { x: CANVAS_W * 9 + 700, y: GROUND_Y - 150, width: 80, height: 16, label: 'SHELF', color: '#A8C0C8',
+        // Tier 2 - crumbling soap
+        { x: 9440, y: 380, width: 80, height: 14, label: 'SHELF', color: '#C8E8C0',
           crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Landing shelf before boss door
-        { x: CANVAS_W * 9 + 830, y: GROUND_Y - 60, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 1 - landing before boss door
+        { x: 9520, y: 470, width: 120, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Tier 3 - high shelf bonus
+        { x: 9100, y: 260, width: 90, height: 16, label: 'CABINET', color: '#B0C0C8' },
 
         // === SCREEN 11 (9600-10560): BOSS ARENA ===
-        // 8 shelves at varying heights for the boss fight
-        { x: CANVAS_W * 10 + 60, y: GROUND_Y - 100, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 10 + 180, y: GROUND_Y - 170, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 10 + 780, y: GROUND_Y - 100, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 10 + 600, y: GROUND_Y - 150, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 10 + 200, y: GROUND_Y - 240, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 10 + 700, y: GROUND_Y - 250, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 10 + 420, y: GROUND_Y - 340, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
-        { x: CANVAS_W * 10 + 450, y: GROUND_Y - 120, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        // Shelves at varying heights for boss fight
+        { x: CANVAS_W * 10 + 60, y: 390, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        { x: CANVAS_W * 10 + 200, y: 280, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        { x: CANVAS_W * 10 + 420, y: 370, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        { x: CANVAS_W * 10 + 600, y: 290, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        { x: CANVAS_W * 10 + 780, y: 390, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        { x: CANVAS_W * 10 + 430, y: 180, width: 100, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        { x: CANVAS_W * 10 + 150, y: 470, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
+        { x: CANVAS_W * 10 + 700, y: 470, width: 90, height: 16, label: 'SHELF', color: '#A8C0C8' },
     ],
 
     // ========== COLLECTABLES ==========
+    // 100 standard + 3 +HEALTH + 1 +LIFE = 104 total
+    // Labels: TOWEL, SHAMPOO, TOOTHBRUSH, SOAP, DUCK, BATH_TOY
     collectables: [
         // === SCREEN 1 (0-960): 10 collectables ===
-        // Ground level / bathtub area
-        { x: 180, y: GROUND_Y - 90, label: 'DUCK', color: '#FFE040' },
-        { x: 280, y: GROUND_Y - 90, label: 'BATH_TOY', color: '#FF80A0' },
-        { x: 350, y: GROUND_Y - 90, label: 'SOAP', color: '#C8E8C0' },
-        { x: 620, y: GROUND_Y - 85, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // On towel rack
-        { x: 290, y: GROUND_Y - 200, label: 'TOWEL', color: '#F0D8C0' },
-        // On shelf high up
-        { x: 110, y: GROUND_Y - 310, label: 'SHAMPOO', color: '#80C0E8' },
-        // On shower shelf
-        { x: 530, y: GROUND_Y - 190, label: 'SOAP', color: '#C8E8C0' },
-        // On shelf near exit
-        { x: 800, y: GROUND_Y - 130, label: 'DUCK', color: '#FFE040' },
-        // Ground collectables
-        { x: 450, y: GROUND_Y - 30, label: 'BATH_TOY', color: '#FF80A0' },
-        { x: 700, y: GROUND_Y - 30, label: 'TOWEL', color: '#E8C8B0' },
+        // On bathtub (T1, y=490)
+        { x: 100, y: 490 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 170, y: 490 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        { x: 230, y: 490 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On toilet (T1, y=480)
+        { x: 385, y: 480 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On towel rack (T2, y=390)
+        { x: 180, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        // On shelf T2 (y=380)
+        { x: 530, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On sink (T1, y=470)
+        { x: 720, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On cabinet (T2, y=400)
+        { x: 860, y: 400 - 32, label: 'DUCK', color: '#FFE040' },
+        // On high shelf (T3, y=280)
+        { x: 330, y: 280 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        { x: 370, y: 280 - 32, label: 'BATH_TOY', color: '#FF80A0' },
 
         // === SCREEN 2 (960-1920): 10 collectables ===
-        // Near sink
-        { x: CANVAS_W + 630, y: GROUND_Y - 85, label: 'SOAP', color: '#C8E8C0' },
+        // On bathtub (T1, y=480)
+        { x: 1020, y: 480 - 32, label: 'SOAP', color: '#C8E8C0' },
         // On towel rack ladder (one per rack)
-        { x: CANVAS_W + 140, y: GROUND_Y - 130, label: 'TOWEL', color: '#F0D8C0' },
-        { x: CANVAS_W + 390, y: GROUND_Y - 200, label: 'SHAMPOO', color: '#80C0E8' },
-        { x: CANVAS_W + 155, y: GROUND_Y - 270, label: 'TOWEL', color: '#E8C8B0' },
-        { x: CANVAS_W + 420, y: GROUND_Y - 340, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // On high shelf at top
-        { x: CANVAS_W + 175, y: GROUND_Y - 410, label: 'DUCK', color: '#FFE040' },
-        // Right side shelf
-        { x: CANVAS_W + 775, y: GROUND_Y - 170, label: 'BATH_TOY', color: '#FF80A0' },
-        // Ground level
-        { x: CANVAS_W + 450, y: GROUND_Y - 30, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W + 550, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W + 850, y: GROUND_Y - 30, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 1060, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 1280, y: 370 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 1100, y: 280 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        { x: 1340, y: 260 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On high shelf (T4, y=170)
+        { x: 1130, y: 170 - 32, label: 'DUCK', color: '#FFE040' },
+        // On transition shelf (T2, y=380)
+        { x: 1550, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On sink (T1, y=470)
+        { x: 1730, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On crumbling (T3, y=280)
+        { x: 1475, y: 280 - 32, label: 'DUCK', color: '#FFE040' },
+        // On bathtub
+        { x: 1080, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
 
         // === SCREEN 3 (1920-2880): 10 collectables ===
-        // On entry shelf
-        { x: CANVAS_W * 2 + 110, y: GROUND_Y - 90, label: 'SHAMPOO', color: '#80C0E8' },
-        // Zigzag climb items (one per platform)
-        { x: CANVAS_W * 2 + 310, y: GROUND_Y - 160, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 2 + 125, y: GROUND_Y - 240, label: 'TOWEL', color: '#F0D8C0' },
-        { x: CANVAS_W * 2 + 370, y: GROUND_Y - 310, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        { x: CANVAS_W * 2 + 165, y: GROUND_Y - 370, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 2 + 410, y: GROUND_Y - 420, label: 'BATH_TOY', color: '#FF80A0' },
-        // Descent items
-        { x: CANVAS_W * 2 + 625, y: GROUND_Y - 310, label: 'SHAMPOO', color: '#80C0E8' },
-        { x: CANVAS_W * 2 + 810, y: GROUND_Y - 190, label: 'TOWEL', color: '#E8C8B0' },
-        // Ground level
-        { x: CANVAS_W * 2 + 500, y: GROUND_Y - 30, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 2 + 700, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
+        // On entry shelf (T1, y=480)
+        { x: 1970, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On static shelf (T2, y=390)
+        { x: 2090, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On crumbling soaps (grab fast!)
+        { x: 2250, y: 380 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 2410, y: 370 - 32, label: 'DUCK', color: '#FFE040' },
+        // On safe landing (T2, y=390)
+        { x: 2560, y: 390 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On crumbling soap 3
+        { x: 2720, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On exit bathtub (T1, y=470)
+        { x: 2840, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // High path items
+        { x: 2130, y: 270 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 2345, y: 260 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 2550, y: 270 - 32, label: 'TOWEL', color: '#E8C8B0' },
 
         // === SCREEN 4 (2880-3840): 10 collectables ===
-        // On sink
-        { x: CANVAS_W * 3 + 95, y: GROUND_Y - 85, label: 'SOAP', color: '#C8E8C0' },
-        // On laundry basket
-        { x: CANVAS_W * 3 + 290, y: GROUND_Y - 95, label: 'TOWEL', color: '#F0D8C0' },
-        // On shelf
-        { x: CANVAS_W * 3 + 510, y: GROUND_Y - 85, label: 'SHAMPOO', color: '#80C0E8' },
-        // On right sink
-        { x: CANVAS_W * 3 + 715, y: GROUND_Y - 90, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // On towel rack
-        { x: CANVAS_W * 3 + 390, y: GROUND_Y - 170, label: 'TOWEL', color: '#E8C8B0' },
-        // On exit shelf
-        { x: CANVAS_W * 3 + 885, y: GROUND_Y - 85, label: 'BATH_TOY', color: '#FF80A0' },
-        // Ground level
-        { x: CANVAS_W * 3 + 150, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 3 + 430, y: GROUND_Y - 30, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 3 + 600, y: GROUND_Y - 30, label: 'BATH_TOY', color: '#FF80A0' },
-        { x: CANVAS_W * 3 + 800, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
+        // On sink left (T1, y=470)
+        { x: 2960, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On bathtub center (T1, y=480)
+        { x: 3180, y: 480 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 3260, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On toilet (T1, y=475)
+        { x: 3445, y: 475 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On sink right (T1, y=470)
+        { x: 3625, y: 470 - 32, label: 'DUCK', color: '#FFE040' },
+        // On towel rack (T2, y=380)
+        { x: 3090, y: 380 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        // On shelf (T2, y=390)
+        { x: 3380, y: 390 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On exit shelf (T1, y=470)
+        { x: 3810, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On bonus cabinet (T3, y=270)
+        { x: 3280, y: 270 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 3320, y: 270 - 32, label: 'BATH_TOY', color: '#FF80A0' },
 
         // === SCREEN 5 (3840-4800): 10 collectables ===
-        // On starting shelf
-        { x: CANVAS_W * 4 + 70, y: GROUND_Y - 110, label: 'SOAP', color: '#C8E8C0' },
-        // On/near moving towel rack 1
-        { x: CANVAS_W * 4 + 240, y: GROUND_Y - 190, label: 'TOWEL', color: '#F0D8C0' },
-        // On rest shelf 1
-        { x: CANVAS_W * 4 + 475, y: GROUND_Y - 130, label: 'SHAMPOO', color: '#80C0E8' },
-        // On/near moving towel rack 2
-        { x: CANVAS_W * 4 + 575, y: GROUND_Y - 230, label: 'DUCK', color: '#FFE040' },
-        // On rest shelf 2
-        { x: CANVAS_W * 4 + 725, y: GROUND_Y - 150, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // On/near moving towel rack 3
-        { x: CANVAS_W * 4 + 820, y: GROUND_Y - 270, label: 'BATH_TOY', color: '#FF80A0' },
-        // Landing shelf
-        { x: CANVAS_W * 4 + 885, y: GROUND_Y - 90, label: 'TOWEL', color: '#E8C8B0' },
-        // Ground level
-        { x: CANVAS_W * 4 + 150, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 4 + 400, y: GROUND_Y - 30, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 4 + 650, y: GROUND_Y - 30, label: 'SHAMPOO', color: '#80C0E8' },
+        // On entry bathtub (T1, y=480)
+        { x: 3920, y: 480 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On static shelf (T2, y=390)
+        { x: 4050, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        // On moving towel rack 1 (T3, y=280)
+        { x: 4190, y: 280 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On static rest shelf (T2, y=380)
+        { x: 4370, y: 380 - 32, label: 'DUCK', color: '#FFE040' },
+        // On moving towel rack 2 (T3, y=270)
+        { x: 4490, y: 270 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On static rest shelf (T2, y=390)
+        { x: 4640, y: 390 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On moving towel rack 3 (T3, y=260)
+        { x: 4760, y: 260 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        // On exit bathtub (T1, y=470)
+        { x: 4850, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On bonus shelf (T4, y=170)
+        { x: 4420, y: 170 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 4460, y: 170 - 32, label: 'SHAMPOO', color: '#80C0E8' },
 
         // === SCREEN 6 (4800-5760): 10 collectables ===
-        // On laundry basket
-        { x: CANVAS_W * 5 + 120, y: GROUND_Y - 95, label: 'TOWEL', color: '#F0D8C0' },
-        // On tower tier 1
-        { x: CANVAS_W * 5 + 330, y: GROUND_Y - 110, label: 'SOAP', color: '#C8E8C0' },
-        // On tower tier 2
-        { x: CANVAS_W * 5 + 480, y: GROUND_Y - 200, label: 'SHAMPOO', color: '#80C0E8' },
-        // On crumbling tier 3 (grab fast!)
-        { x: CANVAS_W * 5 + 305, y: GROUND_Y - 290, label: 'DUCK', color: '#FFE040' },
-        // On crumbling tier 4
-        { x: CANVAS_W * 5 + 485, y: GROUND_Y - 350, label: 'BATH_TOY', color: '#FF80A0' },
-        // On towel rack side
-        { x: CANVAS_W * 5 + 685, y: GROUND_Y - 170, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // On exit shelf
-        { x: CANVAS_W * 5 + 855, y: GROUND_Y - 90, label: 'TOWEL', color: '#E8C8B0' },
-        // Ground
-        { x: CANVAS_W * 5 + 550, y: GROUND_Y - 30, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 5 + 750, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 5 + 160, y: GROUND_Y - 95, label: 'SHAMPOO', color: '#80C0E8' },
+        // On base bathtub (T1, y=480)
+        { x: 4900, y: 480 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        // On static shelf (T2, y=390)
+        { x: 5070, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On crumbling soap T2
+        { x: 5230, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On crumbling soap T3
+        { x: 5090, y: 280 - 32, label: 'DUCK', color: '#FFE040' },
+        // On static shelf T3
+        { x: 5270, y: 270 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On static T4 alternative
+        { x: 5310, y: 180 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On towel rack side (T2, y=380)
+        { x: 5455, y: 380 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        // On sink exit (T1, y=470)
+        { x: 5640, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On bathtub
+        { x: 4960, y: 480 - 32, label: 'DUCK', color: '#FFE040' },
+        // On shelf T2
+        { x: 5110, y: 390 - 32, label: 'SHAMPOO', color: '#80C0E8' },
 
         // === SCREEN 7 (5760-6720): 10 collectables ===
-        // Safe ground path (5 items)
-        { x: CANVAS_W * 6 + 100, y: GROUND_Y - 95, label: 'TOWEL', color: '#F0D8C0' },
-        { x: CANVAS_W * 6 + 320, y: GROUND_Y - 110, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 6 + 530, y: GROUND_Y - 85, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 6 + 755, y: GROUND_Y - 95, label: 'SHAMPOO', color: '#80C0E8' },
-        { x: CANVAS_W * 6 + 885, y: GROUND_Y - 85, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // High path bonus items (5 items, risk/reward)
-        { x: CANVAS_W * 6 + 380, y: GROUND_Y - 210, label: 'BATH_TOY', color: '#FF80A0' },
-        { x: CANVAS_W * 6 + 540, y: GROUND_Y - 330, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 6 + 580, y: GROUND_Y - 330, label: 'TOWEL', color: '#E8C8B0' },
-        { x: CANVAS_W * 6 + 620, y: GROUND_Y - 330, label: 'SHAMPOO', color: '#80C0E8' },
-        // Ground
-        { x: CANVAS_W * 6 + 450, y: GROUND_Y - 30, label: 'BATH_TOY', color: '#FF80A0' },
+        // Safe path items (lower tiers)
+        // On bathtub left (T1, y=480)
+        { x: 5840, y: 480 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 5900, y: 480 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On toilet (T1, y=475)
+        { x: 6055, y: 475 - 32, label: 'DUCK', color: '#FFE040' },
+        // On towel rack (T2, y=380)
+        { x: 5920, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On sink center (T1, y=470)
+        { x: 6235, y: 470 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On bathtub right (T1, y=480)
+        { x: 6440, y: 480 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On shelf right (T2, y=390)
+        { x: 6610, y: 390 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        // High path bonus items (risk/reward)
+        { x: 6220, y: 160 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 6260, y: 160 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 6300, y: 160 - 32, label: 'BATH_TOY', color: '#FF80A0' },
 
         // === SCREEN 8 (6720-7680): 10 collectables ===
-        // On alternating platforms
-        { x: CANVAS_W * 7 + 105, y: GROUND_Y - 110, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 7 + 285, y: GROUND_Y - 190, label: 'TOWEL', color: '#F0D8C0' },
-        { x: CANVAS_W * 7 + 125, y: GROUND_Y - 270, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 7 + 325, y: GROUND_Y - 340, label: 'SHAMPOO', color: '#80C0E8' },
-        { x: CANVAS_W * 7 + 145, y: GROUND_Y - 410, label: 'BATH_TOY', color: '#FF80A0' },
+        // On alternating platforms (zigzag climb)
+        // On entry shelf (T1, y=480)
+        { x: 6790, y: 480 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On crumbling T2 (y=390)
+        { x: 6950, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        // On static T3 (y=280)
+        { x: 7080, y: 280 - 32, label: 'DUCK', color: '#FFE040' },
+        // On crumbling T3 (y=270)
+        { x: 6910, y: 270 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On static T4 (y=180)
+        { x: 7030, y: 180 - 32, label: 'BATH_TOY', color: '#FF80A0' },
         // Descent items
-        { x: CANVAS_W * 7 + 575, y: GROUND_Y - 330, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        { x: CANVAS_W * 7 + 750, y: GROUND_Y - 210, label: 'TOWEL', color: '#E8C8B0' },
-        { x: CANVAS_W * 7 + 875, y: GROUND_Y - 100, label: 'SOAP', color: '#C8E8C0' },
-        // Ground
-        { x: CANVAS_W * 7 + 450, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 7 + 650, y: GROUND_Y - 30, label: 'BATH_TOY', color: '#FF80A0' },
+        { x: 7310, y: 260 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        { x: 7455, y: 380 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        { x: 7590, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On T4 crumbling
+        { x: 7190, y: 170 - 32, label: 'DUCK', color: '#FFE040' },
+        // On static T2
+        { x: 6820, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
 
         // === SCREEN 9 (7680-8640): 10 collectables ===
         // On moving/crumbling platforms
-        { x: CANVAS_W * 8 + 100, y: GROUND_Y - 130, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 8 + 345, y: GROUND_Y - 190, label: 'TOWEL', color: '#F0D8C0' },
-        { x: CANVAS_W * 8 + 535, y: GROUND_Y - 130, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 8 + 660, y: GROUND_Y - 230, label: 'SHAMPOO', color: '#80C0E8' },
-        { x: CANVAS_W * 8 + 845, y: GROUND_Y - 170, label: 'BATH_TOY', color: '#FF80A0' },
-        // Upper shelf
-        { x: CANVAS_W * 8 + 375, y: GROUND_Y - 330, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        // Ground
-        { x: CANVAS_W * 8 + 200, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 8 + 700, y: GROUND_Y - 30, label: 'TOWEL', color: '#E8C8B0' },
-        { x: CANVAS_W * 8 + 450, y: GROUND_Y - 30, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 8 + 900, y: GROUND_Y - 30, label: 'SHAMPOO', color: '#80C0E8' },
+        // On entry shelf (T1, y=480)
+        { x: 7750, y: 480 - 32, label: 'DUCK', color: '#FFE040' },
+        // On moving towel rack (T2, y=380)
+        { x: 7900, y: 380 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        // On crumbling soap (T2, y=390)
+        { x: 8090, y: 390 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On static towel rack (T2, y=380)
+        { x: 8235, y: 380 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On moving towel rack (T3, y=270)
+        { x: 8380, y: 270 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On crumbling soap (T2, y=390)
+        { x: 8550, y: 390 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On exit bathtub (T1, y=470)
+        { x: 8615, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // Upper shelf bonus (T3, y=260)
+        { x: 8130, y: 260 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 8170, y: 260 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        // On entry
+        { x: 7790, y: 480 - 32, label: 'SHAMPOO', color: '#80C0E8' },
 
         // === SCREEN 10 (8640-9600): 10 collectables ===
         // On gauntlet platforms
-        { x: CANVAS_W * 9 + 100, y: GROUND_Y - 150, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 9 + 275, y: GROUND_Y - 230, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 9 + 440, y: GROUND_Y - 160, label: 'SHAMPOO', color: '#80C0E8' },
-        { x: CANVAS_W * 9 + 590, y: GROUND_Y - 250, label: 'TOWEL', color: '#F0D8C0' },
-        { x: CANVAS_W * 9 + 725, y: GROUND_Y - 180, label: 'TOOTHBRUSH', color: '#60D0A0' },
-        { x: CANVAS_W * 9 + 855, y: GROUND_Y - 90, label: 'BATH_TOY', color: '#FF80A0' },
-        // Ground level
-        { x: CANVAS_W * 9 + 300, y: GROUND_Y - 30, label: 'TOWEL', color: '#E8C8B0' },
-        { x: CANVAS_W * 9 + 500, y: GROUND_Y - 30, label: 'DUCK', color: '#FFE040' },
-        { x: CANVAS_W * 9 + 650, y: GROUND_Y - 30, label: 'SOAP', color: '#C8E8C0' },
-        { x: CANVAS_W * 9 + 800, y: GROUND_Y - 30, label: 'SHAMPOO', color: '#80C0E8' },
+        // On entry shelf (T1, y=480)
+        { x: 8710, y: 480 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On moving towel rack (T2, y=380)
+        { x: 8860, y: 380 - 32, label: 'DUCK', color: '#FFE040' },
+        // On crumbling soap (T2, y=390)
+        { x: 9030, y: 390 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // On static towel rack (T2, y=370)
+        { x: 9190, y: 370 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        // On moving shelf (T3, y=270)
+        { x: 9340, y: 270 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // On crumbling soap (T2, y=380)
+        { x: 9470, y: 380 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        // On landing shelf (T1, y=470)
+        { x: 9555, y: 470 - 32, label: 'SOAP', color: '#C8E8C0' },
+        // On high bonus (T3, y=260)
+        { x: 9130, y: 260 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 9170, y: 260 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        // On landing
+        { x: 9595, y: 470 - 32, label: 'SHAMPOO', color: '#80C0E8' },
 
         // === SCREEN 11 (9600-10560): 0 standard collectables (boss arena) ===
 
         // === SPECIAL PICKUPS ===
-        // +HEALTH in Screen 4 (rest area) - on towel rack
-        { x: CANVAS_W * 3 + 370, y: GROUND_Y - 170, label: '+HEALTH', color: '#FF6060' },
-        // +HEALTH in Screen 7 (high path reward)
-        { x: CANVAS_W * 6 + 560, y: GROUND_Y - 330, label: '+HEALTH', color: '#FF6060' },
-        // +HEALTH in Screen 9 (escalate)
-        { x: CANVAS_W * 8 + 395, y: GROUND_Y - 330, label: '+HEALTH', color: '#FF6060' },
-        // +LIFE at the very top of crumbling tower in Screen 6 (y~130)
-        { x: CANVAS_W * 5 + 345, y: GROUND_Y - 420, label: '+LIFE', color: '#FF1493' },
+        // +HEALTH in Screen 4 (rest area) - on towel rack (T2, y=380)
+        { x: 3110, y: 380 - 32, label: '+HEALTH', color: '#FF6060' },
+        // +HEALTH in Screen 7 (high path reward) - on cabinet (T4, y=160)
+        { x: 6240, y: 160 - 32, label: '+HEALTH', color: '#FF6060' },
+        // +HEALTH in Screen 9 (upper shelf T3, y=260)
+        { x: 8150, y: 260 - 32, label: '+HEALTH', color: '#FF6060' },
+        // +LIFE at top of crumbling tower in Screen 6 (T4, y=170)
+        { x: 5130, y: 170 - 32, label: '+LIFE', color: '#FF1493' },
     ],
 
     // ========== OBSTACLES ==========
+    // All on platform surfaces, not ground
     obstacles: [
         // === SCREEN 1 ===
-        // Hot tap near bathtub
-        { x: 400, y: GROUND_Y - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040' },
+        // Hot tap on bathtub edge
+        { x: 240, y: 490 - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040' },
 
         // === SCREEN 2 ===
-        // Wet floor by entrance
-        { x: CANVAS_W + 300, y: GROUND_Y - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
-        // Hair dryer near sink
-        { x: CANVAS_W + 720, y: GROUND_Y - 30, width: 30, height: 28, label: 'HAIR_DRYER', color: '#D0A0D0' },
+        // Wet floor on bathtub
+        { x: 1050, y: 480 - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
+        // Hair dryer on sink
+        { x: 1720, y: 470 - 28, width: 30, height: 28, label: 'HAIR_DRYER', color: '#D0A0D0' },
 
         // === SCREEN 3 ===
-        // Plug on mid-height shelf
-        { x: CANVAS_W * 2 + 355, y: GROUND_Y - 308, width: 22, height: 22, label: 'PLUG', color: '#404040' },
-        // Razor near top
-        { x: CANVAS_W * 2 + 395, y: GROUND_Y - 418, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0' },
+        // Plug on static shelf (T2, y=390)
+        { x: 2080, y: 390 - 22, width: 22, height: 22, label: 'PLUG', color: '#404040' },
+        // Razor on high path (T3, y=270)
+        { x: 2540, y: 270 - 24, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0' },
 
         // === SCREEN 4 ===
-        // Wet floor in rest area (mild hazard)
-        { x: CANVAS_W * 3 + 550, y: GROUND_Y - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
+        // Wet floor on bathtub (mild hazard in rest area)
+        { x: 3200, y: 480 - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
 
         // === SCREEN 5 ===
-        // Timed hot tap (cycles on/off)
-        { x: CANVAS_W * 4 + 350, y: GROUND_Y - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
+        // Timed hot tap on static shelf (T2, y=390)
+        { x: 4040, y: 390 - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
-        // Wet floor between moving racks
-        { x: CANVAS_W * 4 + 600, y: GROUND_Y - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
+        // Wet floor on rest shelf (T2, y=380)
+        { x: 4360, y: 380 - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
 
         // === SCREEN 6 ===
-        // Timed razor on crumbling tower
-        { x: CANVAS_W * 5 + 465, y: GROUND_Y - 348, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0',
+        // Timed razor on T3 static shelf (y=270)
+        { x: 5260, y: 270 - 24, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0.5 },
-        // Plug near base
-        { x: CANVAS_W * 5 + 200, y: GROUND_Y - 30, width: 22, height: 22, label: 'PLUG', color: '#404040',
+        // Plug on T2 shelf (y=390)
+        { x: 5060, y: 390 - 22, width: 22, height: 22, label: 'PLUG', color: '#404040',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.3 },
 
         // === SCREEN 7 ===
-        // Wet floor on safe path
-        { x: CANVAS_W * 6 + 400, y: GROUND_Y - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
+        // Wet floor on sink (T1, y=470)
+        { x: 6220, y: 470 - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
 
         // === SCREEN 8 ===
-        // Timed hot tap near pipe
-        { x: CANVAS_W * 7 + 200, y: GROUND_Y - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
+        // Timed hot tap on static T3 shelf (y=280)
+        { x: 7070, y: 280 - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
           timerOn: 1.5, timerOff: 2.0, timerOffset: 0 },
-        // Razor on upper platform
-        { x: CANVAS_W * 7 + 555, y: GROUND_Y - 328, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0',
+        // Razor on cabinet (T3, y=260)
+        { x: 7300, y: 260 - 24, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.8 },
 
         // === SCREEN 9 ===
-        // Wet floor timed
-        { x: CANVAS_W * 8 + 400, y: GROUND_Y - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8',
+        // Wet floor timed on static towel rack (T2, y=380)
+        { x: 8220, y: 380 - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0 },
-        // Hot tap timed
-        { x: CANVAS_W * 8 + 750, y: GROUND_Y - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
+        // Hot tap timed on exit bathtub (T1, y=470)
+        { x: 8600, y: 470 - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.5 },
 
         // === SCREEN 10 ===
-        // Hot tap
-        { x: CANVAS_W * 9 + 150, y: GROUND_Y - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
+        // Hot tap on static towel rack (T2, y=370)
+        { x: 9170, y: 370 - 30, width: 30, height: 30, label: 'HOT_TAP', color: '#FF4040',
           timerOn: 1.5, timerOff: 2.0, timerOffset: 0 },
-        // Wet floor
-        { x: CANVAS_W * 9 + 350, y: GROUND_Y - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
-        // Razor
-        { x: CANVAS_W * 9 + 600, y: GROUND_Y - 248, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0',
+        // Wet floor on landing (T1, y=470)
+        { x: 9540, y: 470 - 20, width: 60, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
+        // Razor on high bonus (T3, y=260)
+        { x: 9120, y: 260 - 24, width: 24, height: 24, label: 'RAZOR', color: '#C0C0C0',
           timerOn: 1.8, timerOff: 1.5, timerOffset: 0.3 },
 
         // === SCREEN 11 ===
-        // Wet floor in boss arena
-        { x: CANVAS_W * 10 + 400, y: GROUND_Y - 20, width: 70, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
+        // Wet floor in boss arena on shelf
+        { x: CANVAS_W * 10 + 440, y: 370 - 20, width: 70, height: 20, label: 'WET_FLOOR', color: '#80C8E8' },
     ],
 
     // ========== ENEMIES ==========
+    // All on platforms, not ground
     enemies: [
         // === SCREEN 1 ===
-        // Spider near toilet
-        { x: 650, y: GROUND_Y - 30, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Spider on shelf (T2, y=380)
+        { x: 520, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
 
         // === SCREEN 2 ===
-        // Rubber duck patrolling ground
-        { x: CANVAS_W + 500, y: GROUND_Y - 30, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
-        // Mould on ground
-        { x: CANVAS_W + 250, y: GROUND_Y - 30, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Rubber duck on bathtub (T1, y=480)
+        { x: 1060, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
+        // Mould on towel rack (T2, y=370)
+        { x: 1260, y: 370 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
 
         // === SCREEN 3 ===
-        // Spider on mid-level platform
-        { x: CANVAS_W * 2 + 300, y: GROUND_Y - 160, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Spider on static shelf (T2, y=390)
+        { x: 2550, y: 390 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
 
         // === SCREEN 4 ===
-        // Rubber duck (mild threat in rest area)
-        { x: CANVAS_W * 3 + 400, y: GROUND_Y - 30, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
+        // Rubber duck on bathtub (T1, y=480) - mild in rest area
+        { x: 3200, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
 
         // === SCREEN 5 ===
-        // Spider between moving platforms
-        { x: CANVAS_W * 4 + 300, y: GROUND_Y - 30, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
-        // Mould
-        { x: CANVAS_W * 4 + 550, y: GROUND_Y - 30, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Spider on static rest shelf (T2, y=380)
+        { x: 4360, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Mould on shelf (T2, y=390)
+        { x: 4630, y: 390 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
 
         // === SCREEN 6 ===
-        // Spider near tower base
-        { x: CANVAS_W * 5 + 400, y: GROUND_Y - 30, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Spider on T2 static shelf (y=390)
+        { x: 5060, y: 390 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
 
         // === SCREEN 7 ===
-        // Rubber duck on safe path
-        { x: CANVAS_W * 6 + 600, y: GROUND_Y - 30, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
+        // Rubber duck on bathtub (T1, y=480)
+        { x: 6420, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
 
         // === SCREEN 8 ===
-        // Mould near pipes
-        { x: CANVAS_W * 7 + 400, y: GROUND_Y - 30, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
-        // Spider at height
-        { x: CANVAS_W * 7 + 560, y: GROUND_Y - 330, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Mould on towel rack (T2, y=380)
+        { x: 7440, y: 380 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Spider on cabinet (T3, y=260)
+        { x: 7300, y: 260 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
 
         // === SCREEN 9 ===
-        // Rubber duck
-        { x: CANVAS_W * 8 + 450, y: GROUND_Y - 30, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
-        // Spider
-        { x: CANVAS_W * 8 + 800, y: GROUND_Y - 30, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Rubber duck on static towel rack (T2, y=380)
+        { x: 8220, y: 380 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
+        // Spider on exit bathtub (T1, y=470)
+        { x: 8600, y: 470 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
 
         // === SCREEN 10 ===
-        // Spider x2 + mould
-        { x: CANVAS_W * 9 + 200, y: GROUND_Y - 30, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
-        { x: CANVAS_W * 9 + 500, y: GROUND_Y - 30, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
-        { x: CANVAS_W * 9 + 700, y: GROUND_Y - 30, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Spider x2 + mould on platforms
+        { x: 8840, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        { x: 9170, y: 370 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 60, speed: 40 },
+        { x: 9460, y: 380 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
 
         // === SCREEN 11 ===
-        // Boss room - mould lurking
-        { x: CANVAS_W * 10 + 300, y: GROUND_Y - 30, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Mould in boss room on shelf
+        { x: CANVAS_W * 10 + 440, y: 370 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
     ],
 };

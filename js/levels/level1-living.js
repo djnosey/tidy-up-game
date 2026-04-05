@@ -1,6 +1,7 @@
 // Level 1: Living Room
 // 11 screen widths (10,560px at 960px canvas width)
 // 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// DEADLY FLOOR — no full-width ground platform
 
 const GROUND_Y = 520;
 const CANVAS_W = 960;
@@ -11,7 +12,7 @@ export const level1 = {
     width: LEVEL_W,
     groundY: GROUND_Y,
     backgroundColor: '#D4C4A8', // warm beige
-    playerStart: { x: 80, y: GROUND_Y - 72 },
+    playerStart: { x: 80, y: 460 - 72 },
 
     bossDoor: { x: CANVAS_W * 10 - 90, y: GROUND_Y - 120 },
 
@@ -212,388 +213,478 @@ export const level1 = {
     ],
 
     // ========== PLATFORMS ==========
+    // ~80 static + ~10 moving + ~8 crumbling
+    // Four-tier system: T1=460-490, T2=360-400, T3=250-300, T4=140-200
     platforms: [
-        // Ground
-        { x: 0, y: GROUND_Y, width: LEVEL_W, height: 80, label: '', color: '#8B7355' },
+        // Boss arena ground only (label '' = solid full collision)
+        { x: CANVAS_W * 10, y: GROUND_Y, width: CANVAS_W, height: 80, label: '', color: '#8B7355' },
 
-        // === SCREEN 1 (0-960): TEACH - Sofa intro ===
-        // Easy hops: sofa -> table -> shelf, gaps ~80-100px
-        { x: 160, y: GROUND_Y - 60, width: 220, height: 24, label: 'SOFA', color: '#6B4226' },
-        { x: 460, y: GROUND_Y - 40, width: 120, height: 14, label: 'TABLE', color: '#A0522D' },
-        { x: 680, y: GROUND_Y - 90, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 850, y: GROUND_Y - 60, width: 80, height: 24, label: 'SOFA', color: '#6B4226' },
+        // === SCREEN 1 (0-960): TEACH — Wide safe T1 islands, simple hops ===
+        // Wide spawn island
+        { x: 40, y: 460, width: 260, height: 24, label: 'SOFA', color: '#6B4226' },
+        // Easy hop to table (~100px gap)
+        { x: 400, y: 470, width: 200, height: 14, label: 'TABLE', color: '#A0522D' },
+        // Hop to armchair (~80px gap)
+        { x: 680, y: 460, width: 200, height: 24, label: 'ARMCHAIR', color: '#6B4226' },
+        // T2 shelf above armchair (optional up-hop for bonus)
+        { x: 720, y: 380, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
 
-        // === SCREEN 2 (960-1920): TEST - Coffee table area ===
-        // Small gaps 100-120px, shelf climb stepping up ~70px each
-        { x: 1000, y: GROUND_Y - 45, width: 120, height: 14, label: 'TABLE', color: '#A0522D' },
-        { x: 1200, y: GROUND_Y - 60, width: 120, height: 24, label: 'SOFA', color: '#6B4226' },
-        // Shelf climb: 3 shelves stepping up ~70px, zigzag
-        { x: 1420, y: GROUND_Y - 80, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 1560, y: GROUND_Y - 150, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 1420, y: GROUND_Y - 220, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        // Landing after climb
-        { x: 1700, y: GROUND_Y - 60, width: 140, height: 22, label: 'ARMCHAIR', color: '#6B4226' },
+        // === SCREEN 2 (960-1920): TEACH — More T1 islands, gentle climb, first crumble ===
+        // Wide sofa island
+        { x: 960, y: 470, width: 240, height: 24, label: 'SOFA', color: '#6B4226' },
+        // Table hop
+        { x: 1280, y: 480, width: 160, height: 14, label: 'TABLE', color: '#A0522D' },
+        // Armchair landing
+        { x: 1520, y: 465, width: 180, height: 22, label: 'ARMCHAIR', color: '#6B4226' },
+        // First crumble tutorial — wide, long timer, safe static nearby
+        { x: 1780, y: 470, width: 100, height: 20, label: 'CUSHION', color: '#CD853F',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Safe static right after crumble
+        { x: 1870, y: 460, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T2 optional shelf above sofa
+        { x: 1000, y: 380, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T2 books above table
+        { x: 1320, y: 370, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
 
-        // === SCREEN 3 (1920-2880): VERTICAL CLIMB - Bookshelf tower ===
-        // 4-tier bookshelf: 70px vertical steps, zigzag left-right
-        { x: 2000, y: GROUND_Y - 60, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
-        { x: 2130, y: GROUND_Y - 130, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
-        { x: 2000, y: GROUND_Y - 200, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
-        { x: 2130, y: GROUND_Y - 270, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
-        // Landing platforms after tower
-        { x: 2300, y: GROUND_Y - 60, width: 140, height: 24, label: 'SOFA', color: '#6B4226' },
-        { x: 2520, y: GROUND_Y - 50, width: 120, height: 14, label: 'TABLE', color: '#A0522D' },
-        { x: 2720, y: GROUND_Y - 60, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-
-        // === SCREEN 4 (2880-3840): REST -> TEST - Moving frames ===
-        // Rest area: wide sofa
-        { x: 2920, y: GROUND_Y - 60, width: 220, height: 24, label: 'SOFA', color: '#6B4226' },
-        // Transition platform
-        { x: 3200, y: GROUND_Y - 50, width: 70, height: 14, label: 'CHAIR', color: '#8B4513' },
-        // 3 moving FRAME platforms
-        { x: 3350, y: GROUND_Y - 120, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
+        // === SCREEN 3 (1920-2880): Zigzag climb, first crumble pair, first moving ===
+        // T1 landing from screen 2
+        { x: 1940, y: 470, width: 160, height: 24, label: 'SOFA', color: '#6B4226' },
+        // T2 shelf — start zigzag climb
+        { x: 2140, y: 390, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T3 books — zigzag left
+        { x: 1980, y: 290, width: 90, height: 20, label: 'BOOKS', color: '#654321' },
+        // T3 shelf — zigzag right
+        { x: 2200, y: 260, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T2 descent right
+        { x: 2380, y: 370, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T1 landing
+        { x: 2540, y: 470, width: 140, height: 24, label: 'SOFA', color: '#6B4226' },
+        // Two crumbling cushions bridging a gap (with static alternative below)
+        { x: 2730, y: 400, width: 80, height: 20, label: 'CUSHION', color: '#CD853F',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        { x: 2850, y: 390, width: 80, height: 20, label: 'CUSHION', color: '#DAA520',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Static alternative path (lower, longer route)
+        { x: 2750, y: 480, width: 80, height: 14, label: 'TABLE', color: '#A0522D' },
+        // First moving frame (gentle)
+        { x: 2700, y: 280, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
           moveX: 60, moveSpeed: 0.8 },
-        { x: 3500, y: GROUND_Y - 160, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
-          moveX: -70, moveSpeed: 1.2 },
-        { x: 3650, y: GROUND_Y - 130, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
-          moveX: 80, moveSpeed: 1.4 },
-        // Landing after frames
-        { x: 3780, y: GROUND_Y - 60, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
 
-        // === SCREEN 5 (3840-4800): CHALLENGE - TV unit gauntlet ===
-        // Narrow platforms, 150px gaps
-        { x: 3900, y: GROUND_Y - 50, width: 70, height: 14, label: 'CHAIR', color: '#8B4513' },
-        // 2 crumbling cushion platforms
-        { x: 4050, y: GROUND_Y - 100, width: 60, height: 20, label: 'CUSHION', color: '#CD853F',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 2.5 },
-        { x: 4200, y: GROUND_Y - 80, width: 60, height: 20, label: 'CUSHION', color: '#DAA520',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 2.5 },
-        // TV UNIT as main platform
-        { x: 4350, y: GROUND_Y - 50, width: 220, height: 20, label: 'TV UNIT', color: '#2F2F2F' },
-        // Exit platform
-        { x: 4650, y: GROUND_Y - 80, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // === SCREEN 4 (2880-3840): Introduce zigzag + moving platforms ===
+        // T1 wide rest area
+        { x: 2900, y: 470, width: 220, height: 24, label: 'SOFA', color: '#6B4226' },
+        // T2 chair hop
+        { x: 3180, y: 390, width: 80, height: 16, label: 'CHAIR', color: '#8B4513' },
+        // T2 shelf
+        { x: 3330, y: 380, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T3 moving frame
+        { x: 3300, y: 270, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: 80, moveSpeed: 1.0 },
+        // T2 landing shelf
+        { x: 3500, y: 370, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T1 sofa landing
+        { x: 3660, y: 465, width: 180, height: 24, label: 'SOFA', color: '#6B4226' },
+        // T1 table exit
+        { x: 3780, y: 480, width: 80, height: 14, label: 'TABLE', color: '#A0522D' },
+        // T4 bonus shelf (reachable from T3 moving frame)
+        { x: 3260, y: 170, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
 
-        // === SCREEN 6 (4800-5760): REST -> RISK/REWARD - High path choice ===
-        // Safe ground path
-        { x: 4850, y: GROUND_Y - 55, width: 140, height: 22, label: 'ARMCHAIR', color: '#6B4226' },
-        { x: 5060, y: GROUND_Y - 60, width: 220, height: 24, label: 'SOFA', color: '#6B4226' },
-        { x: 5360, y: GROUND_Y - 40, width: 120, height: 14, label: 'TABLE', color: '#A0522D' },
-        { x: 5560, y: GROUND_Y - 55, width: 140, height: 22, label: 'ARMCHAIR', color: '#6B4226' },
-        // High shelf path (bonus route)
-        { x: 5050, y: GROUND_Y - 160, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 5220, y: GROUND_Y - 250, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 5400, y: GROUND_Y - 280, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-
-        // === SCREEN 7 (5760-6720): CHALLENGE - Crumbling tower ===
-        // 5-tier shelf tower, top 2 crumble
-        { x: 5850, y: GROUND_Y - 60, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 5980, y: GROUND_Y - 130, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 5850, y: GROUND_Y - 200, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 5980, y: GROUND_Y - 270, width: 80, height: 20, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 5850, y: GROUND_Y - 340, width: 80, height: 20, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Landing after tower
-        { x: 6150, y: GROUND_Y - 60, width: 120, height: 24, label: 'SOFA', color: '#6B4226' },
-        { x: 6350, y: GROUND_Y - 50, width: 120, height: 14, label: 'TABLE', color: '#A0522D' },
-        { x: 6550, y: GROUND_Y - 60, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-
-        // === SCREEN 8 (6720-7680): ESCALATE - Moving platform chain ===
-        // Start platform
-        { x: 6750, y: GROUND_Y - 60, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        // 5 moving FRAME platforms, staggered
-        { x: 6900, y: GROUND_Y - 120, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
-          moveX: 60, moveSpeed: 0.8 },
-        { x: 7060, y: GROUND_Y - 160, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
-          moveX: -70, moveSpeed: 1.0 },
-        { x: 7220, y: GROUND_Y - 130, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
-          moveX: 80, moveSpeed: 1.2 },
-        { x: 7380, y: GROUND_Y - 170, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
-          moveX: -60, moveSpeed: 1.4 },
-        { x: 7540, y: GROUND_Y - 140, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
+        // === SCREEN 5 (3840-4800): Horizontal gauntlet + high path choice ===
+        // T1 entry
+        { x: 3860, y: 470, width: 120, height: 22, label: 'ARMCHAIR', color: '#6B4226' },
+        // T2 platforms across screen — main gauntlet path
+        { x: 4040, y: 390, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 4220, y: 380, width: 90, height: 20, label: 'BOOKS', color: '#654321' },
+        // Moving frame bridging gauntlet gap
+        { x: 4380, y: 370, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
           moveX: 70, moveSpeed: 1.0 },
-        // End landing
-        { x: 7620, y: GROUND_Y - 60, width: 80, height: 24, label: 'SOFA', color: '#6B4226' },
+        { x: 4530, y: 390, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T1 TV unit — wide safe landing
+        { x: 4680, y: 470, width: 200, height: 20, label: 'TV UNIT', color: '#2F2F2F' },
+        // High risk/reward path (T3 to T4)
+        { x: 4060, y: 280, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 4240, y: 200, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 4420, y: 170, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 4600, y: 260, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
 
-        // === SCREEN 9 (7680-8640): ESCALATE - Crumble sprint ===
-        // 4 crumbling platforms in a row with 1-2 static rest points
-        { x: 7750, y: GROUND_Y - 80, width: 70, height: 20, label: 'CUSHION', color: '#CD853F',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 2.5 },
-        { x: 7900, y: GROUND_Y - 100, width: 70, height: 20, label: 'CUSHION', color: '#DAA520',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 2.5 },
-        // Brief static rest
-        { x: 8050, y: GROUND_Y - 80, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        // More crumbling
-        { x: 8200, y: GROUND_Y - 100, width: 70, height: 20, label: 'CUSHION', color: '#CD853F',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 2.5 },
-        { x: 8350, y: GROUND_Y - 80, width: 70, height: 20, label: 'CUSHION', color: '#DAA520',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 2.5 },
-        // Final static rest
-        { x: 8500, y: GROUND_Y - 60, width: 120, height: 24, label: 'SOFA', color: '#6B4226' },
-
-        // === SCREEN 10 (8640-9600): GAUNTLET - Pre-boss ===
-        // Mix of ALL mechanics: static, moving, crumbling, 200px gaps
-        { x: 8700, y: GROUND_Y - 80, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 8900, y: GROUND_Y - 120, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
-          moveX: 70, moveSpeed: 1.2 },
-        { x: 9080, y: GROUND_Y - 100, width: 70, height: 20, label: 'CUSHION', color: '#CD853F',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 2.5 },
-        { x: 9230, y: GROUND_Y - 80, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 9380, y: GROUND_Y - 130, width: 50, height: 16, label: 'FRAME', color: '#B8860B',
+        // === SCREEN 6 (4800-5760): Horizontal gauntlet + risk/reward T3/T4 ===
+        // T1 armchair entry
+        { x: 4850, y: 465, width: 140, height: 22, label: 'ARMCHAIR', color: '#6B4226' },
+        // T2 lower path — safe route with wider platforms
+        { x: 5050, y: 390, width: 120, height: 24, label: 'SOFA', color: '#6B4226' },
+        { x: 5250, y: 400, width: 100, height: 14, label: 'TABLE', color: '#A0522D' },
+        { x: 5420, y: 390, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // Moving frame in lower path
+        { x: 5580, y: 380, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
           moveX: -60, moveSpeed: 1.0 },
-        { x: 9500, y: GROUND_Y - 60, width: 70, height: 14, label: 'TABLE', color: '#A0522D' },
+        // T1 wide landing
+        { x: 5680, y: 470, width: 80, height: 24, label: 'SOFA', color: '#6B4226' },
+        // T3 upper path — risk/reward with collectibles
+        { x: 5080, y: 280, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 5260, y: 260, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
+        { x: 5440, y: 250, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T4 bonus platform
+        { x: 5260, y: 160, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+
+        // === SCREEN 7 (5760-6720): Crumbling tower + static alternatives ===
+        // T1 entry
+        { x: 5780, y: 470, width: 120, height: 20, label: 'SHELF', color: '#8B6914' },
+        // Zigzag tower — mix of static and crumbling
+        // T2 static
+        { x: 5950, y: 390, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T3 crumbling
+        { x: 5810, y: 300, width: 80, height: 20, label: 'CUSHION', color: '#CD853F',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T3 static alternative (slightly harder to reach)
+        { x: 5960, y: 280, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
+        // T4 crumbling (reward route)
+        { x: 5830, y: 190, width: 80, height: 20, label: 'CUSHION', color: '#DAA520',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T4 static adjacent
+        { x: 5990, y: 170, width: 70, height: 20, label: 'SHELF', color: '#8B6914' },
+        // Descent — T2 platforms
+        { x: 6130, y: 370, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 6300, y: 390, width: 120, height: 24, label: 'SOFA', color: '#6B4226' },
+        // T1 rest
+        { x: 6480, y: 470, width: 160, height: 14, label: 'TABLE', color: '#A0522D' },
+        // T1 exit
+        { x: 6700, y: 460, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+
+        // === SCREEN 8 (6720-7680): Moving platform chain ===
+        // T1 start
+        { x: 6740, y: 470, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T2 static — launch pad
+        { x: 6900, y: 390, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
+        // 5 moving frames at T2/T3 — staggered heights
+        { x: 7040, y: 370, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: 60, moveSpeed: 0.9 },
+        { x: 7180, y: 290, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: -70, moveSpeed: 1.0 },
+        { x: 7320, y: 360, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: 80, moveSpeed: 1.2 },
+        { x: 7460, y: 280, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: -60, moveSpeed: 1.4 },
+        { x: 7600, y: 370, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: 70, moveSpeed: 1.0 },
+        // T2 static rest after chain
+        { x: 7550, y: 400, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T1 landing
+        { x: 7620, y: 470, width: 80, height: 24, label: 'SOFA', color: '#6B4226' },
+
+        // === SCREEN 9 (7680-8640): Full gauntlet — crumble sprint + mixed ===
+        // T1 entry
+        { x: 7700, y: 465, width: 100, height: 22, label: 'ARMCHAIR', color: '#6B4226' },
+        // Crumble sprint at T2 — 4 crumbling in a row
+        { x: 7870, y: 400, width: 80, height: 20, label: 'CUSHION', color: '#CD853F',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        { x: 8020, y: 390, width: 80, height: 20, label: 'CUSHION', color: '#DAA520',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Static rest mid-sprint
+        { x: 8170, y: 385, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // More crumbling
+        { x: 8330, y: 395, width: 80, height: 20, label: 'CUSHION', color: '#CD853F',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        { x: 8480, y: 390, width: 80, height: 20, label: 'CUSHION', color: '#DAA520',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T1 safe landing after sprint
+        { x: 8600, y: 470, width: 120, height: 24, label: 'SOFA', color: '#6B4226' },
+        // T3 optional bonus above sprint
+        { x: 8060, y: 280, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 8300, y: 270, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+
+        // === SCREEN 10 (8640-9600): Full gauntlet — all mechanics ===
+        // T1 entry
+        { x: 8660, y: 470, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T2 shelf
+        { x: 8830, y: 390, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T3 moving frame
+        { x: 8990, y: 290, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: 70, moveSpeed: 1.2 },
+        // T2 crumbling
+        { x: 9130, y: 380, width: 80, height: 20, label: 'CUSHION', color: '#CD853F',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T2 static
+        { x: 9280, y: 390, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // T3 moving frame
+        { x: 9420, y: 280, width: 64, height: 16, label: 'FRAME', color: '#B8860B',
+          moveX: -60, moveSpeed: 1.0 },
+        // T1 pre-boss landing (wide for safety)
+        { x: 9500, y: 470, width: 160, height: 14, label: 'TABLE', color: '#A0522D' },
+        // T2 platforms for approach variety
+        { x: 9080, y: 270, width: 80, height: 20, label: 'BOOKS', color: '#654321' },
+        // T4 high reward
+        { x: 9180, y: 170, width: 70, height: 20, label: 'SHELF', color: '#8B6914' },
 
         // === SCREEN 11 (9600-10560): BOSS ARENA ===
         // 3 shelf platforms for dodging boss
-        { x: 9750, y: GROUND_Y - 120, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 10050, y: GROUND_Y - 150, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 10350, y: GROUND_Y - 120, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 9750, y: 380, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 10050, y: 300, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 10350, y: 380, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
     ],
 
     // ========== COLLECTABLES ==========
     // 100 standard items + 3 +HEALTH + 1 +LIFE = 104 total
     collectables: [
         // === SCREEN 1 (12 items) ===
-        // On/near sofa
-        { x: 200, y: GROUND_Y - 95, label: 'REMOTE', color: '#333' },
-        { x: 260, y: GROUND_Y - 95, label: 'MUG', color: '#8B4513' },
-        { x: 330, y: GROUND_Y - 95, label: 'MAGAZINE', color: '#4682B4' },
-        // On table
-        { x: 490, y: GROUND_Y - 72, label: 'GLASSES', color: '#C0C0C0' },
-        { x: 540, y: GROUND_Y - 72, label: 'COASTER', color: '#D2691E' },
-        // On shelf
-        { x: 700, y: GROUND_Y - 120, label: 'BOOK', color: '#8B0000' },
-        { x: 740, y: GROUND_Y - 120, label: 'GLASS', color: '#87CEEB' },
-        // On exit sofa
-        { x: 870, y: GROUND_Y - 95, label: 'CUSHION', color: '#CD853F' },
-        // On ground between platforms
-        { x: 400, y: GROUND_Y - 30, label: 'SOCKS', color: '#4169E1' },
-        { x: 620, y: GROUND_Y - 30, label: 'PHONE', color: '#333' },
-        { x: 780, y: GROUND_Y - 30, label: 'KEYS', color: '#FFD700' },
-        { x: 930, y: GROUND_Y - 30, label: 'BLANKET', color: '#FFB6C1' },
+        // On spawn sofa (y=460, items at 460-32=428)
+        { x: 80, y: 428, label: 'REMOTE', color: '#333' },
+        { x: 140, y: 428, label: 'MUG', color: '#8B4513' },
+        { x: 200, y: 428, label: 'MAGAZINE', color: '#4682B4' },
+        // On table (y=470, items at 438)
+        { x: 440, y: 438, label: 'GLASSES', color: '#C0C0C0' },
+        { x: 510, y: 438, label: 'COASTER', color: '#D2691E' },
+        { x: 560, y: 438, label: 'PHONE', color: '#333' },
+        // On armchair (y=460, items at 428)
+        { x: 720, y: 428, label: 'CUSHION', color: '#CD853F' },
+        { x: 780, y: 428, label: 'SOCKS', color: '#4169E1' },
+        { x: 840, y: 428, label: 'BLANKET', color: '#FFB6C1' },
+        // On T2 shelf (y=380, items at 348)
+        { x: 740, y: 348, label: 'BOOK', color: '#8B0000' },
+        { x: 790, y: 348, label: 'GLASS', color: '#87CEEB' },
+        { x: 260, y: 428, label: 'KEYS', color: '#FFD700' },
 
         // === SCREEN 2 (12 items) ===
-        // On table
-        { x: 1030, y: GROUND_Y - 77, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 1080, y: GROUND_Y - 77, label: 'MUG', color: '#8B4513' },
-        // On sofa
-        { x: 1230, y: GROUND_Y - 95, label: 'REMOTE', color: '#333' },
-        { x: 1290, y: GROUND_Y - 95, label: 'CUSHION', color: '#CD853F' },
-        // On shelf climb
-        { x: 1450, y: GROUND_Y - 112, label: 'BOOK', color: '#8B0000' },
-        { x: 1590, y: GROUND_Y - 182, label: 'BOOK', color: '#006400' },
-        { x: 1450, y: GROUND_Y - 252, label: 'GLASSES', color: '#C0C0C0' },
-        // On armchair
-        { x: 1740, y: GROUND_Y - 95, label: 'BLANKET', color: '#FFB6C1' },
-        // Ground items
-        { x: 1150, y: GROUND_Y - 30, label: 'SOCKS', color: '#4169E1' },
-        { x: 1350, y: GROUND_Y - 30, label: 'COASTER', color: '#D2691E' },
-        { x: 1560, y: GROUND_Y - 30, label: 'HEADPHONES', color: '#333' },
-        { x: 1870, y: GROUND_Y - 30, label: 'PHONE', color: '#333' },
+        // On sofa (y=470, items at 438)
+        { x: 1000, y: 438, label: 'REMOTE', color: '#333' },
+        { x: 1060, y: 438, label: 'MUG', color: '#8B4513' },
+        { x: 1120, y: 438, label: 'MAGAZINE', color: '#4682B4' },
+        // On table (y=480, items at 448)
+        { x: 1320, y: 448, label: 'GLASSES', color: '#C0C0C0' },
+        { x: 1400, y: 448, label: 'COASTER', color: '#D2691E' },
+        // On armchair (y=465, items at 433)
+        { x: 1560, y: 433, label: 'CUSHION', color: '#CD853F' },
+        { x: 1640, y: 433, label: 'BLANKET', color: '#FFB6C1' },
+        // On crumble/shelf at end (y=470/460)
+        { x: 1800, y: 438, label: 'SOCKS', color: '#4169E1' },
+        { x: 1890, y: 428, label: 'PHONE', color: '#333' },
+        // On T2 shelf (y=380)
+        { x: 1020, y: 348, label: 'BOOK', color: '#8B0000' },
+        // On T2 books (y=370)
+        { x: 1340, y: 338, label: 'HEADPHONES', color: '#333' },
+        { x: 1900, y: 428, label: 'KEYS', color: '#FFD700' },
 
         // === SCREEN 3 (10 items) ===
-        // Bookshelf tower climb items
-        { x: 2020, y: GROUND_Y - 92, label: 'BOOK', color: '#654321' },
-        { x: 2150, y: GROUND_Y - 162, label: 'BOOK', color: '#8B0000' },
-        { x: 2020, y: GROUND_Y - 232, label: 'SOCKS', color: '#4169E1' },
-        { x: 2150, y: GROUND_Y - 302, label: 'COASTER', color: '#D2691E' },
-        // Landing area items
-        { x: 2340, y: GROUND_Y - 95, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 2400, y: GROUND_Y - 95, label: 'MUG', color: '#8B4513' },
-        { x: 2550, y: GROUND_Y - 82, label: 'KEYS', color: '#FFD700' },
-        { x: 2740, y: GROUND_Y - 92, label: 'GLASS', color: '#87CEEB' },
-        // Ground
-        { x: 2200, y: GROUND_Y - 30, label: 'BLANKET', color: '#FFB6C1' },
-        { x: 2640, y: GROUND_Y - 30, label: 'PHONE', color: '#333' },
+        // On T1 sofa (y=470)
+        { x: 1980, y: 438, label: 'BOOK', color: '#654321' },
+        { x: 2040, y: 438, label: 'MUG', color: '#8B4513' },
+        // On T2 shelf (y=390)
+        { x: 2170, y: 358, label: 'BOOK', color: '#8B0000' },
+        // On T3 books (y=290)
+        { x: 2010, y: 258, label: 'GLASS', color: '#87CEEB' },
+        // On T3 shelf (y=260)
+        { x: 2230, y: 228, label: 'COASTER', color: '#D2691E' },
+        // On crumbling cushions (y=400/390)
+        { x: 2755, y: 368, label: 'PHONE', color: '#333' },
+        { x: 2875, y: 358, label: 'BLANKET', color: '#FFB6C1' },
+        // On T1 landing (y=470)
+        { x: 2575, y: 438, label: 'MAGAZINE', color: '#4682B4' },
+        { x: 2640, y: 438, label: 'SOCKS', color: '#4169E1' },
+        // On T3 moving frame (y=280)
+        { x: 2720, y: 248, label: 'GLASSES', color: '#C0C0C0' },
 
         // === SCREEN 4 (10 items) ===
-        // Rest area on sofa (4-5 easy ground items)
-        { x: 2960, y: GROUND_Y - 95, label: 'REMOTE', color: '#333' },
-        { x: 3020, y: GROUND_Y - 95, label: 'CUSHION', color: '#CD853F' },
-        { x: 3080, y: GROUND_Y - 95, label: 'MUG', color: '#8B4513' },
-        { x: 2960, y: GROUND_Y - 30, label: 'SOCKS', color: '#228B22' },
-        { x: 3150, y: GROUND_Y - 30, label: 'MAGAZINE', color: '#4682B4' },
-        // On moving frames
-        { x: 3365, y: GROUND_Y - 152, label: 'GLASSES', color: '#C0C0C0' },
-        { x: 3515, y: GROUND_Y - 192, label: 'HEADPHONES', color: '#333' },
-        { x: 3665, y: GROUND_Y - 162, label: 'BOOK', color: '#8B0000' },
-        // Landing
-        { x: 3800, y: GROUND_Y - 92, label: 'GLASS', color: '#87CEEB' },
-        { x: 3750, y: GROUND_Y - 30, label: 'KEYS', color: '#FFD700' },
+        // On wide rest sofa (y=470)
+        { x: 2940, y: 438, label: 'REMOTE', color: '#333' },
+        { x: 3000, y: 438, label: 'CUSHION', color: '#CD853F' },
+        { x: 3060, y: 438, label: 'MUG', color: '#8B4513' },
+        // On T2 chair (y=390)
+        { x: 3200, y: 358, label: 'KEYS', color: '#FFD700' },
+        // On T2 shelf (y=380)
+        { x: 3360, y: 348, label: 'BOOK', color: '#006400' },
+        // On T3 moving frame (y=270)
+        { x: 3320, y: 238, label: 'HEADPHONES', color: '#333' },
+        // On T4 bonus shelf (y=170)
+        { x: 3280, y: 138, label: 'GLASS', color: '#87CEEB' },
+        // On T1 sofa (y=465)
+        { x: 3700, y: 433, label: 'MAGAZINE', color: '#4682B4' },
+        // On T1 table (y=480)
+        { x: 3800, y: 448, label: 'SOCKS', color: '#228B22' },
+        // On T2 landing (y=370)
+        { x: 3530, y: 338, label: 'GLASSES', color: '#C0C0C0' },
 
         // === SCREEN 5 (10 items) ===
-        // On chair
-        { x: 3920, y: GROUND_Y - 82, label: 'COASTER', color: '#D2691E' },
-        // On crumbling cushions (reward for bravery)
-        { x: 4065, y: GROUND_Y - 132, label: 'PHONE', color: '#333' },
-        { x: 4215, y: GROUND_Y - 112, label: 'BLANKET', color: '#FFB6C1' },
-        // On TV unit
-        { x: 4400, y: GROUND_Y - 82, label: 'REMOTE', color: '#333' },
-        { x: 4460, y: GROUND_Y - 82, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 4520, y: GROUND_Y - 82, label: 'MUG', color: '#8B4513' },
-        // On exit shelf
-        { x: 4670, y: GROUND_Y - 112, label: 'BOOK', color: '#006400' },
-        // Ground
-        { x: 3980, y: GROUND_Y - 30, label: 'SOCKS', color: '#4169E1' },
-        { x: 4150, y: GROUND_Y - 30, label: 'CUSHION', color: '#CD853F' },
-        { x: 4300, y: GROUND_Y - 30, label: 'KEYS', color: '#FFD700' },
+        // On T1 entry armchair (y=470)
+        { x: 3895, y: 438, label: 'COASTER', color: '#D2691E' },
+        // On T2 gauntlet platforms
+        { x: 4070, y: 358, label: 'BOOK', color: '#8B0000' },
+        { x: 4250, y: 348, label: 'REMOTE', color: '#333' },
+        { x: 4560, y: 358, label: 'MUG', color: '#8B4513' },
+        // On T1 TV unit (y=470)
+        { x: 4720, y: 438, label: 'MAGAZINE', color: '#4682B4' },
+        { x: 4800, y: 438, label: 'PHONE', color: '#333' },
+        // High path items (T3/T4)
+        { x: 4090, y: 248, label: 'BLANKET', color: '#FFB6C1' },
+        { x: 4270, y: 168, label: 'KEYS', color: '#FFD700' },
+        { x: 4450, y: 138, label: 'CUSHION', color: '#CD853F' },
+        { x: 4630, y: 228, label: 'SOCKS', color: '#4169E1' },
 
         // === SCREEN 6 (10 items) ===
-        // Safe ground path (7 items)
-        { x: 4880, y: GROUND_Y - 87, label: 'GLASSES', color: '#C0C0C0' },
-        { x: 5100, y: GROUND_Y - 95, label: 'REMOTE', color: '#333' },
-        { x: 5160, y: GROUND_Y - 95, label: 'BLANKET', color: '#FFB6C1' },
-        { x: 5390, y: GROUND_Y - 72, label: 'COASTER', color: '#D2691E' },
-        { x: 5440, y: GROUND_Y - 72, label: 'MUG', color: '#8B4513' },
-        { x: 5590, y: GROUND_Y - 87, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 5650, y: GROUND_Y - 87, label: 'SOCKS', color: '#228B22' },
-        // High shelf path (3 bonus items)
-        { x: 5080, y: GROUND_Y - 192, label: 'HEADPHONES', color: '#333' },
-        { x: 5250, y: GROUND_Y - 282, label: 'PHONE', color: '#333' },
-        { x: 5430, y: GROUND_Y - 312, label: 'GLASS', color: '#87CEEB' },
-        // +HEALTH on high path
-        { x: 5330, y: GROUND_Y - 312, label: '+HEALTH', color: '#00FF00' },
+        // On T1 armchair (y=465)
+        { x: 4890, y: 433, label: 'GLASSES', color: '#C0C0C0' },
+        // Lower safe path
+        { x: 5090, y: 358, label: 'REMOTE', color: '#333' },
+        { x: 5290, y: 368, label: 'COASTER', color: '#D2691E' },
+        { x: 5450, y: 358, label: 'MAGAZINE', color: '#4682B4' },
+        { x: 5710, y: 438, label: 'MUG', color: '#8B4513' },
+        // Upper path bonus items (T3)
+        { x: 5110, y: 248, label: 'HEADPHONES', color: '#333' },
+        { x: 5290, y: 228, label: 'PHONE', color: '#333' },
+        { x: 5470, y: 218, label: 'GLASS', color: '#87CEEB' },
+        // T4 bonus
+        { x: 5290, y: 128, label: 'BOOK', color: '#006400' },
+        // +HEALTH on T3 upper path (risk/reward)
+        { x: 5370, y: 218, label: '+HEALTH', color: '#00FF00' },
 
         // === SCREEN 7 (10 items) ===
+        // On T1 entry (y=470)
+        { x: 5820, y: 438, label: 'BOOK', color: '#654321' },
         // Tower climb items
-        { x: 5870, y: GROUND_Y - 92, label: 'BOOK', color: '#654321' },
-        { x: 6000, y: GROUND_Y - 162, label: 'BOOK', color: '#8B0000' },
-        { x: 5870, y: GROUND_Y - 232, label: 'GLASS', color: '#87CEEB' },
-        // On crumbling shelves (reward)
-        { x: 6000, y: GROUND_Y - 302, label: 'GLASSES', color: '#C0C0C0' },
-        { x: 5870, y: GROUND_Y - 372, label: 'HEADPHONES', color: '#333' },
-        // Landing items
-        { x: 6190, y: GROUND_Y - 95, label: 'CUSHION', color: '#CD853F' },
-        { x: 6380, y: GROUND_Y - 82, label: 'REMOTE', color: '#333' },
-        { x: 6570, y: GROUND_Y - 92, label: 'MUG', color: '#8B4513' },
-        // Ground
-        { x: 6280, y: GROUND_Y - 30, label: 'BLANKET', color: '#FFB6C1' },
-        { x: 6470, y: GROUND_Y - 30, label: 'KEYS', color: '#FFD700' },
-        // +LIFE on hardest-to-reach crumbling shelf (top of tower)
-        { x: 5910, y: GROUND_Y - 372, label: '+LIFE', color: '#FF1493' },
+        { x: 5980, y: 358, label: 'BOOK', color: '#8B0000' },
+        // On crumbling T3 (y=300)
+        { x: 5840, y: 268, label: 'GLASS', color: '#87CEEB' },
+        // On static T3 alternative (y=280)
+        { x: 5990, y: 248, label: 'BLANKET', color: '#FFB6C1' },
+        // On crumbling T4 (y=190)
+        { x: 5860, y: 158, label: 'HEADPHONES', color: '#333' },
+        // On static T4 (y=170)
+        { x: 6020, y: 138, label: 'GLASSES', color: '#C0C0C0' },
+        // Descent and landing
+        { x: 6160, y: 338, label: 'CUSHION', color: '#CD853F' },
+        { x: 6340, y: 358, label: 'REMOTE', color: '#333' },
+        { x: 6520, y: 438, label: 'MUG', color: '#8B4513' },
+        { x: 6730, y: 428, label: 'KEYS', color: '#FFD700' },
+        // +LIFE on hardest T4 crumbling shelf
+        { x: 5870, y: 158, label: '+LIFE', color: '#FF1493' },
 
-        // === SCREEN 8 (8 items) ===
-        // On/near moving platforms
-        { x: 6770, y: GROUND_Y - 92, label: 'COASTER', color: '#D2691E' },
-        { x: 6915, y: GROUND_Y - 152, label: 'SOCKS', color: '#4169E1' },
-        { x: 7075, y: GROUND_Y - 192, label: 'PHONE', color: '#333' },
-        { x: 7235, y: GROUND_Y - 162, label: 'BOOK', color: '#4682B4' },
-        { x: 7395, y: GROUND_Y - 202, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 7555, y: GROUND_Y - 172, label: 'KEYS', color: '#FFD700' },
-        { x: 7640, y: GROUND_Y - 95, label: 'GLASS', color: '#87CEEB' },
-        { x: 7580, y: GROUND_Y - 30, label: 'CUSHION', color: '#CD853F' },
+        // === SCREEN 8 (9 items) ===
+        // On T1 start (y=470)
+        { x: 6770, y: 438, label: 'COASTER', color: '#D2691E' },
+        { x: 6810, y: 438, label: 'BLANKET', color: '#FFB6C1' },
+        // On/near moving frames
+        { x: 6930, y: 358, label: 'SOCKS', color: '#4169E1' },
+        { x: 7060, y: 338, label: 'PHONE', color: '#333' },
+        { x: 7200, y: 258, label: 'BOOK', color: '#4682B4' },
+        { x: 7340, y: 328, label: 'MAGAZINE', color: '#4682B4' },
+        { x: 7480, y: 248, label: 'KEYS', color: '#FFD700' },
+        { x: 7580, y: 368, label: 'GLASS', color: '#87CEEB' },
+        { x: 7650, y: 438, label: 'CUSHION', color: '#CD853F' },
 
         // === SCREEN 9 (8 items) ===
-        // Along the crumble sprint route
-        { x: 7770, y: GROUND_Y - 112, label: 'REMOTE', color: '#333' },
-        { x: 7920, y: GROUND_Y - 132, label: 'MUG', color: '#8B4513' },
-        { x: 8070, y: GROUND_Y - 112, label: 'BLANKET', color: '#FFB6C1' },
-        { x: 8220, y: GROUND_Y - 132, label: 'SOCKS', color: '#228B22' },
-        { x: 8370, y: GROUND_Y - 112, label: 'BOOK', color: '#8B0000' },
-        { x: 8530, y: GROUND_Y - 95, label: 'GLASSES', color: '#C0C0C0' },
-        { x: 8560, y: GROUND_Y - 95, label: 'PHONE', color: '#333' },
-        { x: 8450, y: GROUND_Y - 30, label: 'COASTER', color: '#D2691E' },
+        // On T1 entry (y=465)
+        { x: 7730, y: 433, label: 'REMOTE', color: '#333' },
+        // Along crumble sprint
+        { x: 7895, y: 368, label: 'MUG', color: '#8B4513' },
+        { x: 8045, y: 358, label: 'BLANKET', color: '#FFB6C1' },
+        { x: 8200, y: 353, label: 'SOCKS', color: '#228B22' },
+        { x: 8355, y: 363, label: 'BOOK', color: '#8B0000' },
+        { x: 8505, y: 358, label: 'GLASSES', color: '#C0C0C0' },
+        // On T1 landing (y=470)
+        { x: 8640, y: 438, label: 'PHONE', color: '#333' },
+        // On T3 bonus above sprint (y=280/270)
+        { x: 8090, y: 248, label: 'COASTER', color: '#D2691E' },
         // +HEALTH
-        { x: 8100, y: GROUND_Y - 112, label: '+HEALTH', color: '#00FF00' },
+        { x: 8330, y: 238, label: '+HEALTH', color: '#00FF00' },
 
         // === SCREEN 10 (10 items) ===
         // Mixed across gauntlet platforms
-        { x: 8720, y: GROUND_Y - 112, label: 'MAGAZINE', color: '#4682B4' },
-        { x: 8915, y: GROUND_Y - 152, label: 'REMOTE', color: '#333' },
-        { x: 9095, y: GROUND_Y - 132, label: 'HEADPHONES', color: '#333' },
-        { x: 9250, y: GROUND_Y - 112, label: 'MUG', color: '#8B4513' },
-        { x: 9395, y: GROUND_Y - 162, label: 'BLANKET', color: '#FFB6C1' },
-        { x: 9520, y: GROUND_Y - 92, label: 'KEYS', color: '#FFD700' },
-        // Ground items
-        { x: 8800, y: GROUND_Y - 30, label: 'SOCKS', color: '#4169E1' },
-        { x: 9000, y: GROUND_Y - 30, label: 'GLASS', color: '#87CEEB' },
-        { x: 9180, y: GROUND_Y - 30, label: 'CUSHION', color: '#CD853F' },
-        { x: 9350, y: GROUND_Y - 30, label: 'BOOK', color: '#006400' },
-        // +HEALTH at midpoint
-        { x: 9150, y: GROUND_Y - 112, label: '+HEALTH', color: '#00FF00' },
+        { x: 8695, y: 438, label: 'MAGAZINE', color: '#4682B4' },
+        { x: 8860, y: 358, label: 'REMOTE', color: '#333' },
+        { x: 9010, y: 258, label: 'HEADPHONES', color: '#333' },
+        { x: 9110, y: 238, label: 'BLANKET', color: '#FFB6C1' },
+        { x: 9160, y: 348, label: 'MUG', color: '#8B4513' },
+        { x: 9310, y: 358, label: 'KEYS', color: '#FFD700' },
+        { x: 9440, y: 248, label: 'SOCKS', color: '#4169E1' },
+        { x: 9540, y: 438, label: 'GLASS', color: '#87CEEB' },
+        { x: 9600, y: 438, label: 'CUSHION', color: '#CD853F' },
+        { x: 9210, y: 138, label: 'BOOK', color: '#006400' },
+        // +HEALTH on T4
+        { x: 9200, y: 138, label: '+HEALTH', color: '#00FF00' },
     ],
 
     // ========== OBSTACLES ==========
+    // All placed ON platform surfaces
     obstacles: [
-        // Screen 1: 1 PLUG
-        { x: 410, y: GROUND_Y - 20, width: 24, height: 20, label: 'PLUG', color: '#FFD700' },
+        // Screen 1: PLUG on table (y=470, obstacle on surface)
+        { x: 475, y: 450, width: 24, height: 20, label: 'PLUG', color: '#FFD700' },
 
-        // Screen 2: 1 CABLE
-        { x: 1480, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
+        // Screen 2: CABLE on armchair (y=465)
+        { x: 1580, y: 440, width: 40, height: 25, label: 'CABLE', color: '#333' },
 
-        // Screen 3: 1 CANDLE
-        { x: 2450, y: GROUND_Y - 30, width: 30, height: 30, label: 'CANDLE', color: '#FF4500' },
+        // Screen 3: CANDLE on T2 shelf (y=390)
+        { x: 2400, y: 340, width: 30, height: 30, label: 'CANDLE', color: '#FF4500' },
 
-        // Screen 4: 1 timed PLUG
-        { x: 3260, y: GROUND_Y - 20, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
+        // Screen 4: timed PLUG on T2 shelf (y=380)
+        { x: 3360, y: 360, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
           timerOn: 1.8, timerOff: 1.5, timerOffset: 0.5 },
 
-        // Screen 5: 2 timed CANDLE
-        { x: 4120, y: GROUND_Y - 30, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
+        // Screen 5: timed CANDLE on T2 gauntlet (y=380)
+        { x: 4250, y: 350, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
-        { x: 4580, y: GROUND_Y - 30, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
+        // CANDLE on TV unit (y=470)
+        { x: 4780, y: 440, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
           timerOn: 1.5, timerOff: 2.0, timerOffset: 0.8 },
 
-        // Screen 6: 1 CABLE
-        { x: 5480, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
+        // Screen 6: CABLE on lower path sofa (y=390)
+        { x: 5130, y: 365, width: 40, height: 25, label: 'CABLE', color: '#333' },
 
-        // Screen 7: 2 timed PLUG
-        { x: 6100, y: GROUND_Y - 20, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
+        // Screen 7: timed PLUG on T2 descent (y=370)
+        { x: 6160, y: 350, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
           timerOn: 1.5, timerOff: 1.5, timerOffset: 0 },
-        { x: 6450, y: GROUND_Y - 20, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
+        // PLUG on T1 table (y=470)
+        { x: 6520, y: 450, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
           timerOn: 1.8, timerOff: 1.2, timerOffset: 0.6 },
 
-        // Screen 8: 1 timed CANDLE
-        { x: 7150, y: GROUND_Y - 30, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
+        // Screen 8: timed CANDLE on T2 static (y=400)
+        { x: 7580, y: 370, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.3 },
 
-        // Screen 9: 2 CABLE
-        { x: 7980, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
-        { x: 8420, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
+        // Screen 9: CABLE on static rest mid-sprint (y=385)
+        { x: 8200, y: 360, width: 40, height: 25, label: 'CABLE', color: '#333' },
 
-        // Screen 10: 3 mixed obstacles
-        { x: 8780, y: GROUND_Y - 20, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
+        // Screen 10: mixed
+        { x: 8865, y: 370, width: 24, height: 20, label: 'PLUG', color: '#FFD700',
           timerOn: 1.5, timerOff: 1.5, timerOffset: 0 },
-        { x: 9100, y: GROUND_Y - 30, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
+        { x: 9310, y: 360, width: 30, height: 30, label: 'CANDLE', color: '#FF4500',
           timerOn: 2.0, timerOff: 1.0, timerOffset: 0.5 },
-        { x: 9420, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
+        { x: 9540, y: 445, width: 40, height: 25, label: 'CABLE', color: '#333' },
     ],
 
     // ========== ENEMIES ==========
+    // All placed ON platforms, not on non-existent ground
     enemies: [
-        // Screen 1: 1 ROOMBA
-        { x: 550, y: GROUND_Y - 30, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 100 },
+        // Screen 1: ROOMBA on table (y=470, enemy on surface)
+        { x: 470, y: 440, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 80 },
 
-        // Screen 2: 1 DUST
-        { x: 1300, y: GROUND_Y - 20, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 80 },
+        // Screen 2: DUST on sofa (y=470)
+        { x: 1050, y: 450, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 60 },
 
-        // Screen 3: 1 RC CAR
-        { x: 2600, y: GROUND_Y - 25, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 120 },
+        // Screen 3: RC CAR on T1 landing sofa (y=470)
+        { x: 2580, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
 
-        // Screen 4: 1 ROOMBA
-        { x: 3450, y: GROUND_Y - 30, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 100 },
+        // Screen 4: ROOMBA on wide rest sofa (y=470)
+        { x: 3000, y: 440, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 100 },
 
-        // Screen 5: 1 DUST + 1 RC CAR
-        { x: 4000, y: GROUND_Y - 20, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 80 },
-        { x: 4500, y: GROUND_Y - 25, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 120 },
+        // Screen 5: DUST on T2 shelf + RC CAR on TV unit
+        { x: 4080, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 60 },
+        { x: 4740, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
 
-        // Screen 6: 1 ROOMBA
-        { x: 5300, y: GROUND_Y - 30, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 100 },
+        // Screen 6: ROOMBA on lower path sofa (y=390)
+        { x: 5100, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 60 },
 
-        // Screen 7: 1 DUST + 1 RC CAR
-        { x: 6250, y: GROUND_Y - 20, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 80 },
-        { x: 6500, y: GROUND_Y - 25, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 120 },
+        // Screen 7: DUST on T2 descent + RC CAR on T1 table
+        { x: 6340, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 60 },
+        { x: 6530, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
 
-        // Screen 8: 2 DUST
-        { x: 7000, y: GROUND_Y - 20, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 80 },
-        { x: 7400, y: GROUND_Y - 20, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 80 },
+        // Screen 8: 2 DUST on T2 platforms
+        { x: 6930, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 50 },
+        { x: 7580, y: 380, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 50 },
 
-        // Screen 9: 1 RC CAR
-        { x: 8300, y: GROUND_Y - 25, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 120 },
+        // Screen 9: RC CAR on T1 landing (y=470)
+        { x: 8640, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 60 },
 
         // Screen 10: 2 ROOMBA + 1 RC CAR
-        { x: 8850, y: GROUND_Y - 30, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 100 },
-        { x: 9200, y: GROUND_Y - 30, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 100 },
-        { x: 9450, y: GROUND_Y - 25, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 120 },
+        { x: 8870, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 60 },
+        { x: 9320, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 60 },
+        { x: 9550, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
     ],
 };

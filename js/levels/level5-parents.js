@@ -1,6 +1,7 @@
 // Level 5: Parents' Room
 // 12 screen widths (~11520px at 960px canvas width)
 // HARD level: precision platforming, narrow furniture, mandatory bed bounce, aggressive timed obstacles
+// DEADLY FLOOR — no full-width ground platform. Boss arena gets solid ground only.
 
 const GROUND_Y = 520;
 const CANVAS_W = 960;
@@ -11,7 +12,7 @@ export const level5 = {
     width: LEVEL_W,
     groundY: GROUND_Y,
     backgroundColor: '#E8E0D8',
-    playerStart: { x: 80, y: GROUND_Y - 72 },
+    playerStart: { x: 80, y: 460 - 72 },
 
     bossDoor: { x: CANVAS_W * 11 - 80, y: GROUND_Y - 120 },
 
@@ -250,225 +251,275 @@ export const level5 = {
     ],
 
     // ========== PLATFORMS ==========
+    // ~85 static + ~14 moving + ~12 crumbling = ~111 total
     platforms: [
-        // Ground (wood floor)
-        { x: 0, y: GROUND_Y, width: LEVEL_W, height: 80, label: '', color: '#A0886B' },
+        // Boss arena ground (solid, full collision)
+        { x: CANVAS_W * 11, y: GROUND_Y, width: CANVAS_W, height: 80, label: '', color: '#A0886B' },
 
         // =====================================================================
-        // SCREEN 1 (0-960): TEACH — Bedroom entrance
-        // Easy hops: bedside table → bed → bedside table → dresser
+        // SCREEN 1 (0-960): TEACH — Bedroom entrance, easy hops
+        // Zigzag Climb: T1 islands -> T2 dresser -> T1 landing
         // =====================================================================
-        // Left bedside table
-        { x: 150, y: GROUND_Y - 55, width: 70, height: 20, label: 'BEDSIDE_TABLE', color: '#8B6E50' },
-        // BED — wide, bouncy (purple duvet)
-        { x: 300, y: GROUND_Y - 70, width: 260, height: 24, label: 'BED', color: '#6B4470' },
-        // Right bedside table
-        { x: 610, y: GROUND_Y - 55, width: 70, height: 20, label: 'BEDSIDE_TABLE', color: '#8B6E50' },
-        // Dresser — stepping stone upward
-        { x: 780, y: GROUND_Y - 90, width: 110, height: 22, label: 'DRESSER', color: '#7B5B45' },
+        // T1: Spawn island
+        { x: 40, y: 470, width: 130, height: 22, label: 'DRESSER', color: '#7B5B45' },
+        // T1: Stepping island
+        { x: 230, y: 480, width: 90, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: BED — wide, bouncy (purple duvet)
+        { x: 380, y: 390, width: 220, height: 24, label: 'BED', color: '#6B4470' },
+        // T1: Landing after bed
+        { x: 660, y: 475, width: 80, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Dresser stepping stone
+        { x: 800, y: 380, width: 100, height: 22, label: 'DRESSER', color: '#7B5B45' },
+        // T1: Exit island
+        { x: 900, y: 465, width: 70, height: 20, label: 'LAUNDRY_BASKET', color: '#C4A882' },
 
         // =====================================================================
-        // SCREEN 2 (960-1920): TEST — Bed bounce → dresser top → shelf above
-        // Mandatory bed bounce taught here
+        // SCREEN 2 (960-1920): TEST — Bed bounce teaching
+        // Must bounce on BED to reach T3 shelf, then descend
         // =====================================================================
-        // Landing shelf from screen 1
-        { x: 970, y: GROUND_Y - 55, width: 70, height: 20, label: 'BEDSIDE_TABLE', color: '#8B6E50' },
-        // BED — must bounce to reach dresser top
-        { x: 1120, y: GROUND_Y - 70, width: 260, height: 24, label: 'BED', color: '#6B4470' },
-        // Dresser top — reached via bed bounce (y=320, bed bounce from y=70 → max y≈70-225=-155 → player bottom at ~295, can reach 320)
-        { x: 1460, y: GROUND_Y - 200, width: 110, height: 22, label: 'DRESSER', color: '#7B5B45' },
-        // Shelf above dresser — reachable from dresser with normal jump (gap = 120px)
-        { x: 1490, y: GROUND_Y - 330, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Landing platform to continue right
-        { x: 1680, y: GROUND_Y - 55, width: 100, height: 20, label: 'DRESSER', color: '#7B5B45' },
-        // Shelf step to next screen
-        { x: 1830, y: GROUND_Y - 120, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Entry island
+        { x: 970, y: 470, width: 80, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: BED for bounce
+        { x: 1100, y: 385, width: 200, height: 24, label: 'BED', color: '#6B4470' },
+        // T3: Reached via bed bounce (bounce from 385 -> ~160 player bottom, can reach 280)
+        { x: 1380, y: 280, width: 90, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T2: Landing shelf
+        { x: 1540, y: 370, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T3: High shelf — reachable from T3 shelf with lateral jump
+        { x: 1250, y: 260, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Right island
+        { x: 1680, y: 475, width: 90, height: 20, label: 'DRESSER', color: '#7B5B45' },
+        // T2: Bridge to next screen
+        { x: 1830, y: 380, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
 
         // =====================================================================
-        // SCREEN 3 (1920-2880): VERTICAL CLIMB — Wardrobe climb
-        // Wardrobe base → 6 shelves zigzagging up to y≈200
+        // SCREEN 3 (1920-2880): VERTICAL CLIMB — Wardrobe zigzag
+        // T1 -> T2 -> T3 -> T4 zigzag up wardrobe shelves
         // =====================================================================
-        // Wardrobe base
-        { x: 1960, y: GROUND_Y - 80, width: 140, height: 22, label: 'WARDROBE', color: '#5C3D2E' },
-        // Shelf 1 — right side (gap: 100px vertical from wardrobe top)
-        { x: 2140, y: GROUND_Y - 190, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Shelf 2 — left side
-        { x: 1990, y: GROUND_Y - 280, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Shelf 3 — right side
-        { x: 2170, y: GROUND_Y - 370, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Shelf 4 — left (near top, y≈200 from top of canvas)
-        { x: 2010, y: GROUND_Y - 320, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Landing wardrobe right side
-        { x: 2350, y: GROUND_Y - 80, width: 90, height: 20, label: 'WARDROBE', color: '#5C3D2E' },
-        // Bridge shelf
-        { x: 2520, y: GROUND_Y - 130, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Exit dresser
-        { x: 2700, y: GROUND_Y - 65, width: 100, height: 20, label: 'DRESSER', color: '#7B5B45' },
+        // T1: Wardrobe base
+        { x: 1940, y: 475, width: 100, height: 22, label: 'WARDROBE', color: '#5C3D2E' },
+        // T2: Shelf right
+        { x: 2100, y: 380, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T3: Shelf left
+        { x: 1960, y: 290, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T4: Shelf right (high reward)
+        { x: 2120, y: 200, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T3: Descent shelf
+        { x: 2280, y: 280, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T2: Wardrobe right platform
+        { x: 2400, y: 370, width: 90, height: 22, label: 'WARDROBE', color: '#5C3D2E' },
+        // T1: Landing
+        { x: 2560, y: 465, width: 80, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Bridge shelf
+        { x: 2700, y: 390, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Exit
+        { x: 2830, y: 470, width: 80, height: 20, label: 'LAUNDRY_BASKET', color: '#C4A882' },
 
         // =====================================================================
-        // SCREEN 4 (2880-3840): REST → TEST — Laundry basket stepping
-        // Narrow platforms (70-90px), 120px gaps
+        // SCREEN 4 (2880-3840): Laundry basket stepping — narrow platforms
+        // Horizontal Gauntlet at T1-T2, 64px platforms, ~150px gaps
         // =====================================================================
-        // Laundry basket chain
-        { x: 2920, y: GROUND_Y - 55, width: 90, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
-        { x: 3060, y: GROUND_Y - 100, width: 75, height: 18, label: 'CHAIR', color: '#6B5040' },
-        { x: 3200, y: GROUND_Y - 55, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
-        { x: 3340, y: GROUND_Y - 110, width: 70, height: 18, label: 'CHAIR', color: '#6B5040' },
-        { x: 3480, y: GROUND_Y - 60, width: 90, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
-        // Shelf step up
-        { x: 3620, y: GROUND_Y - 120, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Exit dresser
-        { x: 3760, y: GROUND_Y - 65, width: 100, height: 20, label: 'DRESSER', color: '#7B5B45' },
+        // T1: Entry basket
+        { x: 2900, y: 480, width: 70, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Chair hop
+        { x: 3030, y: 390, width: 64, height: 18, label: 'DRAWER', color: '#8B6E50' },
+        // T1: Basket
+        { x: 3160, y: 475, width: 70, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Dresser
+        { x: 3300, y: 380, width: 80, height: 20, label: 'DRESSER', color: '#7B5B45' },
+        // T1: Basket
+        { x: 3440, y: 470, width: 70, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Shelf
+        { x: 3580, y: 385, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T3: Optional high reward
+        { x: 3340, y: 270, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Exit
+        { x: 3720, y: 475, width: 80, height: 20, label: 'DRESSER', color: '#7B5B45' },
 
         // =====================================================================
         // SCREEN 5 (3840-4800): CHALLENGE — Moving shelf chain
-        // 4 moving shelves, 170px gaps between static zones
+        // 4 moving shelves at T2-T3, static landings between
         // =====================================================================
-        // Entry platform
-        { x: 3870, y: GROUND_Y - 55, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
-        // Moving shelf 1
-        { x: 4020, y: GROUND_Y - 120, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
+        // T1: Entry basket
+        { x: 3860, y: 480, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Moving shelf 1
+        { x: 4000, y: 380, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
           moveX: 60, moveSpeed: 1.0 },
-        // Static landing 1
-        { x: 4200, y: GROUND_Y - 65, width: 70, height: 18, label: 'CHAIR', color: '#6B5040' },
-        // Moving shelf 2
-        { x: 4340, y: GROUND_Y - 140, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
-          moveX: 70, moveSpeed: 1.2 },
-        // Static landing 2
-        { x: 4530, y: GROUND_Y - 60, width: 75, height: 18, label: 'CHAIR', color: '#6B5040' },
-        // Moving shelf 3
-        { x: 4650, y: GROUND_Y - 130, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
-          moveX: 65, moveSpeed: 1.3 },
-        // Moving shelf 4 (highest)
-        { x: 4480, y: GROUND_Y - 240, width: 75, height: 16, label: 'SHELF', color: '#8B6914',
-          moveX: 60, moveSpeed: 1.4 },
+        // T1: Static landing
+        { x: 4170, y: 470, width: 70, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Moving shelf 2
+        { x: 4310, y: 370, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: -70, moveSpeed: 1.2 },
+        // T1: Static landing
+        { x: 4480, y: 475, width: 64, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T3: Moving shelf 3 (higher)
+        { x: 4580, y: 280, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: 65, moveSpeed: 1.0 },
+        // T3: Moving shelf 4 (bonus access)
+        { x: 4400, y: 260, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: -55, moveSpeed: 1.3 },
+        // T2: Static shelf for descent
+        { x: 4700, y: 390, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
 
         // =====================================================================
         // SCREEN 6 (4800-5760): CHALLENGE — Crumbling shelf tower
-        // 5 stacked shelves, 3 crumble (delay: 0.5s), must climb fast
-        // +LIFE at top (y≈140)
+        // Vertical crumble sprint from T1 to T4, +LIFE at top
+        // Static alternatives alongside
         // =====================================================================
-        // Entry platform
-        { x: 4840, y: GROUND_Y - 55, width: 90, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
-        // Shelf 1 (solid base)
-        { x: 4980, y: GROUND_Y - 110, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Shelf 2 (crumble!)
-        { x: 5100, y: GROUND_Y - 190, width: 75, height: 16, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Shelf 3 (solid)
-        { x: 4960, y: GROUND_Y - 260, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Shelf 4 (crumble!)
-        { x: 5110, y: GROUND_Y - 330, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Shelf 5 (crumble! — top, +LIFE here)
-        { x: 4980, y: GROUND_Y - 380, width: 75, height: 16, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Right side descent
-        { x: 5280, y: GROUND_Y - 120, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Wardrobe safe landing
-        { x: 5440, y: GROUND_Y - 65, width: 100, height: 20, label: 'WARDROBE', color: '#5C3D2E' },
-        // Exit platform
-        { x: 5620, y: GROUND_Y - 55, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T1: Entry basket
+        { x: 4830, y: 475, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Solid shelf (base)
+        { x: 4960, y: 385, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T2: Crumble shelf (parallel path)
+        { x: 5100, y: 370, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T3: Solid shelf
+        { x: 4940, y: 280, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T3: Crumble shelf
+        { x: 5120, y: 270, width: 64, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T4: Top shelf — +LIFE here (crumble!)
+        { x: 4970, y: 170, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T4: Solid alternative top shelf
+        { x: 5150, y: 190, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T2: Descent shelf right
+        { x: 5300, y: 380, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Wardrobe safe landing
+        { x: 5440, y: 465, width: 100, height: 22, label: 'WARDROBE', color: '#5C3D2E' },
+        // T1: Exit
+        { x: 5620, y: 475, width: 70, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
 
         // =====================================================================
         // SCREEN 7 (5760-6720): RISK/REWARD — Dual-height wardrobe
-        // Safe lower path: wardrobe → chair → dresser (~5 items)
-        // High path: shelf climb to wardrobe top (3 bonus items + 1 +HEALTH)
+        // Low safe path: T1-T2 wardrobe/dresser chain
+        // High path: T3-T4 shelf climb for +HEALTH
         // =====================================================================
-        // Lower safe path
-        { x: 5800, y: GROUND_Y - 75, width: 120, height: 22, label: 'WARDROBE', color: '#5C3D2E' },
-        { x: 5980, y: GROUND_Y - 55, width: 75, height: 18, label: 'CHAIR', color: '#6B5040' },
-        { x: 6120, y: GROUND_Y - 70, width: 100, height: 20, label: 'DRESSER', color: '#7B5B45' },
-        { x: 6290, y: GROUND_Y - 55, width: 75, height: 18, label: 'CHAIR', color: '#6B5040' },
-        { x: 6430, y: GROUND_Y - 65, width: 100, height: 20, label: 'DRESSER', color: '#7B5B45' },
-        // High reward path — shelf climb from wardrobe
-        { x: 5830, y: GROUND_Y - 190, width: 75, height: 16, label: 'SHELF', color: '#8B6914' },
-        { x: 5980, y: GROUND_Y - 280, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
-        { x: 6140, y: GROUND_Y - 200, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Exit to screen 8
-        { x: 6600, y: GROUND_Y - 55, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // Lower safe path (T1-T2) — with moving drawers
+        { x: 5790, y: 465, width: 110, height: 22, label: 'WARDROBE', color: '#5C3D2E' },
+        { x: 5960, y: 390, width: 70, height: 18, label: 'DRAWER', color: '#8B6E50',
+          moveX: 40, moveSpeed: 0.9 },
+        { x: 6100, y: 470, width: 90, height: 20, label: 'DRESSER', color: '#7B5B45' },
+        { x: 6260, y: 385, width: 64, height: 18, label: 'DRAWER', color: '#8B6E50',
+          moveX: -45, moveSpeed: 1.0 },
+        { x: 6400, y: 470, width: 90, height: 20, label: 'DRESSER', color: '#7B5B45' },
+        // High reward path (T3-T4 from wardrobe)
+        { x: 5820, y: 290, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        { x: 5980, y: 200, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        { x: 6150, y: 280, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T4: BED bounce platform for extreme height
+        { x: 6300, y: 290, width: 100, height: 24, label: 'BED', color: '#6B4470' },
+        // T1: Exit island
+        { x: 6570, y: 475, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
 
         // =====================================================================
         // SCREEN 8 (6720-7680): ESCALATE — Timed obstacle corridor
-        // Iron and hair straightener ON narrow platforms, 180px gaps
+        // Narrow T2 platforms with timed obstacles, 170px gaps
         // =====================================================================
-        // Platform 1 with iron
-        { x: 6760, y: GROUND_Y - 80, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Platform 2
-        { x: 6950, y: GROUND_Y - 120, width: 75, height: 18, label: 'CHAIR', color: '#6B5040' },
-        // Platform 3 with hair straightener
-        { x: 7140, y: GROUND_Y - 80, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Platform 4
-        { x: 7320, y: GROUND_Y - 130, width: 70, height: 18, label: 'CHAIR', color: '#6B5040' },
-        // Platform 5 with iron
-        { x: 7500, y: GROUND_Y - 75, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Safe landing
-        { x: 7620, y: GROUND_Y - 55, width: 70, height: 20, label: 'BEDSIDE_TABLE', color: '#8B6E50' },
+        // T1: Entry
+        { x: 6740, y: 470, width: 70, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Platform with iron (crumbling!)
+        { x: 6870, y: 380, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T2: Static alternative next to crumble
+        { x: 6960, y: 395, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Landing
+        { x: 7020, y: 475, width: 64, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Platform with hair straightener (crumbling!)
+        { x: 7150, y: 370, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T2: Static alternative
+        { x: 7240, y: 385, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Landing
+        { x: 7300, y: 470, width: 64, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Platform with iron (moving!)
+        { x: 7430, y: 385, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: 45, moveSpeed: 1.0 },
+        // T1: Safe exit
+        { x: 7580, y: 465, width: 80, height: 20, label: 'DRESSER', color: '#7B5B45' },
 
         // =====================================================================
         // SCREEN 9 (7680-8640): ESCALATE — Moving + crumble combo
-        // Crumbling shelves below, moving shelves above
+        // Crumbling T2, moving T3, must choose path quickly
         // =====================================================================
-        // Entry platform
-        { x: 7720, y: GROUND_Y - 55, width: 90, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
-        // Crumble shelf 1
-        { x: 7870, y: GROUND_Y - 120, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Moving shelf above crumble 1
-        { x: 7860, y: GROUND_Y - 230, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
+        // T1: Entry
+        { x: 7700, y: 475, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Crumble shelf 1
+        { x: 7850, y: 380, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T3: Moving shelf above crumble 1
+        { x: 7840, y: 270, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
           moveX: 60, moveSpeed: 1.0 },
-        // Static landing
-        { x: 8050, y: GROUND_Y - 65, width: 75, height: 18, label: 'CHAIR', color: '#6B5040' },
-        // Crumble shelf 2
-        { x: 8190, y: GROUND_Y - 130, width: 75, height: 16, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Moving shelf above crumble 2
-        { x: 8180, y: GROUND_Y - 240, width: 75, height: 16, label: 'SHELF', color: '#8B6914',
-          moveX: 65, moveSpeed: 1.2 },
-        // Safe dresser
-        { x: 8370, y: GROUND_Y - 60, width: 100, height: 20, label: 'DRESSER', color: '#7B5B45' },
-        // Exit shelf
-        { x: 8530, y: GROUND_Y - 110, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T2: Static shelf (alternative to crumble)
+        { x: 7990, y: 390, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Landing
+        { x: 8100, y: 470, width: 70, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Crumble shelf 2
+        { x: 8240, y: 375, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T3: Moving shelf above crumble 2
+        { x: 8230, y: 260, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: -65, moveSpeed: 1.2 },
+        // T2: Static alternative
+        { x: 8380, y: 385, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Safe dresser
+        { x: 8500, y: 465, width: 90, height: 20, label: 'DRESSER', color: '#7B5B45' },
 
         // =====================================================================
         // SCREEN 10 (8640-9600): ESCALATE — Precision gauntlet
-        // 200px gaps, 70px wide platforms
+        // 64px platforms, 180-200px gaps, T1-T2 only
         // =====================================================================
-        // Platform chain — expert precision
-        { x: 8680, y: GROUND_Y - 55, width: 70, height: 20, label: 'BEDSIDE_TABLE', color: '#8B6E50' },
-        { x: 8890, y: GROUND_Y - 100, width: 70, height: 18, label: 'CHAIR', color: '#6B5040' },
-        { x: 9090, y: GROUND_Y - 60, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
-        { x: 9280, y: GROUND_Y - 110, width: 70, height: 18, label: 'CHAIR', color: '#6B5040' },
-        { x: 9470, y: GROUND_Y - 65, width: 70, height: 20, label: 'BEDSIDE_TABLE', color: '#8B6E50' },
+        // T1: Entry
+        { x: 8660, y: 475, width: 64, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Narrow shelf (crumbling!)
+        { x: 8810, y: 380, width: 64, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T2: Static alternative
+        { x: 8890, y: 395, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Tiny island
+        { x: 8970, y: 470, width: 64, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Narrow shelf (moving!)
+        { x: 9130, y: 375, width: 64, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: -50, moveSpeed: 1.2 },
+        // T1: Tiny island
+        { x: 9290, y: 480, width: 64, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Narrow shelf (moving!)
+        { x: 9420, y: 370, width: 64, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: 50, moveSpeed: 1.1 },
+        // T1: Exit
+        { x: 9550, y: 470, width: 70, height: 20, label: 'DRESSER', color: '#7B5B45' },
 
         // =====================================================================
         // SCREEN 11 (9600-10560): GAUNTLET — Pre-boss, all mechanics
-        // Moving, crumbling, narrow, timed obstacles, moths at platform height
+        // Moving + crumbling + narrow + obstacles + enemies
         // =====================================================================
-        // Entry from screen 10
-        { x: 9640, y: GROUND_Y - 55, width: 80, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
-        // Moving shelf
-        { x: 9770, y: GROUND_Y - 130, width: 75, height: 16, label: 'SHELF', color: '#8B6914',
-          moveX: 60, moveSpeed: 1.1 },
-        // Narrow chair
-        { x: 9940, y: GROUND_Y - 60, width: 70, height: 18, label: 'CHAIR', color: '#6B5040' },
-        // Crumble shelf
-        { x: 10080, y: GROUND_Y - 130, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Static shelf (with timed obstacle)
-        { x: 10220, y: GROUND_Y - 80, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        // Chair hop
-        { x: 10370, y: GROUND_Y - 120, width: 70, height: 18, label: 'CHAIR', color: '#6B5040' },
-        // Final landing before boss door
-        { x: 10480, y: GROUND_Y - 55, width: 70, height: 20, label: 'BEDSIDE_TABLE', color: '#8B6E50' },
+        // T1: Entry
+        { x: 9620, y: 475, width: 70, height: 18, label: 'LAUNDRY_BASKET', color: '#C4A882' },
+        // T2: Moving shelf
+        { x: 9760, y: 375, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: 55, moveSpeed: 1.1 },
+        // T1: Narrow drawer
+        { x: 9920, y: 470, width: 64, height: 20, label: 'DRAWER', color: '#8B6E50' },
+        // T2: Crumble shelf
+        { x: 10060, y: 380, width: 64, height: 16, label: 'SHELF', color: '#8B6914',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T2: Static alternative
+        { x: 10140, y: 395, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // T1: Platform with obstacle
+        { x: 10250, y: 465, width: 80, height: 20, label: 'DRESSER', color: '#7B5B45' },
+        // T2: Moving shelf (fast)
+        { x: 10380, y: 370, width: 64, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: -60, moveSpeed: 1.3 },
+        // T1: Final landing before boss door
+        { x: 10470, y: 475, width: 80, height: 20, label: 'DRAWER', color: '#8B6E50' },
 
         // =====================================================================
         // SCREEN 12 (10560-11520): BOSS ARENA
-        // 3 platforms for dodging boss attacks
+        // 3 platforms for dodging boss attacks + arena ground
         // =====================================================================
-        { x: 10700, y: GROUND_Y - 110, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        { x: 10940, y: GROUND_Y - 140, width: 100, height: 22, label: 'DRESSER', color: '#7B5B45' },
-        { x: 11200, y: GROUND_Y - 110, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 10700, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 10940, y: 300, width: 100, height: 22, label: 'DRESSER', color: '#7B5B45' },
+        { x: 11200, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
     ],
 
     // ========== COLLECTABLES ==========
@@ -477,223 +528,241 @@ export const level5 = {
         // =====================================================================
         // SCREEN 1 (0-960): 10 collectables
         // =====================================================================
-        // On left bedside table
-        { x: 170, y: GROUND_Y - 88, label: 'PHONE', color: '#333333' },
-        { x: 200, y: GROUND_Y - 88, label: 'GLASS', color: '#87CEEB' },
-        // On bed
-        { x: 350, y: GROUND_Y - 105, label: 'PILLOW', color: '#E8D8E0' },
-        { x: 420, y: GROUND_Y - 105, label: 'CLOTHES', color: '#6B4470' },
-        { x: 490, y: GROUND_Y - 105, label: 'BOOK', color: '#8B0000' },
-        // On right bedside table
-        { x: 630, y: GROUND_Y - 88, label: 'CHARGER', color: '#333333' },
-        { x: 660, y: GROUND_Y - 88, label: 'PHONE', color: '#333333' },
-        // On dresser
-        { x: 800, y: GROUND_Y - 125, label: 'SLIPPER', color: '#D2691E' },
-        { x: 840, y: GROUND_Y - 125, label: 'CLOTHES', color: '#4169E1' },
-        // Ground near exit
-        { x: 920, y: GROUND_Y - 30, label: 'LAUNDRY', color: '#9370DB' },
+        // On spawn dresser (T1)
+        { x: 70, y: 470 - 32, label: 'CLOTHES', color: '#6B4470' },
+        { x: 120, y: 470 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        // On stepping drawer (T1)
+        { x: 260, y: 480 - 32, label: 'CHARGER', color: '#333333' },
+        // On BED (T2)
+        { x: 420, y: 390 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        { x: 500, y: 390 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        { x: 560, y: 390 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        // On landing drawer (T1)
+        { x: 685, y: 475 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On dresser (T2)
+        { x: 830, y: 380 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 870, y: 380 - 32, label: 'CLOTHES', color: '#4169E1' },
+        // On exit basket (T1)
+        { x: 925, y: 465 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
 
         // =====================================================================
         // SCREEN 2 (960-1920): 10 collectables
         // =====================================================================
-        // On bedside table
-        { x: 990, y: GROUND_Y - 88, label: 'GLASS', color: '#87CEEB' },
-        // On bed (before bounce)
-        { x: 1180, y: GROUND_Y - 105, label: 'PILLOW', color: '#F0E0D0' },
-        { x: 1250, y: GROUND_Y - 105, label: 'CLOTHES', color: '#CD5C5C' },
-        { x: 1320, y: GROUND_Y - 105, label: 'LAUNDRY', color: '#8FBC8F' },
-        // On dresser top (reached via bed bounce)
-        { x: 1480, y: GROUND_Y - 235, label: 'BOOK', color: '#4682B4' },
-        { x: 1530, y: GROUND_Y - 235, label: 'CHARGER', color: '#333333' },
-        // On high shelf (reached from dresser top)
-        { x: 1510, y: GROUND_Y - 365, label: 'PHONE', color: '#333333' },
-        // On landing dresser
-        { x: 1710, y: GROUND_Y - 90, label: 'SLIPPER', color: '#D2691E' },
-        // On shelf step
-        { x: 1855, y: GROUND_Y - 155, label: 'BOOK', color: '#8B4513' },
-        // Ground
-        { x: 1600, y: GROUND_Y - 30, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On entry drawer (T1)
+        { x: 995, y: 470 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On BED (T2, before bounce)
+        { x: 1150, y: 385 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        { x: 1220, y: 385 - 32, label: 'CLOTHES', color: '#556B2F' },
+        // On T3 shelf (reached via bed bounce)
+        { x: 1410, y: 280 - 32, label: 'CHARGER', color: '#333333' },
+        // On high shelf T3
+        { x: 1275, y: 260 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        // On T2 landing shelf
+        { x: 1565, y: 370 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On right island (T1)
+        { x: 1710, y: 475 - 32, label: 'CLOTHES', color: '#8B6914' },
+        { x: 1740, y: 475 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On bridge shelf (T2)
+        { x: 1860, y: 380 - 32, label: 'CHARGER', color: '#333333' },
+        // On BED surface
+        { x: 1270, y: 385 - 32, label: 'LAUNDRY', color: '#9370DB' },
 
         // =====================================================================
         // SCREEN 3 (1920-2880): 10 collectables
         // =====================================================================
-        // On wardrobe base
-        { x: 2000, y: GROUND_Y - 115, label: 'CLOTHES', color: '#556B2F' },
-        { x: 2060, y: GROUND_Y - 115, label: 'CLOTHES', color: '#8B6914' },
-        // On shelf 1 (right)
-        { x: 2165, y: GROUND_Y - 225, label: 'BOOK', color: '#006400' },
-        // On shelf 2 (left)
-        { x: 2015, y: GROUND_Y - 315, label: 'PILLOW', color: '#E0D0E8' },
-        // On shelf 3 (right, high)
-        { x: 2195, y: GROUND_Y - 405, label: 'CHARGER', color: '#333333' },
-        // On right wardrobe
-        { x: 2380, y: GROUND_Y - 115, label: 'LAUNDRY', color: '#9370DB' },
-        // On bridge shelf
-        { x: 2545, y: GROUND_Y - 165, label: 'GLASS', color: '#87CEEB' },
-        // On exit dresser
-        { x: 2730, y: GROUND_Y - 100, label: 'SLIPPER', color: '#D2691E' },
-        // Ground items
-        { x: 2250, y: GROUND_Y - 30, label: 'LAUNDRY', color: '#8FBC8F' },
-        { x: 2600, y: GROUND_Y - 30, label: 'CLOTHES', color: '#CD5C5C' },
+        // On wardrobe base (T1)
+        { x: 1970, y: 475 - 32, label: 'CLOTHES', color: '#556B2F' },
+        { x: 2010, y: 475 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        // On T2 shelf right
+        { x: 2125, y: 380 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        // On T3 shelf left
+        { x: 1985, y: 290 - 32, label: 'CHARGER', color: '#333333' },
+        // On T4 shelf right (high reward!)
+        { x: 2145, y: 200 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        // On descent shelf (T3)
+        { x: 2305, y: 280 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On wardrobe right (T2)
+        { x: 2430, y: 370 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On landing (T1)
+        { x: 2590, y: 465 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        // On bridge shelf (T2)
+        { x: 2725, y: 390 - 32, label: 'CLOTHES', color: '#4169E1' },
+        // On exit (T1)
+        { x: 2855, y: 470 - 32, label: 'CHARGER', color: '#333333' },
 
         // =====================================================================
         // SCREEN 4 (2880-3840): 9 collectables + 1 +HEALTH
         // =====================================================================
-        // On laundry basket 1
-        { x: 2945, y: GROUND_Y - 88, label: 'LAUNDRY', color: '#B0C4DE' },
-        // On chair 1
-        { x: 3080, y: GROUND_Y - 133, label: 'PILLOW', color: '#E8D8E0' },
-        // On laundry basket 2
-        { x: 3225, y: GROUND_Y - 88, label: 'CLOTHES', color: '#4169E1' },
-        // On chair 2
-        { x: 3360, y: GROUND_Y - 143, label: 'BOOK', color: '#8B0000' },
-        // On laundry basket 3
-        { x: 3510, y: GROUND_Y - 93, label: 'LAUNDRY', color: '#9370DB' },
-        // On shelf step
-        { x: 3645, y: GROUND_Y - 155, label: 'PHONE', color: '#333333' },
-        // On exit dresser
-        { x: 3790, y: GROUND_Y - 100, label: 'GLASS', color: '#87CEEB' },
-        // Ground items
-        { x: 3150, y: GROUND_Y - 30, label: 'SLIPPER', color: '#D2691E' },
-        { x: 3550, y: GROUND_Y - 30, label: 'CHARGER', color: '#333333' },
-        // +HEALTH on chair 2 (tricky jump)
-        { x: 3380, y: GROUND_Y - 143, label: '+HEALTH', color: '#00FF00' },
+        // On basket 1 (T1)
+        { x: 2925, y: 480 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        // On T2 drawer
+        { x: 3055, y: 390 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        // On basket 2 (T1)
+        { x: 3185, y: 475 - 32, label: 'CLOTHES', color: '#6B4470' },
+        // On T2 dresser
+        { x: 3330, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On basket 3 (T1)
+        { x: 3465, y: 470 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        // On T2 shelf
+        { x: 3605, y: 385 - 32, label: 'CHARGER', color: '#333333' },
+        // On T3 optional high shelf
+        { x: 3365, y: 270 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        // On exit dresser (T1)
+        { x: 3750, y: 475 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        // On T2 dresser
+        { x: 3350, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // +HEALTH on T3 high shelf (reward for risky jump)
+        { x: 3370, y: 270 - 32, label: '+HEALTH', color: '#00FF00' },
 
         // =====================================================================
         // SCREEN 5 (3840-4800): 9 collectables
         // =====================================================================
-        // On entry platform
-        { x: 3895, y: GROUND_Y - 88, label: 'LAUNDRY', color: '#8FBC8F' },
-        // On moving shelf 1
-        { x: 4045, y: GROUND_Y - 155, label: 'BOOK', color: '#4682B4' },
-        // On static landing 1
-        { x: 4220, y: GROUND_Y - 98, label: 'CLOTHES', color: '#6B4470' },
-        // On moving shelf 2
-        { x: 4365, y: GROUND_Y - 175, label: 'PILLOW', color: '#F0E0D0' },
-        // On static landing 2
-        { x: 4550, y: GROUND_Y - 93, label: 'PHONE', color: '#333333' },
-        // On moving shelf 3
-        { x: 4670, y: GROUND_Y - 165, label: 'CHARGER', color: '#333333' },
-        // On moving shelf 4 (high, bonus)
-        { x: 4500, y: GROUND_Y - 275, label: 'GLASS', color: '#87CEEB' },
-        // Ground items
-        { x: 4100, y: GROUND_Y - 30, label: 'SLIPPER', color: '#D2691E' },
-        { x: 4400, y: GROUND_Y - 30, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On entry basket (T1)
+        { x: 3890, y: 480 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On moving shelf 1 (T2)
+        { x: 4030, y: 380 - 32, label: 'CLOTHES', color: '#556B2F' },
+        // On T1 landing
+        { x: 4195, y: 470 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        // On moving shelf 2 (T2)
+        { x: 4345, y: 370 - 32, label: 'CHARGER', color: '#333333' },
+        // On T1 landing
+        { x: 4500, y: 475 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On moving shelf 3 (T3)
+        { x: 4610, y: 280 - 32, label: 'CLOTHES', color: '#8B6914' },
+        // On moving shelf 4 (T3 bonus)
+        { x: 4430, y: 260 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        // On static descent shelf (T2)
+        { x: 4730, y: 390 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        // On T1 landing
+        { x: 4510, y: 475 - 32, label: 'CHARGER', color: '#333333' },
 
         // =====================================================================
         // SCREEN 6 (4800-5760): 8 collectables + 1 +LIFE
         // =====================================================================
-        // On entry platform
-        { x: 4870, y: GROUND_Y - 88, label: 'CLOTHES', color: '#CD5C5C' },
-        // On shelf 1 (solid base)
-        { x: 5005, y: GROUND_Y - 145, label: 'BOOK', color: '#8B4513' },
-        // On crumble shelf 2
-        { x: 5120, y: GROUND_Y - 225, label: 'PILLOW', color: '#E0D0E8' },
-        // On shelf 3 (solid)
-        { x: 4985, y: GROUND_Y - 295, label: 'CHARGER', color: '#333333' },
-        // On right descent shelf
-        { x: 5305, y: GROUND_Y - 155, label: 'PHONE', color: '#333333' },
-        // On wardrobe landing
-        { x: 5470, y: GROUND_Y - 100, label: 'LAUNDRY', color: '#9370DB' },
-        // On exit platform
-        { x: 5645, y: GROUND_Y - 88, label: 'GLASS', color: '#87CEEB' },
-        // Ground
-        { x: 5200, y: GROUND_Y - 30, label: 'SLIPPER', color: '#D2691E' },
-        // +LIFE at the very top (crumble shelf 5, y≈140)
-        { x: 5005, y: GROUND_Y - 415, label: '+LIFE', color: '#FF1493' },
+        // On entry basket (T1)
+        { x: 4860, y: 475 - 32, label: 'CLOTHES', color: '#4169E1' },
+        // On solid shelf T2
+        { x: 4990, y: 385 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        // On crumble T2
+        { x: 5125, y: 370 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        // On solid T3
+        { x: 4965, y: 280 - 32, label: 'CHARGER', color: '#333333' },
+        // On descent shelf T2
+        { x: 5330, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On wardrobe landing T1
+        { x: 5475, y: 465 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        // On exit T1
+        { x: 5645, y: 475 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On solid T4 alternative
+        { x: 5175, y: 190 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        // +LIFE at T4 crumble top!
+        { x: 4995, y: 170 - 32, label: '+LIFE', color: '#FF1493' },
 
         // =====================================================================
-        // SCREEN 7 (5760-6720): 9 collectables (5 low path, 3 high + 1 +HEALTH high)
+        // SCREEN 7 (5760-6720): 9 collectables (5 low path, 3 high + 1 +HEALTH)
         // =====================================================================
-        // Lower safe path items (5)
-        { x: 5840, y: GROUND_Y - 110, label: 'CLOTHES', color: '#556B2F' },
-        { x: 6000, y: GROUND_Y - 88, label: 'LAUNDRY', color: '#8FBC8F' },
-        { x: 6150, y: GROUND_Y - 105, label: 'BOOK', color: '#006400' },
-        { x: 6310, y: GROUND_Y - 88, label: 'PILLOW', color: '#E8D8E0' },
-        { x: 6460, y: GROUND_Y - 100, label: 'PHONE', color: '#333333' },
-        // High reward path items (3 bonus + +HEALTH)
-        { x: 5855, y: GROUND_Y - 225, label: 'CLOTHES', color: '#8B6914' },
-        { x: 6005, y: GROUND_Y - 315, label: 'CHARGER', color: '#333333' },
-        { x: 6165, y: GROUND_Y - 235, label: 'GLASS', color: '#87CEEB' },
-        // +HEALTH on high shelf (reward for taking risk)
-        { x: 6020, y: GROUND_Y - 315, label: '+HEALTH', color: '#00FF00' },
+        // Lower safe path (5)
+        { x: 5830, y: 465 - 32, label: 'CLOTHES', color: '#556B2F' },
+        { x: 5985, y: 390 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        { x: 6130, y: 470 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        { x: 6285, y: 385 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 6430, y: 470 - 32, label: 'CHARGER', color: '#333333' },
+        // High reward path (3 bonus + +HEALTH)
+        { x: 5845, y: 290 - 32, label: 'CLOTHES', color: '#8B6914' },
+        { x: 6005, y: 200 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        { x: 6175, y: 280 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        // +HEALTH on high T4 shelf
+        { x: 6020, y: 200 - 32, label: '+HEALTH', color: '#00FF00' },
         // Exit
-        { x: 6625, y: GROUND_Y - 88, label: 'SLIPPER', color: '#D2691E' },
+        { x: 6595, y: 475 - 32, label: 'SLIPPER', color: '#D2691E' },
 
         // =====================================================================
         // SCREEN 8 (6720-7680): 8 collectables
         // =====================================================================
-        // On platforms (between timed obstacles)
-        { x: 6785, y: GROUND_Y - 115, label: 'LAUNDRY', color: '#B0C4DE' },
-        { x: 6970, y: GROUND_Y - 153, label: 'BOOK', color: '#8B0000' },
-        { x: 7165, y: GROUND_Y - 115, label: 'PILLOW', color: '#F0E0D0' },
-        { x: 7340, y: GROUND_Y - 163, label: 'CLOTHES', color: '#4169E1' },
-        { x: 7525, y: GROUND_Y - 110, label: 'PHONE', color: '#333333' },
-        // On safe landing
-        { x: 7640, y: GROUND_Y - 88, label: 'CHARGER', color: '#333333' },
-        // Ground items
-        { x: 6850, y: GROUND_Y - 30, label: 'SLIPPER', color: '#D2691E' },
-        { x: 7250, y: GROUND_Y - 30, label: 'GLASS', color: '#87CEEB' },
+        // On T1 entry
+        { x: 6765, y: 470 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On T2 platforms (between timed obstacles)
+        { x: 6900, y: 380 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        // On T1 landing
+        { x: 7045, y: 475 - 32, label: 'CLOTHES', color: '#4169E1' },
+        // On T2 platform
+        { x: 7180, y: 370 - 32, label: 'CHARGER', color: '#333333' },
+        // On T1 landing
+        { x: 7325, y: 470 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On T2 platform
+        { x: 7460, y: 385 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        // On T1 safe exit
+        { x: 7610, y: 465 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        // On T2 platform
+        { x: 7180, y: 370 - 32, label: 'PILLOW', color: '#F0E0D0' },
 
         // =====================================================================
         // SCREEN 9 (7680-8640): 9 collectables + 1 +HEALTH
         // =====================================================================
-        // On entry
-        { x: 7745, y: GROUND_Y - 88, label: 'LAUNDRY', color: '#9370DB' },
-        // On crumble shelf 1
-        { x: 7895, y: GROUND_Y - 155, label: 'CLOTHES', color: '#CD5C5C' },
-        // On moving shelf above 1
-        { x: 7885, y: GROUND_Y - 265, label: 'BOOK', color: '#4682B4' },
-        // On static landing
-        { x: 8070, y: GROUND_Y - 98, label: 'PILLOW', color: '#E8D8E0' },
-        // On crumble shelf 2
-        { x: 8210, y: GROUND_Y - 165, label: 'PHONE', color: '#333333' },
-        // On moving shelf above 2
-        { x: 8200, y: GROUND_Y - 275, label: 'GLASS', color: '#87CEEB' },
-        // On safe dresser
-        { x: 8400, y: GROUND_Y - 95, label: 'CHARGER', color: '#333333' },
-        // On exit shelf
-        { x: 8555, y: GROUND_Y - 145, label: 'SLIPPER', color: '#D2691E' },
-        // Ground
-        { x: 8300, y: GROUND_Y - 30, label: 'LAUNDRY', color: '#8FBC8F' },
-        // +HEALTH on moving shelf 2 (tricky)
-        { x: 8220, y: GROUND_Y - 275, label: '+HEALTH', color: '#00FF00' },
+        // On T1 entry
+        { x: 7730, y: 475 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        // On crumble shelf T2
+        { x: 7880, y: 380 - 32, label: 'CLOTHES', color: '#6B4470' },
+        // On moving shelf T3
+        { x: 7870, y: 270 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        // On static T2
+        { x: 8015, y: 390 - 32, label: 'CHARGER', color: '#333333' },
+        // On T1 landing
+        { x: 8125, y: 470 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On crumble shelf T2
+        { x: 8270, y: 375 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On moving shelf T3
+        { x: 8260, y: 260 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        // On safe dresser T1
+        { x: 8535, y: 465 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        // On static T2
+        { x: 8405, y: 385 - 32, label: 'CHARGER', color: '#333333' },
+        // +HEALTH on T3 moving shelf (tricky)
+        { x: 8250, y: 260 - 32, label: '+HEALTH', color: '#00FF00' },
 
         // =====================================================================
         // SCREEN 10 (8640-9600): 8 collectables
         // =====================================================================
-        // On precision platforms
-        { x: 8700, y: GROUND_Y - 88, label: 'CLOTHES', color: '#6B4470' },
-        { x: 8910, y: GROUND_Y - 133, label: 'BOOK', color: '#8B4513' },
-        { x: 9110, y: GROUND_Y - 93, label: 'LAUNDRY', color: '#B0C4DE' },
-        { x: 9300, y: GROUND_Y - 143, label: 'PILLOW', color: '#E0D0E8' },
-        { x: 9490, y: GROUND_Y - 98, label: 'PHONE', color: '#333333' },
-        // Ground items (risky to grab — on ground between expert gaps)
-        { x: 8800, y: GROUND_Y - 30, label: 'SLIPPER', color: '#D2691E' },
-        { x: 9200, y: GROUND_Y - 30, label: 'GLASS', color: '#87CEEB' },
-        { x: 9400, y: GROUND_Y - 30, label: 'CHARGER', color: '#333333' },
+        // On T1 entry
+        { x: 8685, y: 475 - 32, label: 'CLOTHES', color: '#8B6914' },
+        // On T2 shelf
+        { x: 8835, y: 380 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        // On T1 island
+        { x: 8995, y: 470 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        // On T2 shelf
+        { x: 9155, y: 375 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On T1 island
+        { x: 9315, y: 480 - 32, label: 'CHARGER', color: '#333333' },
+        // On moving T2 shelf
+        { x: 9445, y: 370 - 32, label: 'CLOTHES', color: '#4169E1' },
+        // On T1 exit
+        { x: 9575, y: 470 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        // On T2 shelf
+        { x: 9155, y: 375 - 32, label: 'PILLOW', color: '#E8D8E0' },
 
         // =====================================================================
         // SCREEN 11 (9600-10560): 10 collectables
         // =====================================================================
-        // On entry
-        { x: 9665, y: GROUND_Y - 88, label: 'LAUNDRY', color: '#9370DB' },
-        // On moving shelf
-        { x: 9795, y: GROUND_Y - 165, label: 'CLOTHES', color: '#CD5C5C' },
-        // On narrow chair
-        { x: 9960, y: GROUND_Y - 93, label: 'BOOK', color: '#8B0000' },
-        // On crumble shelf
-        { x: 10100, y: GROUND_Y - 165, label: 'PILLOW', color: '#F0E0D0' },
-        // On static shelf (with obstacle)
-        { x: 10245, y: GROUND_Y - 115, label: 'PHONE', color: '#333333' },
-        // On chair hop
-        { x: 10390, y: GROUND_Y - 153, label: 'GLASS', color: '#87CEEB' },
-        // On final landing
-        { x: 10500, y: GROUND_Y - 88, label: 'CHARGER', color: '#333333' },
-        // Ground items
-        { x: 9850, y: GROUND_Y - 30, label: 'SLIPPER', color: '#D2691E' },
-        { x: 10150, y: GROUND_Y - 30, label: 'LAUNDRY', color: '#8FBC8F' },
-        { x: 10350, y: GROUND_Y - 30, label: 'CLOTHES', color: '#556B2F' },
+        // On T1 entry
+        { x: 9645, y: 475 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+        // On moving shelf T2
+        { x: 9790, y: 375 - 32, label: 'CLOTHES', color: '#556B2F' },
+        // On T1 drawer
+        { x: 9945, y: 470 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        // On crumble T2
+        { x: 10085, y: 380 - 32, label: 'SLIPPER', color: '#D2691E' },
+        // On static T2
+        { x: 10165, y: 395 - 32, label: 'CHARGER', color: '#333333' },
+        // On T1 dresser
+        { x: 10280, y: 465 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        // On moving T2
+        { x: 10405, y: 370 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        // On T1 final landing
+        { x: 10500, y: 475 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        // On static T2
+        { x: 10165, y: 395 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        // On T1 dresser
+        { x: 10300, y: 465 - 32, label: 'SLIPPER', color: '#D2691E' },
 
         // =====================================================================
         // SCREEN 12 (10560-11520): BOSS ARENA — 0 standard collectables
@@ -702,105 +771,102 @@ export const level5 = {
 
     // ========== OBSTACLES ==========
     obstacles: [
-        // === SCREEN 1: 1 PLUG ===
-        { x: 260, y: GROUND_Y - 20, width: 24, height: 20, label: 'PLUG', color: '#FFD700' },
+        // === SCREEN 1: 1 PLUG on T1 stepping drawer ===
+        { x: 280, y: 480 - 22, width: 24, height: 20, label: 'PLUG', color: '#FFD700' },
 
-        // === SCREEN 2: 1 CABLE ===
-        { x: 1440, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333333' },
+        // === SCREEN 2: 1 CABLE on T1 right island ===
+        { x: 1720, y: 475 - 25, width: 40, height: 25, label: 'CABLE', color: '#333333' },
 
-        // === SCREEN 3: 1 IRON (timed) ===
-        { x: 2480, y: GROUND_Y - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        // === SCREEN 3: 1 IRON (timed) on T2 shelf ===
+        { x: 2440, y: 370 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
 
-        // === SCREEN 4: 1 HAIR_STRAIGHTENER (timed) ===
-        { x: 3420, y: GROUND_Y - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
+        // === SCREEN 4: 1 HAIR_STRAIGHTENER on T2 dresser ===
+        { x: 3340, y: 380 - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0 },
 
-        // === SCREEN 5: 2 timed obstacles ===
-        { x: 4150, y: GROUND_Y - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        // === SCREEN 5: 2 timed obstacles on T2 shelves ===
+        { x: 4050, y: 380 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.5 },
-        { x: 4600, y: GROUND_Y - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
+        { x: 4360, y: 370 - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 1.0 },
 
-        // === SCREEN 6: 2 timed obstacles ===
-        { x: 5050, y: GROUND_Y - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        // === SCREEN 6: 2 timed obstacles on T2 shelves ===
+        { x: 5010, y: 385 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
-        { x: 5350, y: GROUND_Y - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
+        { x: 5160, y: 370 - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0.8 },
 
-        // === SCREEN 7: 1 CABLE ===
-        { x: 6250, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333333' },
+        // === SCREEN 7: 1 CABLE on T1 dresser ===
+        { x: 6140, y: 470 - 25, width: 40, height: 25, label: 'CABLE', color: '#333333' },
 
-        // === SCREEN 8: 3 timed obstacles ON platforms ===
-        // Iron on shelf platform 1
-        { x: 6800, y: GROUND_Y - 102, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        // === SCREEN 8: 3 timed obstacles ON T2 platforms ===
+        { x: 6910, y: 380 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
-        // Hair straightener on shelf platform 3
-        { x: 7180, y: GROUND_Y - 102, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
+        { x: 7190, y: 370 - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0.5 },
-        // Iron on shelf platform 5
-        { x: 7540, y: GROUND_Y - 97, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        { x: 7470, y: 385 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 1.0 },
 
-        // === SCREEN 9: 2 timed obstacles ===
-        { x: 7950, y: GROUND_Y - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        // === SCREEN 9: 2 timed obstacles on T2 ===
+        { x: 8030, y: 390 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
-        { x: 8280, y: GROUND_Y - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
+        { x: 8420, y: 385 - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0.5 },
 
-        // === SCREEN 10: 2 timed obstacles ===
-        { x: 8980, y: GROUND_Y - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        // === SCREEN 10: 2 timed obstacles on T2 ===
+        { x: 8855, y: 380 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
-        { x: 9360, y: GROUND_Y - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
+        { x: 9175, y: 375 - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0.8 },
 
         // === SCREEN 11: 3 mixed obstacles ===
-        { x: 9880, y: GROUND_Y - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
+        { x: 9960, y: 470 - 22, width: 30, height: 22, label: 'IRON', color: '#C0C0C0',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
-        { x: 10160, y: GROUND_Y - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
+        { x: 10185, y: 395 - 20, width: 28, height: 20, label: 'HAIR_STRAIGHTENER', color: '#FF69B4',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0.5 },
-        { x: 10300, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333333' },
+        { x: 10290, y: 465 - 25, width: 40, height: 25, label: 'CABLE', color: '#333333' },
     ],
 
     // ========== ENEMIES ==========
     enemies: [
-        // === SCREEN 1: 1 MOTH ===
-        { x: 500, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
+        // === SCREEN 1: 1 MOTH on BED (T2) ===
+        { x: 450, y: 390 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 60 },
 
-        // === SCREEN 2: 1 ALARM_CLOCK ===
-        { x: 1350, y: GROUND_Y - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 90 },
+        // === SCREEN 2: 1 ALARM_CLOCK on T2 landing shelf ===
+        { x: 1560, y: 370 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 50 },
 
-        // === SCREEN 3: 1 LAUNDRY_MONSTER ===
-        { x: 2450, y: GROUND_Y - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 60 },
+        // === SCREEN 3: 1 LAUNDRY_MONSTER on T2 wardrobe right ===
+        { x: 2430, y: 370 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
 
-        // === SCREEN 4: 1 MOTH ===
-        { x: 3300, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
+        // === SCREEN 4: 1 MOTH on T1 basket ===
+        { x: 3180, y: 475 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
 
-        // === SCREEN 5: 1 ALARM_CLOCK + 1 MOTH ===
-        { x: 4100, y: GROUND_Y - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 90 },
-        { x: 4450, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
+        // === SCREEN 5: 1 ALARM_CLOCK on T1 + 1 MOTH on T2 moving ===
+        { x: 4190, y: 470 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 40 },
+        { x: 4720, y: 390 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 50 },
 
-        // === SCREEN 6: 1 LAUNDRY_MONSTER ===
-        { x: 5250, y: GROUND_Y - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 60 },
+        // === SCREEN 6: 1 LAUNDRY_MONSTER on T2 ===
+        { x: 5320, y: 380 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
 
-        // === SCREEN 7: 1 MOTH ===
-        { x: 6350, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
+        // === SCREEN 7: 1 MOTH on T1 dresser ===
+        { x: 6420, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 50 },
 
-        // === SCREEN 8: 1 ALARM_CLOCK + 1 LAUNDRY_MONSTER ===
-        { x: 7050, y: GROUND_Y - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 90 },
-        { x: 7400, y: GROUND_Y - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 60 },
+        // === SCREEN 8: 1 ALARM_CLOCK on T1 + 1 LAUNDRY_MONSTER on T2 ===
+        { x: 7040, y: 475 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 40 },
+        { x: 7460, y: 385 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
 
-        // === SCREEN 9: 1 MOTH + 1 ALARM_CLOCK ===
-        { x: 7980, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
-        { x: 8350, y: GROUND_Y - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 90 },
+        // === SCREEN 9: 1 MOTH on T1 + 1 SPIDER on T2 ===
+        { x: 8120, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
+        { x: 8400, y: 385 - 22, width: 22, height: 22, label: 'SPIDER', color: '#333333', patrolRange: 40 },
 
-        // === SCREEN 10: 1 LAUNDRY_MONSTER + 1 MOTH ===
-        { x: 9000, y: GROUND_Y - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 60 },
-        { x: 9350, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
+        // === SCREEN 10: 1 LAUNDRY_MONSTER on T2 + 1 MOTH on T1 ===
+        { x: 8830, y: 380 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 40 },
+        { x: 9310, y: 480 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
 
-        // === SCREEN 11: 2 MOTH + 1 LAUNDRY_MONSTER ===
-        { x: 9800, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
-        { x: 10100, y: GROUND_Y - 20, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80 },
-        { x: 10400, y: GROUND_Y - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 60 },
+        // === SCREEN 11: 2 MOTH on T1 + 1 LAUNDRY_MONSTER on T2 ===
+        { x: 9940, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
+        { x: 10490, y: 475 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
+        { x: 10270, y: 465 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
     ],
 };

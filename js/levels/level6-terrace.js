@@ -2,6 +2,7 @@
 // 13 screen widths (12,480px at 960px canvas width)
 // FINAL and HARDEST level — 100 standard collectables + 3 +HEALTH + 1 +LIFE
 // Difficulty: 5% easy, 20% moderate, 40% challenging, 35% expert
+// DEADLY FLOOR — no full-width ground platform. Boss arena gets solid ground only.
 
 const GROUND_Y = 520;
 const CANVAS_W = 960;
@@ -12,7 +13,7 @@ export const level6 = {
     width: LEVEL_W,
     groundY: GROUND_Y,
     backgroundColor: '#87CEEB',
-    playerStart: { x: 80, y: GROUND_Y - 72 },
+    playerStart: { x: 80, y: 465 - 72 },
 
     bossDoor: { x: CANVAS_W * 12 - 80, y: GROUND_Y - 120 },
 
@@ -399,387 +400,548 @@ export const level6 = {
     ],
 
     // ========== PLATFORMS ==========
+    // ~90 static + ~18 moving + ~16 crumbling = ~124 total
     platforms: [
-        // Ground
-        { x: 0, y: GROUND_Y, width: LEVEL_W, height: 80, label: '', color: '#C4A070' },
+        // Boss arena ground (solid, full collision)
+        { x: CANVAS_W * 12, y: GROUND_Y, width: CANVAS_W, height: 80, label: '', color: '#C4A070' },
 
-        // === SCREEN 1 (0-960): TEACH — Garden entrance ===
-        // Easy hops: chair -> table -> pot -> railing, gaps 80-100px
-        { x: 160, y: GROUND_Y - 55, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
-        { x: 330, y: GROUND_Y - 50, width: 110, height: 20, label: 'GARDEN_TABLE', color: '#8B5E3C' },
-        { x: 530, y: GROUND_Y - 65, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 680, y: GROUND_Y - 55, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 850, y: GROUND_Y - 50, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
+        // =====================================================================
+        // SCREEN 1 (0-960): TEACH — Garden entrance
+        // Easy hops: T1 islands -> T2 table/chair -> T1
+        // =====================================================================
+        // T1: Spawn island
+        { x: 40, y: 465, width: 120, height: 20, label: 'BENCH', color: '#8B5E3C' },
+        // T1: Stepping island
+        { x: 220, y: 475, width: 80, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T2: Garden table (wide, safe)
+        { x: 370, y: 380, width: 130, height: 20, label: 'TABLE', color: '#8B5E3C' },
+        // T1: Landing
+        { x: 560, y: 470, width: 70, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T2: Chair
+        { x: 690, y: 390, width: 80, height: 18, label: 'CHAIR', color: '#228B22' },
+        // T1: Railing island
+        { x: 830, y: 475, width: 90, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T1: Exit island
+        { x: 930, y: 465, width: 50, height: 16, label: 'RAILING', color: '#6B4226' },
 
-        // === SCREEN 2 (960-1920): TEST — Plant pot stepping ===
-        // Narrow PLANT_POT (55px!) with 120px gaps — precision test
-        { x: 1000, y: GROUND_Y - 55, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 1200, y: GROUND_Y - 70, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 1375, y: GROUND_Y - 85, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 1550, y: GROUND_Y - 75, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 1725, y: GROUND_Y - 65, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 1870, y: GROUND_Y - 55, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
+        // =====================================================================
+        // SCREEN 2 (960-1920): TEST — Planter stepping
+        // Narrow PLANTERs (55px!) at T1-T2, crumbling planters introduced
+        // =====================================================================
+        // T1: Entry railing
+        { x: 970, y: 470, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Planter (narrow, crumble!)
+        { x: 1120, y: 385, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T2: Static planter (alternative)
+        { x: 1220, y: 395, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T1: Railing
+        { x: 1340, y: 475, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Planter
+        { x: 1480, y: 380, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T1: Railing
+        { x: 1610, y: 470, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Planter (crumble!)
+        { x: 1740, y: 390, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T1: Exit railing
+        { x: 1860, y: 475, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
 
-        // === SCREEN 3 (1920-2880): TEST — Clothesline section ===
-        // 3 moving CLOTHESLINE platforms, 130-150px gaps
-        { x: 1960, y: GROUND_Y - 60, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 2140, y: GROUND_Y - 100, width: 120, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
+        // =====================================================================
+        // SCREEN 3 (1920-2880): TEST — Clothesline section
+        // 3 moving CLOTHESLINEs at T2-T3 with static railing anchors
+        // =====================================================================
+        // T1: Entry railing
+        { x: 1940, y: 470, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Moving clothesline 1
+        { x: 2080, y: 375, width: 110, height: 14, label: 'SHELF', color: '#C0C0C0',
           moveX: 50, moveSpeed: 0.8 },
-        { x: 2370, y: GROUND_Y - 130, width: 100, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
+        // T1: Mid railing
+        { x: 2260, y: 480, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Moving clothesline 2 (higher)
+        { x: 2380, y: 280, width: 100, height: 14, label: 'SHELF', color: '#C0C0C0',
           moveX: -60, moveSpeed: 1.0 },
-        { x: 2580, y: GROUND_Y - 95, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
+        // T2: Static railing bridge
+        { x: 2540, y: 385, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Moving clothesline 3
+        { x: 2680, y: 370, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
           moveX: 55, moveSpeed: 0.9 },
-        { x: 2770, y: GROUND_Y - 60, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T1: Exit railing
+        { x: 2830, y: 470, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
 
-        // === SCREEN 4 (2880-3840): VERTICAL CLIMB — Railing zigzag ===
-        // 7 railings zigzagging from ground up to y~200 (max 130px vertical per hop)
-        { x: 2930, y: GROUND_Y - 60, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 3080, y: GROUND_Y - 140, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 2950, y: GROUND_Y - 220, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 3100, y: GROUND_Y - 290, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 3270, y: GROUND_Y - 250, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 3440, y: GROUND_Y - 200, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 3600, y: GROUND_Y - 130, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 3760, y: GROUND_Y - 55, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
+        // =====================================================================
+        // SCREEN 4 (2880-3840): VERTICAL CLIMB — Railing zigzag to T4
+        // Aggressive T1 -> T2 -> T3 -> T4 zigzag, max challenge
+        // =====================================================================
+        // T1: Entry railing
+        { x: 2910, y: 475, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Right
+        { x: 3050, y: 385, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Left
+        { x: 2930, y: 290, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T4: Right (bonus!)
+        { x: 3080, y: 190, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Descent right
+        { x: 3230, y: 270, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Descent
+        { x: 3380, y: 380, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Moving railing (side path)
+        { x: 3400, y: 280, width: 70, height: 16, label: 'RAILING', color: '#6B4226',
+          moveX: 40, moveSpeed: 0.9 },
+        // T1: Landing
+        { x: 3540, y: 470, width: 80, height: 18, label: 'BENCH', color: '#8B5E3C' },
+        // T2: Bridge
+        { x: 3680, y: 390, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T1: Exit
+        { x: 3810, y: 475, width: 64, height: 18, label: 'PLANTER', color: '#A0522D' },
 
-        // === SCREEN 5 (3840-4800): REST — Garden table rest ===
-        // Wide platforms, easy ground collecting
-        { x: 3900, y: GROUND_Y - 50, width: 110, height: 20, label: 'GARDEN_TABLE', color: '#8B5E3C' },
-        { x: 4100, y: GROUND_Y - 55, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
-        { x: 4280, y: GROUND_Y - 50, width: 110, height: 20, label: 'GARDEN_TABLE', color: '#8B5E3C' },
-        { x: 4480, y: GROUND_Y - 55, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
-        { x: 4650, y: GROUND_Y - 50, width: 100, height: 20, label: 'GARDEN_TABLE', color: '#8B5E3C' },
+        // =====================================================================
+        // SCREEN 5 (3840-4800): REST — Garden table rest area
+        // Wide platforms, generous spacing, easy collecting
+        // =====================================================================
+        // T1: Wide bench (rest!)
+        { x: 3870, y: 470, width: 130, height: 20, label: 'BENCH', color: '#8B5E3C' },
+        // T2: Table
+        { x: 4060, y: 380, width: 120, height: 20, label: 'TABLE', color: '#8B5E3C' },
+        // T1: Chair
+        { x: 4240, y: 470, width: 80, height: 18, label: 'CHAIR', color: '#228B22' },
+        // T2: Table
+        { x: 4380, y: 385, width: 110, height: 20, label: 'TABLE', color: '#8B5E3C' },
+        // T1: Chair
+        { x: 4550, y: 475, width: 80, height: 18, label: 'CHAIR', color: '#228B22' },
+        // T2: Shelf
+        { x: 4690, y: 390, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
 
-        // === SCREEN 6 (4800-5760): CHALLENGE — Crumbling railing sprint ===
-        // 4 crumbling RAILING (crumbleDelay: 0.5!) with 170px gaps. Must keep moving!
-        { x: 4830, y: GROUND_Y - 60, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 5010, y: GROUND_Y - 90, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
+        // =====================================================================
+        // SCREEN 6 (4800-5760): CHALLENGE — Crumbling planter sprint
+        // 6 crumbling PLANTERs at T2 with static alternatives, keep moving!
+        // =====================================================================
+        // T1: Entry railing
+        { x: 4830, y: 475, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Crumble planter 1
+        { x: 4970, y: 380, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 5200, y: GROUND_Y - 120, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
+        // T2: Static railing (alternative)
+        { x: 5060, y: 395, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Crumble planter 2
+        { x: 5190, y: 370, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 5390, y: GROUND_Y - 100, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
+        // T1: Mid railing
+        { x: 5310, y: 470, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Crumble planter 3
+        { x: 5420, y: 385, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 5570, y: GROUND_Y - 80, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
+        // T2: Crumble planter 4
+        { x: 5540, y: 375, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
           crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 5720, y: GROUND_Y - 55, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
+        // T2: Static railing
+        { x: 5630, y: 390, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T1: Exit chair
+        { x: 5720, y: 470, width: 70, height: 18, label: 'CHAIR', color: '#228B22' },
 
-        // === SCREEN 7 (5760-6720): CHALLENGE — Moving clothesline gauntlet ===
-        // 5 swinging CLOTHESLINE at varying heights, moveX: 50-80, speeds 0.8-1.4, 180px gaps
-        { x: 5800, y: GROUND_Y - 60, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 5980, y: GROUND_Y - 110, width: 100, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: 60, moveSpeed: 0.8 },
-        { x: 6180, y: GROUND_Y - 150, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: -70, moveSpeed: 1.2 },
-        { x: 6380, y: GROUND_Y - 120, width: 100, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: 80, moveSpeed: 1.0 },
-        { x: 6560, y: GROUND_Y - 160, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: -50, moveSpeed: 1.4 },
-        { x: 6700, y: GROUND_Y - 100, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
+        // =====================================================================
+        // SCREEN 7 (5760-6720): CHALLENGE — Moving clothesline gauntlet
+        // 5 moving clotheslines at T2-T3, 180px gaps, aggressive speeds
+        // =====================================================================
+        // T1: Entry planter
+        { x: 5790, y: 475, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T2: Moving clothesline 1
+        { x: 5930, y: 380, width: 100, height: 14, label: 'SHELF', color: '#C0C0C0',
           moveX: 60, moveSpeed: 0.9 },
-
-        // === SCREEN 8 (6720-7680): ESCALATE — Vertical + moving combo ===
-        // PLANT_POT climb (55px!) interspersed with moving RAILING
-        { x: 6760, y: GROUND_Y - 60, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 6900, y: GROUND_Y - 140, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
-          moveX: 40, moveSpeed: 0.8 },
-        { x: 7060, y: GROUND_Y - 220, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 7210, y: GROUND_Y - 290, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
-          moveX: -50, moveSpeed: 1.0 },
-        { x: 7370, y: GROUND_Y - 240, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 7520, y: GROUND_Y - 170, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
-          moveX: 45, moveSpeed: 0.9 },
-        { x: 7650, y: GROUND_Y - 60, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-
-        // === SCREEN 9 (7680-8640): RISK/REWARD — Rooftop paths ===
-        // Safe lower path (GARDEN_TABLE/CHAIR)
-        { x: 7720, y: GROUND_Y - 50, width: 110, height: 20, label: 'GARDEN_TABLE', color: '#8B5E3C' },
-        { x: 7920, y: GROUND_Y - 55, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
-        { x: 8100, y: GROUND_Y - 50, width: 110, height: 20, label: 'GARDEN_TABLE', color: '#8B5E3C' },
-        { x: 8300, y: GROUND_Y - 55, width: 70, height: 18, label: 'GARDEN_CHAIR', color: '#228B22' },
-        { x: 8480, y: GROUND_Y - 50, width: 100, height: 20, label: 'GARDEN_TABLE', color: '#8B5E3C' },
-        // Dangerous upper CLOTHESLINE chain path
-        { x: 7780, y: GROUND_Y - 180, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: 40, moveSpeed: 0.8 },
-        { x: 7980, y: GROUND_Y - 250, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: -50, moveSpeed: 1.0 },
-        { x: 8200, y: GROUND_Y - 280, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: 45, moveSpeed: 1.2 },
-        { x: 8420, y: GROUND_Y - 220, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: -40, moveSpeed: 0.9 },
-
-        // === SCREEN 10 (8640-9600): ESCALATE — Crumble + wind gauntlet ===
-        // Crumbling RAILING between moving CLOTHESLINE, 200px gaps (near max!)
-        { x: 8680, y: GROUND_Y - 60, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 8880, y: GROUND_Y - 110, width: 100, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: 60, moveSpeed: 1.0 },
-        { x: 9100, y: GROUND_Y - 90, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 9300, y: GROUND_Y - 130, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: -55, moveSpeed: 1.2 },
-        { x: 9480, y: GROUND_Y - 80, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-
-        // === SCREEN 11 (9600-10560): ESCALATE — BBQ area ===
-        // BBQ_SHELF platforms, mix of static + moving
-        { x: 9640, y: GROUND_Y - 60, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444' },
-        { x: 9830, y: GROUND_Y - 110, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444',
-          moveX: 40, moveSpeed: 0.8 },
-        { x: 10010, y: GROUND_Y - 80, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444' },
-        { x: 10200, y: GROUND_Y - 130, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444',
-          moveX: -45, moveSpeed: 1.0 },
-        { x: 10380, y: GROUND_Y - 90, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444' },
-        { x: 10510, y: GROUND_Y - 55, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-
-        // === SCREEN 12 (10560-11520): GAUNTLET — Final gauntlet ===
-        // 210px gaps — the HARDEST platforming in the ENTIRE GAME!
-        // All platform types combined
-        { x: 10600, y: GROUND_Y - 60, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 10810, y: GROUND_Y - 100, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 11020, y: GROUND_Y - 140, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
-          moveX: 60, moveSpeed: 1.2 },
-        { x: 11200, y: GROUND_Y - 110, width: 80, height: 16, label: 'RAILING', color: '#6B4226',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 11380, y: GROUND_Y - 80, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444' },
-        // High moving clothesline — +LIFE location
-        { x: 11100, y: GROUND_Y - 280, width: 90, height: 14, label: 'CLOTHESLINE', color: '#C0C0C0',
+        // T2: Moving clothesline 2
+        { x: 6120, y: 360, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: -70, moveSpeed: 1.2 },
+        // T3: Moving clothesline 3 (higher!)
+        { x: 6300, y: 270, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: 80, moveSpeed: 1.0 },
+        // T2: Moving clothesline 4
+        { x: 6470, y: 375, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
           moveX: -50, moveSpeed: 1.4 },
+        // T2: Moving clothesline 5
+        { x: 6620, y: 390, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: 60, moveSpeed: 0.9 },
+        // T1: Exit railing
+        { x: 6700, y: 470, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
 
-        // === SCREEN 13 (11520-12480): BOSS ARENA ===
-        // 7 platforms at varying heights for dodging BBQ DRAGON
-        { x: 11600, y: GROUND_Y - 100, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 11750, y: GROUND_Y - 180, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
-        { x: 11920, y: GROUND_Y - 120, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444' },
-        { x: 12080, y: GROUND_Y - 200, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
-        { x: 12230, y: GROUND_Y - 130, width: 55, height: 18, label: 'PLANT_POT', color: '#A0522D' },
-        { x: 12350, y: GROUND_Y - 80, width: 90, height: 20, label: 'BBQ_SHELF', color: '#444444' },
-        { x: 12100, y: GROUND_Y - 300, width: 80, height: 16, label: 'RAILING', color: '#6B4226' },
+        // =====================================================================
+        // SCREEN 8 (6720-7680): ESCALATE — Vertical + moving combo
+        // Planter climb T1-T4 with moving railings interspersed
+        // =====================================================================
+        // T1: Entry planter
+        { x: 6760, y: 475, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T2: Moving railing right
+        { x: 6890, y: 380, width: 70, height: 16, label: 'RAILING', color: '#6B4226',
+          moveX: 40, moveSpeed: 0.8 },
+        // T3: Planter
+        { x: 7030, y: 280, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T4: Moving railing (highest!)
+        { x: 7170, y: 180, width: 70, height: 16, label: 'RAILING', color: '#6B4226',
+          moveX: -50, moveSpeed: 1.0 },
+        // T3: Planter descent
+        { x: 7310, y: 270, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T2: Moving railing
+        { x: 7440, y: 385, width: 70, height: 16, label: 'RAILING', color: '#6B4226',
+          moveX: 45, moveSpeed: 0.9 },
+        // T4: Static bonus railing
+        { x: 7200, y: 150, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T1: Exit planter
+        { x: 7580, y: 470, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T2: Static shelf bridge
+        { x: 7500, y: 395, width: 70, height: 16, label: 'SHELF', color: '#8B6914' },
+
+        // =====================================================================
+        // SCREEN 9 (7680-8640): RISK/REWARD — Dual path
+        // Safe lower: T1-T2 table/chair chain
+        // Dangerous upper: T3-T4 moving clotheslines for +HEALTH
+        // =====================================================================
+        // Lower safe path (T1-T2)
+        { x: 7710, y: 470, width: 100, height: 20, label: 'TABLE', color: '#8B5E3C' },
+        { x: 7880, y: 475, width: 70, height: 18, label: 'CHAIR', color: '#228B22' },
+        { x: 8030, y: 465, width: 100, height: 20, label: 'TABLE', color: '#8B5E3C' },
+        { x: 8200, y: 475, width: 70, height: 18, label: 'CHAIR', color: '#228B22' },
+        { x: 8350, y: 470, width: 90, height: 20, label: 'BENCH', color: '#8B5E3C' },
+        // T2: Stepping shelf up to high path
+        { x: 7750, y: 385, width: 64, height: 16, label: 'SHELF', color: '#8B6914' },
+        // Upper path (T3-T4)
+        { x: 7870, y: 280, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: 40, moveSpeed: 0.8 },
+        { x: 8060, y: 200, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: -50, moveSpeed: 1.0 },
+        { x: 8260, y: 260, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: 45, moveSpeed: 1.2 },
+        { x: 8440, y: 190, width: 80, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: -40, moveSpeed: 0.9 },
+        // T1: Exit
+        { x: 8550, y: 475, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+
+        // =====================================================================
+        // SCREEN 10 (8640-9600): ESCALATE — Crumble + moving gauntlet
+        // Crumbling planters between moving clotheslines, 200px gaps
+        // =====================================================================
+        // T1: Entry railing
+        { x: 8660, y: 470, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Crumble planter
+        { x: 8800, y: 380, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
+        // T2: Static railing (alternative)
+        { x: 8890, y: 395, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Moving clothesline
+        { x: 9000, y: 280, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: 60, moveSpeed: 1.0 },
+        // T2: Crumble planter
+        { x: 9150, y: 375, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
+        // T1: Mid railing
+        { x: 9260, y: 475, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Moving clothesline
+        { x: 9370, y: 270, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: -55, moveSpeed: 1.2 },
+        // T2: Crumble planter
+        { x: 9490, y: 380, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
+        // T2: Static alternative
+        { x: 9560, y: 395, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+
+        // =====================================================================
+        // SCREEN 11 (9600-10560): ESCALATE — BBQ area, all mechanics
+        // Shelves, moving, crumbling, narrow — everything combined
+        // =====================================================================
+        // T1: Entry bench
+        { x: 9630, y: 470, width: 80, height: 20, label: 'BENCH', color: '#8B5E3C' },
+        // T2: Moving shelf
+        { x: 9770, y: 380, width: 80, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: 40, moveSpeed: 0.8 },
+        // T1: Railing
+        { x: 9920, y: 475, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Crumble planter
+        { x: 10040, y: 370, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
+        // T2: Static railing
+        { x: 10130, y: 390, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Moving clothesline (high)
+        { x: 10050, y: 260, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: -45, moveSpeed: 1.0 },
+        // T1: Planter
+        { x: 10260, y: 470, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        // T2: Moving shelf
+        { x: 10380, y: 385, width: 70, height: 16, label: 'SHELF', color: '#8B6914',
+          moveX: 50, moveSpeed: 1.1 },
+        // T1: Exit railing
+        { x: 10500, y: 475, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+
+        // =====================================================================
+        // SCREEN 12 (10560-11520): GAUNTLET — Final gauntlet, HARDEST platforming
+        // 200px gaps, all platform types, maximum T4 usage
+        // =====================================================================
+        // T1: Entry railing
+        { x: 10590, y: 470, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Crumble planter
+        { x: 10730, y: 380, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
+        // T2: Static alternative
+        { x: 10820, y: 395, width: 55, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T3: Moving clothesline
+        { x: 10930, y: 280, width: 90, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: 60, moveSpeed: 1.2 },
+        // T2: Narrow railing
+        { x: 11090, y: 375, width: 55, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T4: High moving clothesline — +LIFE location!
+        { x: 11020, y: 160, width: 80, height: 14, label: 'SHELF', color: '#C0C0C0',
+          moveX: -50, moveSpeed: 1.4 },
+        // T2: Crumble planter
+        { x: 11220, y: 385, width: 55, height: 18, label: 'PLANTER', color: '#A0522D',
+          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
+        // T1: Railing
+        { x: 11340, y: 470, width: 64, height: 16, label: 'RAILING', color: '#6B4226' },
+        // T2: Final shelf to boss door
+        { x: 11440, y: 390, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
+
+        // =====================================================================
+        // SCREEN 13 (11520-12480): BOSS ARENA
+        // 7 platforms at varying heights for dodging BBQ DRAGON + arena ground
+        // =====================================================================
+        { x: 11600, y: 380, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        { x: 11750, y: 280, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        { x: 11920, y: 370, width: 80, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 12080, y: 200, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
+        { x: 12230, y: 370, width: 55, height: 18, label: 'PLANTER', color: '#A0522D' },
+        { x: 12350, y: 280, width: 80, height: 16, label: 'SHELF', color: '#8B6914' },
+        { x: 12100, y: 150, width: 70, height: 16, label: 'RAILING', color: '#6B4226' },
     ],
 
     // ========== COLLECTABLES ==========
-    // 100 standard items + 3 +HEALTH + 1 +LIFE
+    // 100 standard items + 3 +HEALTH + 1 +LIFE = 104 total
     collectables: [
         // === SCREEN 1 (9 items) ===
-        // On garden chair
-        { x: 180, y: GROUND_Y - 88, label: 'SHOE', color: '#4169E1' },
-        // On garden table
-        { x: 360, y: GROUND_Y - 82, label: 'MUG', color: '#FFFFFF' },
-        { x: 420, y: GROUND_Y - 82, label: 'KEYS', color: '#FFD700' },
-        // On plant pot
-        { x: 545, y: GROUND_Y - 98, label: 'WATERING_CAN', color: '#2E8B57' },
-        // On railing
-        { x: 700, y: GROUND_Y - 88, label: 'ROPE', color: '#D2B48C' },
-        // On exit chair
-        { x: 870, y: GROUND_Y - 83, label: 'BOOK', color: '#DC143C' },
-        // Ground items
-        { x: 250, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 600, y: GROUND_Y - 32, label: 'SHOE', color: '#8B4513' },
-        { x: 780, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // On spawn bench (T1)
+        { x: 80, y: 465 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 130, y: 465 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // On stepping planter (T1)
+        { x: 250, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // On table (T2)
+        { x: 400, y: 380 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 460, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // On planter (T1)
+        { x: 580, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
+        // On chair (T2)
+        { x: 720, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // On railing (T1)
+        { x: 860, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
+        // On exit (T1)
+        { x: 945, y: 465 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
 
         // === SCREEN 2 (9 items) ===
-        // On railing
-        { x: 1020, y: GROUND_Y - 88, label: 'MUG', color: '#FF6347' },
-        // On plant pots (precision reward)
-        { x: 1215, y: GROUND_Y - 103, label: 'KEYS', color: '#FFD700' },
-        { x: 1390, y: GROUND_Y - 118, label: 'WATERING_CAN', color: '#2E8B57' },
-        { x: 1565, y: GROUND_Y - 108, label: 'BOOK', color: '#4682B4' },
-        // On exit railing
-        { x: 1745, y: GROUND_Y - 98, label: 'ROPE', color: '#D2B48C' },
-        // On exit pot
-        { x: 1885, y: GROUND_Y - 88, label: 'SHOE', color: '#4169E1' },
-        // Ground items
-        { x: 1100, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 1450, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 1800, y: GROUND_Y - 32, label: 'MUG', color: '#FFFFFF' },
+        // On entry railing (T1)
+        { x: 1000, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
+        // On crumble planter T2
+        { x: 1140, y: 385 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // On static planter T2
+        { x: 1240, y: 395 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // On railing T1
+        { x: 1365, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
+        // On planter T2
+        { x: 1500, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // On railing T1
+        { x: 1635, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
+        // On crumble planter T2
+        { x: 1760, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // On exit railing T1
+        { x: 1885, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // On static planter T2
+        { x: 1245, y: 395 - 32, label: 'ROPE', color: '#D2B48C' },
 
         // === SCREEN 3 (9 items) ===
-        // On start railing
-        { x: 1980, y: GROUND_Y - 93, label: 'SHOE', color: '#8B4513' },
-        // On moving clotheslines (risky!)
-        { x: 2180, y: GROUND_Y - 135, label: 'KEYS', color: '#FFD700' },
-        { x: 2400, y: GROUND_Y - 165, label: 'WATERING_CAN', color: '#2E8B57' },
-        { x: 2610, y: GROUND_Y - 130, label: 'ROPE', color: '#D2B48C' },
-        // On exit railing
-        { x: 2790, y: GROUND_Y - 93, label: 'MUG', color: '#FF6347' },
-        // Ground items
-        { x: 2060, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 2300, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 2500, y: GROUND_Y - 32, label: 'BOOK', color: '#DC143C' },
-        { x: 2700, y: GROUND_Y - 32, label: 'SHOE', color: '#4169E1' },
+        // On entry railing (T1)
+        { x: 1965, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
+        // On moving clothesline 1 (T2)
+        { x: 2120, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // On mid railing (T1)
+        { x: 2285, y: 480 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // On moving clothesline 2 (T3, bonus!)
+        { x: 2420, y: 280 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 2450, y: 280 - 32, label: 'ROPE', color: '#D2B48C' },
+        // On static railing (T2)
+        { x: 2565, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
+        // On moving clothesline 3 (T2)
+        { x: 2720, y: 370 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // On exit railing (T1)
+        { x: 2855, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // On bridge railing
+        { x: 2570, y: 385 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
 
         // === SCREEN 4 (8 items) ===
-        // On ascending railings (zigzag climb)
-        { x: 2950, y: GROUND_Y - 93, label: 'ROPE', color: '#D2B48C' },
-        { x: 3100, y: GROUND_Y - 173, label: 'MUG', color: '#FFFFFF' },
-        { x: 2970, y: GROUND_Y - 253, label: 'KEYS', color: '#FFD700' },
-        { x: 3120, y: GROUND_Y - 323, label: 'BOOK', color: '#8B0000' },
-        { x: 3290, y: GROUND_Y - 283, label: 'WATERING_CAN', color: '#2E8B57' },
-        { x: 3460, y: GROUND_Y - 233, label: 'GARDEN_TOOL', color: '#228B22' },
-        // Ground items
-        { x: 3200, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 3700, y: GROUND_Y - 32, label: 'SHOE', color: '#8B4513' },
+        // On ascending railings
+        { x: 2935, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 3075, y: 385 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 2955, y: 290 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // On T4 bonus!
+        { x: 3105, y: 190 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // Descent
+        { x: 3255, y: 270 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 3405, y: 380 - 32, label: 'SHOE', color: '#8B4513' },
+        // On landing (T1)
+        { x: 3570, y: 470 - 32, label: 'ROPE', color: '#D2B48C' },
+        // On exit
+        { x: 3830, y: 475 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
 
-        // === SCREEN 5 (8 items) ===
-        // Easy ground/table collecting — rest screen
-        { x: 3930, y: GROUND_Y - 82, label: 'MUG', color: '#FF6347' },
-        { x: 3990, y: GROUND_Y - 82, label: 'KEYS', color: '#FFD700' },
-        { x: 4120, y: GROUND_Y - 88, label: 'BOOK', color: '#DC143C' },
-        { x: 4310, y: GROUND_Y - 82, label: 'ROPE', color: '#D2B48C' },
-        { x: 4500, y: GROUND_Y - 88, label: 'SHOE', color: '#4169E1' },
-        { x: 4680, y: GROUND_Y - 82, label: 'WATERING_CAN', color: '#2E8B57' },
-        // Ground
-        { x: 4200, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 4560, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        // +HEALTH
-        { x: 4370, y: GROUND_Y - 82, label: '+HEALTH', color: '#00FF00' },
+        // === SCREEN 5 (8 items + 1 +HEALTH) ===
+        // Rest screen — generous, easy collecting
+        { x: 3910, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 3970, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 4100, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 4160, y: 380 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 4270, y: 470 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 4420, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 4580, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 4720, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // +HEALTH on rest table
+        { x: 4440, y: 385 - 32, label: '+HEALTH', color: '#00FF00' },
 
         // === SCREEN 6 (8 items) ===
-        // On crumbling railings (must grab fast!)
-        { x: 4850, y: GROUND_Y - 93, label: 'MUG', color: '#FFFFFF' },
-        { x: 5030, y: GROUND_Y - 123, label: 'KEYS', color: '#FFD700' },
-        { x: 5220, y: GROUND_Y - 153, label: 'BOOK', color: '#4682B4' },
-        { x: 5410, y: GROUND_Y - 133, label: 'ROPE', color: '#D2B48C' },
-        { x: 5590, y: GROUND_Y - 113, label: 'SHOE', color: '#8B4513' },
-        { x: 5740, y: GROUND_Y - 88, label: 'WATERING_CAN', color: '#2E8B57' },
-        // Ground
-        { x: 5130, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 5480, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // On crumbling planters (must grab fast!)
+        { x: 4860, y: 475 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 4990, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 5210, y: 370 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 5335, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 5440, y: 385 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 5560, y: 375 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 5655, y: 390 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 5745, y: 470 - 32, label: 'ROPE', color: '#D2B48C' },
 
         // === SCREEN 7 (8 items) ===
         // On moving clotheslines (challenge!)
-        { x: 5815, y: GROUND_Y - 93, label: 'MUG', color: '#FF6347' },
-        { x: 6010, y: GROUND_Y - 145, label: 'SHOE', color: '#4169E1' },
-        { x: 6210, y: GROUND_Y - 185, label: 'KEYS', color: '#FFD700' },
-        { x: 6410, y: GROUND_Y - 155, label: 'WATERING_CAN', color: '#2E8B57' },
-        { x: 6590, y: GROUND_Y - 195, label: 'BOOK', color: '#DC143C' },
-        { x: 6730, y: GROUND_Y - 135, label: 'ROPE', color: '#D2B48C' },
-        // Ground
-        { x: 6100, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 6450, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 5810, y: 475 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 5970, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 6160, y: 360 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 6340, y: 270 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 6510, y: 375 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 6660, y: 390 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 6720, y: 470 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // On high clothesline 3 bonus
+        { x: 6330, y: 270 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
 
         // === SCREEN 8 (8 items) ===
-        // On vertical climb platforms
-        { x: 6775, y: GROUND_Y - 93, label: 'SHOE', color: '#8B4513' },
-        { x: 6930, y: GROUND_Y - 175, label: 'KEYS', color: '#FFD700' },
-        { x: 7075, y: GROUND_Y - 253, label: 'MUG', color: '#FFFFFF' },
-        { x: 7240, y: GROUND_Y - 323, label: 'BOOK', color: '#8B0000' },
-        { x: 7390, y: GROUND_Y - 273, label: 'WATERING_CAN', color: '#2E8B57' },
-        { x: 7550, y: GROUND_Y - 203, label: 'ROPE', color: '#D2B48C' },
-        // Ground
-        { x: 7100, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 7450, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // On vertical climb
+        { x: 6780, y: 475 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 6920, y: 380 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 7050, y: 280 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 7200, y: 180 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 7330, y: 270 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 7470, y: 385 - 32, label: 'SHOE', color: '#8B4513' },
+        // On T4 bonus railing
+        { x: 7225, y: 150 - 32, label: 'ROPE', color: '#D2B48C' },
+        // On bridge shelf
+        { x: 7525, y: 395 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
 
-        // === SCREEN 9 (8 items) ===
-        // Safe lower path (~4 items)
-        { x: 7750, y: GROUND_Y - 82, label: 'MUG', color: '#FF6347' },
-        { x: 7940, y: GROUND_Y - 88, label: 'SHOE', color: '#4169E1' },
-        { x: 8130, y: GROUND_Y - 82, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 8320, y: GROUND_Y - 88, label: 'GARDEN_TOOL', color: '#228B22' },
-        // Dangerous upper path (4 items + 1 +HEALTH)
-        { x: 7810, y: GROUND_Y - 215, label: 'KEYS', color: '#FFD700' },
-        { x: 8010, y: GROUND_Y - 285, label: 'BOOK', color: '#DC143C' },
-        { x: 8230, y: GROUND_Y - 315, label: 'WATERING_CAN', color: '#2E8B57' },
-        { x: 8450, y: GROUND_Y - 255, label: 'ROPE', color: '#D2B48C' },
-        // +HEALTH on upper path
-        { x: 8120, y: GROUND_Y - 315, label: '+HEALTH', color: '#00FF00' },
+        // === SCREEN 9 (8 items + 1 +HEALTH) ===
+        // Lower safe path (~4 items)
+        { x: 7745, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 7910, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 8065, y: 465 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 8230, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
+        // Upper path (4 items + 1 +HEALTH)
+        { x: 7905, y: 280 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 8095, y: 200 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 8295, y: 260 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 8475, y: 190 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        // +HEALTH on high path
+        { x: 8110, y: 200 - 32, label: '+HEALTH', color: '#00FF00' },
 
-        // === SCREEN 10 (7 items) ===
-        // Along crumble + wind gauntlet
-        { x: 8700, y: GROUND_Y - 93, label: 'SHOE', color: '#8B4513' },
-        { x: 8910, y: GROUND_Y - 145, label: 'KEYS', color: '#FFD700' },
-        { x: 9120, y: GROUND_Y - 123, label: 'MUG', color: '#FFFFFF' },
-        { x: 9330, y: GROUND_Y - 165, label: 'BOOK', color: '#4682B4' },
-        { x: 9500, y: GROUND_Y - 113, label: 'ROPE', color: '#D2B48C' },
-        // Ground
-        { x: 8980, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 9400, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 9250, y: GROUND_Y - 32, label: 'WATERING_CAN', color: '#2E8B57' },
-        // +HEALTH
-        { x: 9200, y: GROUND_Y - 123, label: '+HEALTH', color: '#00FF00' },
+        // === SCREEN 10 (7 items + 1 +HEALTH) ===
+        // Along crumble + moving gauntlet
+        { x: 8685, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 8825, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 9035, y: 280 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 9175, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 9285, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 9405, y: 270 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 9515, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // +HEALTH on T3 moving clothesline
+        { x: 9390, y: 270 - 32, label: '+HEALTH', color: '#00FF00' },
 
         // === SCREEN 11 (7 items) ===
-        // BBQ area platforms
-        { x: 9660, y: GROUND_Y - 93, label: 'MUG', color: '#FF6347' },
-        { x: 9860, y: GROUND_Y - 145, label: 'SHOE', color: '#4169E1' },
-        { x: 10030, y: GROUND_Y - 113, label: 'KEYS', color: '#FFD700' },
-        { x: 10230, y: GROUND_Y - 165, label: 'WATERING_CAN', color: '#2E8B57' },
-        { x: 10400, y: GROUND_Y - 123, label: 'BOOK', color: '#DC143C' },
-        // Ground
-        { x: 9750, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 10300, y: GROUND_Y - 32, label: 'ROPE', color: '#D2B48C' },
+        // BBQ area
+        { x: 9665, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 9805, y: 380 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 9945, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 10065, y: 370 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 10085, y: 260 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 10285, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 10415, y: 385 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
 
-        // === SCREEN 12 (10 items) ===
-        // Hardest section — every collectable is a challenge to grab
-        { x: 10620, y: GROUND_Y - 93, label: 'SHOE', color: '#8B4513' },
-        { x: 10830, y: GROUND_Y - 133, label: 'MUG', color: '#FFFFFF' },
-        { x: 11050, y: GROUND_Y - 175, label: 'KEYS', color: '#FFD700' },
-        { x: 11220, y: GROUND_Y - 143, label: 'BOOK', color: '#4682B4' },
-        { x: 11400, y: GROUND_Y - 113, label: 'WATERING_CAN', color: '#2E8B57' },
-        // Ground items (still risky — enemies everywhere)
-        { x: 10700, y: GROUND_Y - 32, label: 'FOOTBALL', color: '#F5F5F5' },
-        { x: 10900, y: GROUND_Y - 32, label: 'ROPE', color: '#D2B48C' },
-        { x: 11100, y: GROUND_Y - 32, label: 'GARDEN_TOOL', color: '#228B22' },
-        { x: 11300, y: GROUND_Y - 32, label: 'SHOE', color: '#4169E1' },
-        { x: 11450, y: GROUND_Y - 32, label: 'MUG', color: '#FF6347' },
-        // +LIFE on the hardest-to-reach high moving clothesline
-        { x: 11130, y: GROUND_Y - 315, label: '+LIFE', color: '#FF1493' },
+        // === SCREEN 12 (10 items + 1 +LIFE) ===
+        // Hardest section — every collectable is a challenge
+        { x: 10615, y: 470 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 10755, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 10965, y: 280 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 11115, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 11245, y: 385 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 11365, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 11465, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 10845, y: 395 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 11115, y: 375 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 10620, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 11300, y: 280 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // +LIFE on T4 high moving clothesline — hardest grab in the game!
+        { x: 11050, y: 160 - 32, label: '+LIFE', color: '#FF1493' },
     ],
 
     // ========== OBSTACLES ==========
     obstacles: [
-        // Screen 1: 1 CACTUS
-        { x: 460, y: GROUND_Y - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400' },
+        // Screen 1: 1 CACTUS on T1 planter
+        { x: 580, y: 470 - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400' },
 
-        // Screen 2: 1 WET_FLOOR
-        { x: 1300, y: GROUND_Y - 28, width: 30, height: 28, label: 'WET_FLOOR', color: '#00BFFF' },
+        // Screen 2: 1 WET_FLOOR on T1 railing
+        { x: 1360, y: 475 - 28, width: 30, height: 28, label: 'WET_FLOOR', color: '#00BFFF' },
 
-        // Screen 3: 1 CACTUS (timed)
-        { x: 2250, y: GROUND_Y - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
+        // Screen 3: 1 CACTUS (timed) on T2 railing
+        { x: 2560, y: 385 - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
 
-        // Screen 4: 1 PLUG
-        { x: 3350, y: GROUND_Y - 26, width: 26, height: 26, label: 'PLUG', color: '#333333' },
+        // Screen 4: 1 PLUG on T2
+        { x: 3400, y: 380 - 26, width: 26, height: 26, label: 'PLUG', color: '#333333' },
 
-        // Screen 5: 1 WET_FLOOR
-        { x: 4420, y: GROUND_Y - 28, width: 30, height: 28, label: 'WET_FLOOR', color: '#00BFFF' },
+        // Screen 5: 1 WET_FLOOR on T1
+        { x: 4260, y: 470 - 28, width: 30, height: 28, label: 'WET_FLOOR', color: '#00BFFF' },
 
-        // Screen 6: 2 timed obstacles
-        { x: 5100, y: GROUND_Y - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
+        // Screen 6: 2 timed obstacles on T2
+        { x: 5080, y: 395 - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
           timerOn: 1.5, timerOff: 1.2, timerOffset: 0 },
-        { x: 5450, y: GROUND_Y - 28, width: 30, height: 28, label: 'WET_FLOOR', color: '#00BFFF',
+        { x: 5650, y: 390 - 28, width: 30, height: 28, label: 'WET_FLOOR', color: '#00BFFF',
           timerOn: 1.8, timerOff: 1.0, timerOffset: 0.5 },
 
-        // Screen 7: 1 timed HOT_SUN (overhead!)
+        // Screen 7: 1 timed HOT_SUN (overhead)
         { x: 6300, y: 100, width: 40, height: 40, label: 'HOT_SUN', color: '#FF4500',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0 },
 
-        // Screen 8: 2 timed obstacles
-        { x: 7000, y: GROUND_Y - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
+        // Screen 8: 2 timed obstacles on platforms
+        { x: 7050, y: 280 - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
           timerOn: 1.8, timerOff: 1.2, timerOffset: 0.3 },
-        { x: 7400, y: GROUND_Y - 26, width: 26, height: 26, label: 'PLUG', color: '#333333',
+        { x: 7520, y: 395 - 26, width: 26, height: 26, label: 'PLUG', color: '#333333',
           timerOn: 1.5, timerOff: 1.5, timerOffset: 0.8 },
 
-        // Screen 9: 1 timed BBQ_GRILL
-        { x: 8200, y: GROUND_Y - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
+        // Screen 9: 1 timed BBQ_GRILL on T1 table
+        { x: 8070, y: 465 - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
           timerOn: 2.0, timerOff: 1.0, timerOffset: 0 },
 
         // Screen 10: 2 timed obstacles
-        { x: 9000, y: GROUND_Y - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
+        { x: 8910, y: 395 - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
           timerOn: 1.5, timerOff: 1.0, timerOffset: 0 },
-        { x: 9350, y: 100, width: 40, height: 40, label: 'HOT_SUN', color: '#FF4500',
+        { x: 9280, y: 100, width: 40, height: 40, label: 'HOT_SUN', color: '#FF4500',
           timerOn: 1.8, timerOff: 1.2, timerOffset: 0.5 },
 
         // Screen 11: 2 timed BBQ_GRILL + 1 HOT_SUN
-        { x: 9780, y: GROUND_Y - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
+        { x: 9940, y: 475 - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
           timerOn: 1.5, timerOff: 1.2, timerOffset: 0 },
-        { x: 10150, y: GROUND_Y - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
+        { x: 10150, y: 390 - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
           timerOn: 1.8, timerOff: 1.0, timerOffset: 0.6 },
         { x: 10350, y: 100, width: 40, height: 40, label: 'HOT_SUN', color: '#FF4500',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.3 },
 
         // Screen 12: 3 mixed obstacles — HARDEST screen
-        { x: 10750, y: GROUND_Y - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
+        { x: 10750, y: 380 - 35, width: 35, height: 35, label: 'BBQ_GRILL', color: '#222222',
           timerOn: 1.2, timerOff: 1.0, timerOffset: 0 },
-        { x: 11050, y: GROUND_Y - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
+        { x: 11110, y: 375 - 30, width: 25, height: 30, label: 'CACTUS', color: '#006400',
           timerOn: 1.5, timerOff: 0.8, timerOffset: 0.3 },
         { x: 11350, y: 100, width: 40, height: 40, label: 'HOT_SUN', color: '#FF4500',
           timerOn: 1.5, timerOff: 1.0, timerOffset: 0.6 },
@@ -787,50 +949,50 @@ export const level6 = {
 
     // ========== ENEMIES ==========
     enemies: [
-        // Screen 1: 1 CAT
-        { x: 600, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
+        // Screen 1: 1 CAT on T2 table
+        { x: 420, y: 380 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 60 },
 
-        // Screen 2: 1 WASP
-        { x: 1400, y: GROUND_Y - 120, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
+        // Screen 2: 1 WASP near T2
+        { x: 1500, y: 370 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
 
-        // Screen 3: 1 PIGEON
-        { x: 2500, y: GROUND_Y - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 120 },
+        // Screen 3: 1 PIGEON on T1 mid railing
+        { x: 2280, y: 480 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 40 },
 
-        // Screen 4: 1 CAT + 1 WASP
-        { x: 3300, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
-        { x: 3550, y: GROUND_Y - 150, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
+        // Screen 4: 1 CAT on T1 bench + 1 WASP near T3
+        { x: 3560, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 50 },
+        { x: 3420, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
 
-        // Screen 5: 1 PIGEON
-        { x: 4400, y: GROUND_Y - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 120 },
+        // Screen 5: 1 PIGEON on T1
+        { x: 4260, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 50 },
 
-        // Screen 6: 1 CAT + 1 WASP
-        { x: 5300, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
-        { x: 5600, y: GROUND_Y - 140, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
+        // Screen 6: 1 CAT on T1 + 1 WASP near T2
+        { x: 5330, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
+        { x: 5560, y: 365 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
 
-        // Screen 7: 1 PIGEON + 1 WASP
-        { x: 6100, y: GROUND_Y - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 120 },
-        { x: 6500, y: GROUND_Y - 180, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
+        // Screen 7: 1 PIGEON on T1 + 1 WASP near T3
+        { x: 6715, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 40 },
+        { x: 6350, y: 260 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
 
-        // Screen 8: 1 CAT + 1 PIGEON
-        { x: 7100, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
-        { x: 7500, y: GROUND_Y - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 120 },
+        // Screen 8: 1 CAT on T1 + 1 PIGEON on T3
+        { x: 6780, y: 475 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 30 },
+        { x: 7330, y: 270 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 30 },
 
-        // Screen 9: 1 WASP
-        { x: 8200, y: GROUND_Y - 160, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
+        // Screen 9: 1 WASP near upper path
+        { x: 8280, y: 250 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 80 },
 
-        // Screen 10: 1 CAT + 1 WASP
-        { x: 9050, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
-        { x: 9400, y: GROUND_Y - 140, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
+        // Screen 10: 1 CAT on T1 + 1 WASP near T3
+        { x: 9280, y: 475 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
+        { x: 9020, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
 
-        // Screen 11: 1 PIGEON + 1 WASP + 1 CAT
-        { x: 9800, y: GROUND_Y - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 120 },
-        { x: 10100, y: GROUND_Y - 160, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
-        { x: 10400, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
+        // Screen 11: 1 PIGEON on T1 + 1 WASP near T3 + 1 CAT on T1
+        { x: 9650, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 50 },
+        { x: 10070, y: 250 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
+        { x: 10280, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 30 },
 
         // Screen 12: 2 CAT + 1 WASP + 1 PIGEON — HARDEST screen
-        { x: 10700, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
-        { x: 11000, y: GROUND_Y - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80 },
-        { x: 11150, y: GROUND_Y - 180, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 100 },
-        { x: 11400, y: GROUND_Y - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 120 },
+        { x: 10610, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
+        { x: 11360, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
+        { x: 11040, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
+        { x: 11240, y: 385 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 30 },
     ],
 };

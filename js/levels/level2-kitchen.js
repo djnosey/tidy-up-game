@@ -1,5 +1,7 @@
 // Level 2: Kitchen (redesigned)
 // 12 screen widths (11,520px at 960px canvas width)
+// 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// DEADLY FLOOR — no full-width ground platform
 
 const GROUND_Y = 520;
 const CANVAS_W = 960;
@@ -10,7 +12,7 @@ export const level2 = {
     width: LEVEL_W,
     groundY: GROUND_Y,
     backgroundColor: '#F0E8D8',
-    playerStart: { x: 80, y: GROUND_Y - 72 },
+    playerStart: { x: 80, y: 460 - 72 },
 
     bossDoor: { x: CANVAS_W * 11 - 80, y: GROUND_Y - 120 },
 
@@ -131,7 +133,7 @@ export const level2 = {
         { x: 4500, y: GROUND_Y - 280, type: 'wall_shelf_deco', w: 60, items: ['🫖', '🧂', '🫒'] },
         { x: 4650, y: GROUND_Y - 200, type: 'dripping_tap' },
 
-        // === SCREEN 6 (4800-5760): Crumbling drawer sequence ===
+        // === SCREEN 6 (4800-5760): Crumbling plate stack sequence ===
         { x: 5280, y: 70, type: 'ceiling_light', size: 48, color: '#FFF8E0' },
         { x: 5100, y: GROUND_Y - 380, type: 'window', w: 85, h: 75 },
         { x: 5082, y: GROUND_Y - 385, type: 'curtain', w: 28, h: 235, color: '#CC9966' },
@@ -259,464 +261,516 @@ export const level2 = {
     ],
 
     // ========== PLATFORMS ==========
+    // ~85 static + ~14 moving + ~12 crumbling
+    // Four-tier system: T1=460-490, T2=360-400, T3=250-300, T4=140-200
     platforms: [
-        // Ground
-        { x: 0, y: GROUND_Y, width: LEVEL_W, height: 80, label: '', color: '#E8E0D0' },
+        // Boss arena ground only (label '' = solid full collision)
+        { x: CANVAS_W * 11, y: GROUND_Y, width: CANVAS_W, height: 80, label: '', color: '#E8E0D0' },
 
-        // === Screen 1 (0-960): TEACH - Counter intro ===
-        // Wide counter - easy landing
-        { x: 150, y: GROUND_Y - 55, width: 240, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Dining table - easy hop from counter (gap ~60px)
-        { x: 450, y: GROUND_Y - 50, width: 130, height: 18, label: 'DINING_TABLE', color: '#A0522D' },
-        // Stool - easy step from table (gap ~80px)
-        { x: 660, y: GROUND_Y - 45, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
-        // Shelf - moderate hop from stool (gap ~75px, height diff ~45px)
-        { x: 800, y: GROUND_Y - 90, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // === Screen 1 (0-960): TEACH — Counter intro, wide T1 islands ===
+        // Wide spawn counter
+        { x: 40, y: 460, width: 240, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // Dining table hop (~80px gap)
+        { x: 360, y: 470, width: 160, height: 18, label: 'DINING_TABLE', color: '#A0522D' },
+        // Stool stepping stone (~80px gap)
+        { x: 600, y: 475, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
+        // Shelf — moderate hop up
+        { x: 740, y: 400, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // Counter landing
+        { x: 870, y: 465, width: 90, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 optional shelf for bonus
+        { x: 400, y: 380, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
 
-        // === Screen 2 (960-1920): TEST - Stool stepping stones ===
-        // Stool chain with 100-120px gaps, slight height variations
-        { x: 990, y: GROUND_Y - 50, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
-        { x: 1110, y: GROUND_Y - 80, width: 60, height: 16, label: 'CHAIR', color: '#8B4513' },
-        { x: 1230, y: GROUND_Y - 60, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
-        { x: 1370, y: GROUND_Y - 90, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
-        { x: 1490, y: GROUND_Y - 70, width: 60, height: 16, label: 'CHAIR', color: '#8B4513' },
-        { x: 1610, y: GROUND_Y - 100, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
-        // Landing counter
-        { x: 1750, y: GROUND_Y - 55, width: 160, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // === Screen 2 (960-1920): TEST — Stool stepping stones, vertical variety ===
+        // T1 counter entry
+        { x: 970, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // Stool chain with height variations
+        { x: 1160, y: 475, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
+        { x: 1290, y: 400, width: 70, height: 16, label: 'CHAIR', color: '#8B4513' },
+        { x: 1420, y: 470, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
+        { x: 1560, y: 390, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
+        { x: 1690, y: 470, width: 70, height: 16, label: 'CHAIR', color: '#8B4513' },
+        // Counter landing
+        { x: 1810, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T3 shelf above (optional climb)
+        { x: 1300, y: 290, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T2 shelf for T3 access
+        { x: 1160, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
 
-        // === Screen 3 (1920-2880): VERTICAL CLIMB - Fridge tower ===
-        // Start from ground, zigzag up
-        { x: 1960, y: GROUND_Y - 55, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Right side - step up (70px vertical gap)
-        { x: 2120, y: GROUND_Y - 125, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
-        // Left side - step up
-        { x: 1980, y: GROUND_Y - 195, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
-        // Right side - step up
-        { x: 2140, y: GROUND_Y - 265, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
-        // Fridge at top - reward platform
-        { x: 2000, y: GROUND_Y - 335, width: 100, height: 20, label: 'FRIDGE', color: '#C0C8D0' },
-        // Descent path right side
-        { x: 2280, y: GROUND_Y - 250, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        { x: 2420, y: GROUND_Y - 180, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Landing at end of screen
-        { x: 2560, y: GROUND_Y - 60, width: 160, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // === Screen 3 (1920-2880): VERTICAL CLIMB — Fridge tower ===
+        // T1 counter start
+        { x: 1940, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // Zigzag drawer climb
+        { x: 2120, y: 390, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
+        { x: 1970, y: 300, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
+        { x: 2140, y: 260, width: 80, height: 18, label: 'DRAWER', color: '#B0A090' },
+        // Fridge top — T4 reward
+        { x: 1990, y: 180, width: 100, height: 20, label: 'FRIDGE', color: '#C0C8D0' },
+        // Descent shelves
+        { x: 2280, y: 280, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 2420, y: 370, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T1 landing counter
+        { x: 2560, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
         // Additional shelf for collectables
-        { x: 2750, y: GROUND_Y - 120, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 2740, y: 390, width: 100, height: 20, label: 'SHELF', color: '#8B6914' },
+        // Crumbling plate stack shortcut (skip zigzag)
+        { x: 2060, y: 380, width: 70, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
 
-        // === Screen 4 (2880-3840): TEST - Hanging pot chain ===
-        // Launch counter
-        { x: 2900, y: GROUND_Y - 55, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // 4 hanging pots with moderate gaps (120-150px)
-        { x: 3100, y: GROUND_Y - 120, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
+        // === Screen 4 (2880-3840): TEST — Hanging pot chain ===
+        // T1 launch counter
+        { x: 2900, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 shelf — launch pad for pots
+        { x: 3070, y: 390, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // 4 hanging pots at T3 (moving)
+        { x: 3200, y: 290, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
           moveX: 60, moveSpeed: 0.8 },
-        { x: 3260, y: GROUND_Y - 150, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
+        { x: 3360, y: 270, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
           moveX: -70, moveSpeed: 1.0 },
-        { x: 3430, y: GROUND_Y - 130, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
+        { x: 3520, y: 280, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
           moveX: 80, moveSpeed: 1.2 },
-        { x: 3600, y: GROUND_Y - 110, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
-          moveX: -60, moveSpeed: 1.4 },
-        // Landing counter
-        { x: 3720, y: GROUND_Y - 55, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
-
-        // === Screen 5 (3840-4800): REST - Counter straightaway ===
-        // Long easy path, mostly ground level
-        { x: 3880, y: GROUND_Y - 55, width: 220, height: 22, label: 'COUNTER', color: '#A0896C' },
-        { x: 4180, y: GROUND_Y - 50, width: 130, height: 18, label: 'DINING_TABLE', color: '#A0522D' },
-        { x: 4400, y: GROUND_Y - 55, width: 200, height: 22, label: 'COUNTER', color: '#A0896C' },
-        { x: 4680, y: GROUND_Y - 45, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
-
-        // === Screen 6 (4800-5760): CHALLENGE - Crumbling drawer sequence ===
-        // Stable start counter
-        { x: 4840, y: GROUND_Y - 55, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Crumbling drawer 1 (gap ~100px from counter)
-        { x: 5040, y: GROUND_Y - 100, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Static counter in middle for safety
-        { x: 5180, y: GROUND_Y - 55, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Crumbling drawer 2 (higher)
-        { x: 5360, y: GROUND_Y - 110, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Crumbling drawer 3
-        { x: 5510, y: GROUND_Y - 80, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Landing counter
-        { x: 5650, y: GROUND_Y - 55, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
-
-        // === Screen 7 (5760-6720): CHALLENGE - Upper cabinet climb ===
-        // 6-tier shelf tower
-        { x: 5800, y: GROUND_Y - 55, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Tier 1
-        { x: 5940, y: GROUND_Y - 120, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Tier 2
-        { x: 5830, y: GROUND_Y - 190, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Tier 3
-        { x: 5960, y: GROUND_Y - 260, width: 60, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Tier 4
-        { x: 5850, y: GROUND_Y - 330, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Tier 5
-        { x: 5980, y: GROUND_Y - 395, width: 60, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Tier 6 - top (y~180 area) -- +LIFE platform
-        { x: 5870, y: GROUND_Y - 450, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Descent path - right side
-        { x: 6120, y: GROUND_Y - 340, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        { x: 6260, y: GROUND_Y - 260, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
-        { x: 6400, y: GROUND_Y - 180, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Landing
-        { x: 6540, y: GROUND_Y - 55, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
-
-        // === Screen 8 (6720-7680): RISK/REWARD - Dual-path ===
-        // Lower safe path (counters)
-        { x: 6760, y: GROUND_Y - 55, width: 160, height: 22, label: 'COUNTER', color: '#A0896C' },
-        { x: 6990, y: GROUND_Y - 55, width: 130, height: 22, label: 'COUNTER', color: '#A0896C' },
-        { x: 7200, y: GROUND_Y - 55, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
-        { x: 7420, y: GROUND_Y - 55, width: 130, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Upper path (hanging pots - risk/reward)
-        { x: 6850, y: GROUND_Y - 160, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
-          moveX: 50, moveSpeed: 1.0 },
-        { x: 7030, y: GROUND_Y - 190, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
-          moveX: -60, moveSpeed: 1.2 },
-        { x: 7210, y: GROUND_Y - 170, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
-          moveX: 50, moveSpeed: 0.9 },
-        { x: 7390, y: GROUND_Y - 200, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
-          moveX: -70, moveSpeed: 1.1 },
-        // Landing
-        { x: 7560, y: GROUND_Y - 55, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
-
-        // === Screen 9 (7680-8640): ESCALATE - Pot + crumble combo ===
-        { x: 7720, y: GROUND_Y - 55, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Crumbling drawer under pot path
-        { x: 7910, y: GROUND_Y - 100, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Swinging pot over crumbles (170px gaps)
-        { x: 8050, y: GROUND_Y - 160, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
-          moveX: 70, moveSpeed: 1.2 },
-        // Another crumbling drawer
-        { x: 8200, y: GROUND_Y - 110, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Pot
-        { x: 8350, y: GROUND_Y - 140, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
+        { x: 3680, y: 290, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
           moveX: -60, moveSpeed: 1.0 },
-        // Safe counter
-        { x: 8480, y: GROUND_Y - 55, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 shelf — safe alternative lower path
+        { x: 3240, y: 390, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 3440, y: 400, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 3620, y: 390, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T1 landing counter
+        { x: 3770, y: 465, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
 
-        // === Screen 10 (8640-9600): ESCALATE - Speed run crumbles ===
-        { x: 8680, y: GROUND_Y - 55, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // 5 crumbling platforms in a row, spaced ~130px apart
-        { x: 8850, y: GROUND_Y - 90, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 9000, y: GROUND_Y - 110, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 9150, y: GROUND_Y - 90, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        { x: 9300, y: GROUND_Y - 110, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        { x: 9450, y: GROUND_Y - 80, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.6, crumbleRespawn: 3.0 },
-        // Landing
-        { x: 9560, y: GROUND_Y - 55, width: 40, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // === Screen 5 (3840-4800): REST — Counter straightaway ===
+        // Wide easy path — mostly T1/T2
+        { x: 3870, y: 465, width: 200, height: 22, label: 'COUNTER', color: '#A0896C' },
+        { x: 4140, y: 470, width: 140, height: 18, label: 'DINING_TABLE', color: '#A0522D' },
+        { x: 4350, y: 465, width: 200, height: 22, label: 'COUNTER', color: '#A0896C' },
+        { x: 4620, y: 475, width: 65, height: 16, label: 'STOOL', color: '#8B6914' },
+        { x: 4740, y: 465, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 shelves for optional higher route
+        { x: 4000, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 4450, y: 370, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
 
-        // === Screen 11 (9600-10560): GAUNTLET - Pre-boss ===
-        // All mechanics combined
-        { x: 9640, y: GROUND_Y - 55, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
-        // Moving pot
-        { x: 9830, y: GROUND_Y - 130, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
-          moveX: 60, moveSpeed: 1.3 },
-        // Crumbling drawer
-        { x: 9970, y: GROUND_Y - 100, width: 80, height: 18, label: 'DRAWER', color: '#B0A090',
-          crumble: true, crumbleDelay: 0.5, crumbleRespawn: 3.0 },
-        // Static shelf
-        { x: 10100, y: GROUND_Y - 140, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
-        // Moving pot (190px gap)
-        { x: 10240, y: GROUND_Y - 120, width: 55, height: 16, label: 'HANGING_POT', color: '#8B4513',
+        // === Screen 6 (4800-5760): CHALLENGE — Crumbling plate stacks ===
+        // T1 stable counter start
+        { x: 4830, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // Crumbling plate stack 1 at T2
+        { x: 5020, y: 390, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Static counter safety
+        { x: 5150, y: 465, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // Crumbling plate stack 2 at T2 (higher)
+        { x: 5310, y: 380, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Crumbling plate stack 3 at T3
+        { x: 5450, y: 290, width: 70, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Static shelf alternative to crumble 3
+        { x: 5430, y: 390, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T2 landing shelf
+        { x: 5590, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T1 landing counter
+        { x: 5700, y: 465, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // Moving pot bridging gap at T3
+        { x: 5150, y: 280, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: 70, moveSpeed: 1.0 },
+
+        // === Screen 7 (5760-6720): CHALLENGE — Upper cabinet climb ===
+        // T1 counter start
+        { x: 5780, y: 465, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 shelf — start climb
+        { x: 5940, y: 390, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T3 zigzag
+        { x: 5810, y: 300, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 5960, y: 270, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T4 top — +LIFE platform
+        { x: 5830, y: 180, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T4 alternate (slightly different position)
+        { x: 5980, y: 160, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        // Descent — crumbling drawers for speed descent
+        { x: 6100, y: 280, width: 70, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Static descent alternative
+        { x: 6130, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 6290, y: 300, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 6420, y: 390, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T1 landing
+        { x: 6560, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+
+        // === Screen 8 (6720-7680): RISK/REWARD — Dual-path ===
+        // Lower safe path — T1/T2 counters
+        { x: 6740, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        { x: 6950, y: 465, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
+        { x: 7140, y: 465, width: 130, height: 22, label: 'COUNTER', color: '#A0896C' },
+        { x: 7340, y: 465, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
+        { x: 7530, y: 465, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // Upper path — hanging pots at T3 (risk/reward with bonus collectibles)
+        { x: 6820, y: 280, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: 50, moveSpeed: 1.0 },
+        { x: 7000, y: 260, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: -60, moveSpeed: 1.2 },
+        { x: 7180, y: 270, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: 50, moveSpeed: 0.9 },
+        { x: 7360, y: 250, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
           moveX: -70, moveSpeed: 1.1 },
-        // Static counter
-        { x: 10360, y: GROUND_Y - 55, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 launch shelf for upper path
+        { x: 6780, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T2 landing from upper path
+        { x: 7480, y: 380, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+
+        // === Screen 9 (7680-8640): ESCALATE — Pot + crumble combo ===
+        // T1 counter start
+        { x: 7700, y: 465, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 crumbling plate stack
+        { x: 7890, y: 390, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T3 swinging pot over crumbles
+        { x: 8030, y: 270, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: 70, moveSpeed: 1.2 },
+        // T2 another crumble
+        { x: 8180, y: 380, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T3 pot
+        { x: 8330, y: 280, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: -60, moveSpeed: 1.0 },
+        // Static shelves as alternatives
+        { x: 7920, y: 300, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 8200, y: 290, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T1 safe counter landing
+        { x: 8440, y: 465, width: 140, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 extra shelf
+        { x: 8060, y: 400, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+
+        // === Screen 10 (8640-9600): ESCALATE — Speed run crumbles ===
+        // T1 counter start
+        { x: 8660, y: 465, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // 5 crumbling plate stacks at T2, spaced for sprint
+        { x: 8830, y: 390, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        { x: 8980, y: 380, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        { x: 9130, y: 390, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        { x: 9280, y: 380, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        { x: 9430, y: 390, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // Static shelf mid-run for safety
+        { x: 9060, y: 400, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T1 counter landing
+        { x: 9540, y: 465, width: 100, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T3 bonus route above crumbles
+        { x: 8900, y: 280, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 9100, y: 270, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+        { x: 9300, y: 280, width: 70, height: 18, label: 'SHELF', color: '#8B6914' },
+
+        // === Screen 11 (9600-10560): GAUNTLET — All mechanics combined ===
+        // T1 counter start
+        { x: 9620, y: 465, width: 120, height: 22, label: 'COUNTER', color: '#A0896C' },
+        // T2 shelf
+        { x: 9800, y: 390, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T3 moving pot
+        { x: 9940, y: 270, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: 60, moveSpeed: 1.3 },
+        // T2 crumbling plate stack
+        { x: 10060, y: 385, width: 80, height: 18, label: 'PLATE_STACK', color: '#E8E8E8',
+          crumble: true, crumbleDelay: 0.8, crumbleRespawn: 3.0 },
+        // T3 static shelf
+        { x: 10180, y: 290, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T3 moving pot (gap ~170px)
+        { x: 10320, y: 270, width: 64, height: 16, label: 'HANGING_POT', color: '#8B4513',
+          moveX: -70, moveSpeed: 1.1 },
+        // T2 static shelf
+        { x: 10140, y: 400, width: 80, height: 18, label: 'SHELF', color: '#8B6914' },
+        // T1 pre-boss counter
+        { x: 10380, y: 465, width: 160, height: 22, label: 'COUNTER', color: '#A0896C' },
 
         // === Screen 12 (10560-11520): BOSS ARENA ===
-        { x: 10640, y: GROUND_Y - 100, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 10820, y: GROUND_Y - 160, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 11020, y: GROUND_Y - 120, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 11220, y: GROUND_Y - 170, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
-        { x: 11400, y: GROUND_Y - 110, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        // Shelves for dodging boss
+        { x: 10640, y: 390, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 10820, y: 300, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 11020, y: 380, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 11220, y: 290, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
+        { x: 11400, y: 380, width: 90, height: 20, label: 'SHELF', color: '#8B6914' },
     ],
 
     // ========== COLLECTABLES ==========
+    // 100 standard + 3 +HEALTH + 1 +LIFE = 104 total
     collectables: [
         // === Screen 1 (10 collectables) ===
-        // On the counter (y = GROUND_Y - 55, items ~30px above = GROUND_Y - 85)
-        { x: 190, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 250, y: GROUND_Y - 88, label: 'CUP', color: '#87CEEB' },
-        { x: 310, y: GROUND_Y - 88, label: 'UTENSIL', color: '#C0C0C0' },
-        { x: 370, y: GROUND_Y - 88, label: 'SPONGE', color: '#FFD700' },
-        // On the dining table
-        { x: 480, y: GROUND_Y - 82, label: 'PLATE', color: '#E8E8E8' },
-        { x: 540, y: GROUND_Y - 82, label: 'CUP', color: '#F5F5DC' },
-        // On ground between table and stool
-        { x: 620, y: GROUND_Y - 34, label: 'SPICE', color: '#D2691E' },
-        // On stool
-        { x: 685, y: GROUND_Y - 78, label: 'TEA_TOWEL', color: '#FF6347' },
-        // On shelf
-        { x: 830, y: GROUND_Y - 122, label: 'SPICE', color: '#8B4513' },
-        { x: 870, y: GROUND_Y - 122, label: 'PAN', color: '#696969' },
+        // On spawn counter (y=460, items at 428)
+        { x: 80, y: 428, label: 'PLATE', color: '#E8E8E8' },
+        { x: 140, y: 428, label: 'CUP', color: '#87CEEB' },
+        { x: 200, y: 428, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 250, y: 428, label: 'SPONGE', color: '#FFD700' },
+        // On dining table (y=470, items at 438)
+        { x: 400, y: 438, label: 'PLATE', color: '#E8E8E8' },
+        { x: 470, y: 438, label: 'CUP', color: '#F5F5DC' },
+        // On stool (y=475, items at 443)
+        { x: 625, y: 443, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On shelf (y=400, items at 368)
+        { x: 770, y: 368, label: 'SPICE', color: '#8B4513' },
+        { x: 810, y: 368, label: 'PAN', color: '#696969' },
+        // On T2 bonus shelf (y=380, items at 348)
+        { x: 430, y: 348, label: 'SPICE', color: '#D2691E' },
 
         // === Screen 2 (10 collectables) ===
-        // On stepping stone platforms (~30px above each)
-        { x: 1010, y: GROUND_Y - 82, label: 'PLATE', color: '#E8E8E8' },
-        { x: 1130, y: GROUND_Y - 112, label: 'CUP', color: '#87CEEB' },
-        { x: 1255, y: GROUND_Y - 92, label: 'UTENSIL', color: '#C0C0C0' },
-        { x: 1390, y: GROUND_Y - 122, label: 'POT', color: '#808080' },
-        { x: 1510, y: GROUND_Y - 102, label: 'SPONGE', color: '#FFD700' },
-        { x: 1635, y: GROUND_Y - 132, label: 'PAN', color: '#696969' },
-        { x: 1665, y: GROUND_Y - 132, label: 'SPICE', color: '#D2691E' },
-        // On landing counter
-        { x: 1780, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 1840, y: GROUND_Y - 88, label: 'CUP', color: '#F5F5DC' },
-        // Ground item
-        { x: 1900, y: GROUND_Y - 34, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On counter (y=465, items at 433)
+        { x: 1010, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 1070, y: 433, label: 'CUP', color: '#87CEEB' },
+        // On stepping stones
+        { x: 1180, y: 443, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 1310, y: 368, label: 'POT', color: '#808080' },
+        { x: 1440, y: 438, label: 'SPONGE', color: '#FFD700' },
+        { x: 1580, y: 358, label: 'PAN', color: '#696969' },
+        { x: 1710, y: 438, label: 'SPICE', color: '#D2691E' },
+        // On landing counter (y=465)
+        { x: 1840, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 1900, y: 433, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On T3 shelf (y=290)
+        { x: 1320, y: 258, label: 'CUP', color: '#F5F5DC' },
 
         // === Screen 3 (10 collectables) ===
-        // On counter
-        { x: 2000, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        // On zigzag drawers going up
-        { x: 2145, y: GROUND_Y - 158, label: 'UTENSIL', color: '#C0C0C0' },
-        { x: 2005, y: GROUND_Y - 228, label: 'CUP', color: '#87CEEB' },
-        { x: 2165, y: GROUND_Y - 298, label: 'SPICE', color: '#D2691E' },
-        // On fridge top
-        { x: 2030, y: GROUND_Y - 368, label: 'POT', color: '#808080' },
-        { x: 2070, y: GROUND_Y - 368, label: 'PAN', color: '#696969' },
+        // On counter (y=465)
+        { x: 1980, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        // On zigzag drawers
+        { x: 2145, y: 358, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 1995, y: 268, label: 'CUP', color: '#87CEEB' },
+        { x: 2165, y: 228, label: 'SPICE', color: '#D2691E' },
+        // On fridge top (y=180, items at 148)
+        { x: 2020, y: 148, label: 'POT', color: '#808080' },
+        { x: 2060, y: 148, label: 'PAN', color: '#696969' },
         // On descent shelves
-        { x: 2305, y: GROUND_Y - 282, label: 'SPONGE', color: '#FFD700' },
-        { x: 2445, y: GROUND_Y - 212, label: 'TEA_TOWEL', color: '#FF6347' },
-        // On landing counter
-        { x: 2600, y: GROUND_Y - 92, label: 'PLATE', color: '#E8E8E8' },
-        // On end shelf
-        { x: 2780, y: GROUND_Y - 152, label: 'SPICE', color: '#8B4513' },
+        { x: 2305, y: 248, label: 'SPONGE', color: '#FFD700' },
+        { x: 2445, y: 338, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On landing counter (y=465)
+        { x: 2600, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        // On shelf (y=390)
+        { x: 2770, y: 358, label: 'SPICE', color: '#8B4513' },
 
         // === Screen 4 (9 collectables) ===
-        // On launch counter
-        { x: 2940, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 3000, y: GROUND_Y - 88, label: 'CUP', color: '#F5F5DC' },
-        // On/near hanging pots (items float near pots)
-        { x: 3120, y: GROUND_Y - 152, label: 'POT', color: '#808080' },
-        { x: 3280, y: GROUND_Y - 182, label: 'PAN', color: '#696969' },
-        { x: 3450, y: GROUND_Y - 162, label: 'UTENSIL', color: '#C0C0C0' },
-        { x: 3620, y: GROUND_Y - 142, label: 'SPONGE', color: '#FFD700' },
-        // On landing counter
-        { x: 3740, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 3800, y: GROUND_Y - 88, label: 'SPICE', color: '#D2691E' },
-        // Ground
-        { x: 3680, y: GROUND_Y - 34, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On launch counter (y=465)
+        { x: 2940, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 3000, y: 433, label: 'CUP', color: '#F5F5DC' },
+        // On/near hanging pots (T3, items ~32px above pot y)
+        { x: 3220, y: 258, label: 'POT', color: '#808080' },
+        { x: 3380, y: 238, label: 'PAN', color: '#696969' },
+        { x: 3540, y: 248, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 3700, y: 258, label: 'SPONGE', color: '#FFD700' },
+        // On landing counter (y=465)
+        { x: 3800, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 3860, y: 433, label: 'SPICE', color: '#D2691E' },
+        // On T2 alternative shelf (y=390)
+        { x: 3460, y: 368, label: 'TEA_TOWEL', color: '#FF6347' },
 
         // === Screen 5 (9 collectables) ===
-        // Mostly ground level and on counters
-        { x: 3920, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 3980, y: GROUND_Y - 88, label: 'CUP', color: '#87CEEB' },
-        { x: 4050, y: GROUND_Y - 88, label: 'UTENSIL', color: '#C0C0C0' },
-        // On dining table
-        { x: 4220, y: GROUND_Y - 82, label: 'SPONGE', color: '#FFD700' },
-        { x: 4280, y: GROUND_Y - 82, label: 'PAN', color: '#696969' },
-        // On second counter
-        { x: 4440, y: GROUND_Y - 88, label: 'POT', color: '#808080' },
-        { x: 4520, y: GROUND_Y - 88, label: 'SPICE', color: '#D2691E' },
-        // Ground items (easy pickup)
-        { x: 4350, y: GROUND_Y - 34, label: 'TEA_TOWEL', color: '#FF6347' },
-        { x: 4650, y: GROUND_Y - 34, label: 'CUP', color: '#F5F5DC' },
+        // Rest area — mostly on T1 counters
+        { x: 3910, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 3970, y: 433, label: 'CUP', color: '#87CEEB' },
+        { x: 4030, y: 433, label: 'UTENSIL', color: '#C0C0C0' },
+        // On dining table (y=470)
+        { x: 4180, y: 438, label: 'SPONGE', color: '#FFD700' },
+        { x: 4240, y: 438, label: 'PAN', color: '#696969' },
+        // On second counter (y=465)
+        { x: 4390, y: 433, label: 'POT', color: '#808080' },
+        { x: 4480, y: 433, label: 'SPICE', color: '#D2691E' },
+        // On T2 shelves (y=380/370)
+        { x: 4025, y: 348, label: 'TEA_TOWEL', color: '#FF6347' },
+        { x: 4475, y: 338, label: 'CUP', color: '#F5F5DC' },
 
         // === Screen 6 (9 collectables) ===
-        // On stable counter
-        { x: 4880, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 4940, y: GROUND_Y - 88, label: 'UTENSIL', color: '#C0C0C0' },
-        // On crumbling drawer 1
-        { x: 5065, y: GROUND_Y - 132, label: 'POT', color: '#808080' },
-        // On middle counter
-        { x: 5220, y: GROUND_Y - 88, label: 'CUP', color: '#87CEEB' },
-        // On crumbling drawer 2
-        { x: 5385, y: GROUND_Y - 142, label: 'PAN', color: '#696969' },
-        { x: 5405, y: GROUND_Y - 142, label: 'SPICE', color: '#D2691E' },
-        // On crumbling drawer 3
-        { x: 5535, y: GROUND_Y - 112, label: 'SPONGE', color: '#FFD700' },
-        // On landing counter
-        { x: 5680, y: GROUND_Y - 88, label: 'TEA_TOWEL', color: '#FF6347' },
-        // Ground
-        { x: 5160, y: GROUND_Y - 34, label: 'PLATE', color: '#E8E8E8' },
+        // On stable counter (y=465)
+        { x: 4870, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 4930, y: 433, label: 'UTENSIL', color: '#C0C0C0' },
+        // On crumbling plate stack 1 (y=390)
+        { x: 5045, y: 358, label: 'POT', color: '#808080' },
+        // On middle counter (y=465)
+        { x: 5190, y: 433, label: 'CUP', color: '#87CEEB' },
+        // On crumbling plate stack 2 (y=380)
+        { x: 5335, y: 348, label: 'PAN', color: '#696969' },
+        { x: 5365, y: 348, label: 'SPICE', color: '#D2691E' },
+        // On crumbling plate stack 3 (y=290)
+        { x: 5475, y: 258, label: 'SPONGE', color: '#FFD700' },
+        // On landing counter (y=465)
+        { x: 5730, y: 433, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On static shelf alternative (y=390)
+        { x: 5455, y: 358, label: 'PLATE', color: '#E8E8E8' },
 
         // === Screen 7 (9 collectables) ===
+        // On counter (y=465)
+        { x: 5820, y: 433, label: 'PLATE', color: '#E8E8E8' },
         // Shelf tower climb
-        { x: 5840, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        // Tier 1
-        { x: 5965, y: GROUND_Y - 152, label: 'CUP', color: '#87CEEB' },
-        // Tier 2
-        { x: 5855, y: GROUND_Y - 222, label: 'UTENSIL', color: '#C0C0C0' },
-        // Tier 3
-        { x: 5980, y: GROUND_Y - 292, label: 'SPICE', color: '#D2691E' },
-        // Tier 4
-        { x: 5875, y: GROUND_Y - 362, label: 'POT', color: '#808080' },
-        // Descent shelves
-        { x: 6145, y: GROUND_Y - 372, label: 'PAN', color: '#696969' },
-        { x: 6285, y: GROUND_Y - 292, label: 'SPONGE', color: '#FFD700' },
-        { x: 6425, y: GROUND_Y - 212, label: 'TEA_TOWEL', color: '#FF6347' },
-        // Landing
-        { x: 6580, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
+        { x: 5965, y: 358, label: 'CUP', color: '#87CEEB' },
+        { x: 5835, y: 268, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 5985, y: 238, label: 'SPICE', color: '#D2691E' },
+        { x: 5855, y: 148, label: 'POT', color: '#808080' },
+        // Descent
+        { x: 6120, y: 248, label: 'PAN', color: '#696969' },
+        { x: 6315, y: 268, label: 'SPONGE', color: '#FFD700' },
+        { x: 6445, y: 358, label: 'TEA_TOWEL', color: '#FF6347' },
+        // Landing (y=465)
+        { x: 6600, y: 433, label: 'PLATE', color: '#E8E8E8' },
 
         // === Screen 8 (9 collectables) ===
-        // Lower safe path (5 items)
-        { x: 6800, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 7030, y: GROUND_Y - 88, label: 'CUP', color: '#F5F5DC' },
-        { x: 7240, y: GROUND_Y - 88, label: 'UTENSIL', color: '#C0C0C0' },
-        { x: 7460, y: GROUND_Y - 88, label: 'SPONGE', color: '#FFD700' },
-        { x: 7590, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        // Upper path (4 extra items - risk/reward)
-        { x: 6870, y: GROUND_Y - 192, label: 'POT', color: '#808080' },
-        { x: 7050, y: GROUND_Y - 222, label: 'PAN', color: '#696969' },
-        { x: 7230, y: GROUND_Y - 202, label: 'SPICE', color: '#D2691E' },
-        { x: 7410, y: GROUND_Y - 232, label: 'TEA_TOWEL', color: '#FF6347' },
+        // Lower safe path (5 items on counters, y=465)
+        { x: 6780, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 6990, y: 433, label: 'CUP', color: '#F5F5DC' },
+        { x: 7180, y: 433, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 7380, y: 433, label: 'SPONGE', color: '#FFD700' },
+        { x: 7560, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        // Upper path (4 items on/near pots, T3)
+        { x: 6840, y: 248, label: 'POT', color: '#808080' },
+        { x: 7020, y: 228, label: 'PAN', color: '#696969' },
+        { x: 7200, y: 238, label: 'SPICE', color: '#D2691E' },
+        { x: 7380, y: 218, label: 'TEA_TOWEL', color: '#FF6347' },
 
         // === Screen 9 (8 collectables) ===
-        // On counter
-        { x: 7760, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        // On crumbling drawer 1
-        { x: 7935, y: GROUND_Y - 132, label: 'CUP', color: '#87CEEB' },
-        // Near hanging pot 1
-        { x: 8070, y: GROUND_Y - 192, label: 'POT', color: '#808080' },
-        // On crumbling drawer 2
-        { x: 8225, y: GROUND_Y - 142, label: 'PAN', color: '#696969' },
-        // Near hanging pot 2
-        { x: 8370, y: GROUND_Y - 172, label: 'UTENSIL', color: '#C0C0C0' },
-        // On landing counter
-        { x: 8510, y: GROUND_Y - 88, label: 'SPONGE', color: '#FFD700' },
-        { x: 8570, y: GROUND_Y - 88, label: 'SPICE', color: '#D2691E' },
-        // Ground
-        { x: 8600, y: GROUND_Y - 34, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On counter (y=465)
+        { x: 7740, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        // On crumbling plate 1 (y=390)
+        { x: 7915, y: 358, label: 'CUP', color: '#87CEEB' },
+        // Near hanging pot 1 (y=270)
+        { x: 8050, y: 238, label: 'POT', color: '#808080' },
+        // On crumbling plate 2 (y=380)
+        { x: 8205, y: 348, label: 'PAN', color: '#696969' },
+        // Near hanging pot 2 (y=280)
+        { x: 8350, y: 248, label: 'UTENSIL', color: '#C0C0C0' },
+        // On landing counter (y=465)
+        { x: 8480, y: 433, label: 'SPONGE', color: '#FFD700' },
+        { x: 8540, y: 433, label: 'SPICE', color: '#D2691E' },
+        // On static shelf (y=300)
+        { x: 7945, y: 268, label: 'TEA_TOWEL', color: '#FF6347' },
 
         // === Screen 10 (9 collectables) ===
-        // On start counter
-        { x: 8720, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        // On crumbling platforms (one per platform)
-        { x: 8875, y: GROUND_Y - 122, label: 'CUP', color: '#87CEEB' },
-        { x: 9025, y: GROUND_Y - 142, label: 'UTENSIL', color: '#C0C0C0' },
-        { x: 9175, y: GROUND_Y - 122, label: 'POT', color: '#808080' },
-        { x: 9325, y: GROUND_Y - 142, label: 'PAN', color: '#696969' },
-        { x: 9475, y: GROUND_Y - 112, label: 'SPONGE', color: '#FFD700' },
-        // Ground items
-        { x: 8780, y: GROUND_Y - 34, label: 'SPICE', color: '#D2691E' },
-        { x: 9200, y: GROUND_Y - 34, label: 'TEA_TOWEL', color: '#FF6347' },
-        // Landing
-        { x: 9575, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
+        // On start counter (y=465)
+        { x: 8700, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        // On crumbling plates (one per plate)
+        { x: 8855, y: 358, label: 'CUP', color: '#87CEEB' },
+        { x: 9005, y: 348, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 9155, y: 358, label: 'POT', color: '#808080' },
+        { x: 9305, y: 348, label: 'PAN', color: '#696969' },
+        { x: 9455, y: 358, label: 'SPONGE', color: '#FFD700' },
+        // On static shelf mid-run (y=400)
+        { x: 9080, y: 368, label: 'SPICE', color: '#D2691E' },
+        // On landing counter (y=465)
+        { x: 9570, y: 433, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On T3 bonus shelf (y=280/270)
+        { x: 9120, y: 238, label: 'PLATE', color: '#E8E8E8' },
 
         // === Screen 11 (8 collectables) ===
-        // On counter
-        { x: 9680, y: GROUND_Y - 88, label: 'PLATE', color: '#E8E8E8' },
-        { x: 9730, y: GROUND_Y - 88, label: 'CUP', color: '#F5F5DC' },
-        // Near hanging pot
-        { x: 9850, y: GROUND_Y - 162, label: 'POT', color: '#808080' },
-        // On crumbling drawer
-        { x: 9995, y: GROUND_Y - 132, label: 'PAN', color: '#696969' },
-        // On static shelf
-        { x: 10125, y: GROUND_Y - 172, label: 'UTENSIL', color: '#C0C0C0' },
-        // Near second pot
-        { x: 10260, y: GROUND_Y - 152, label: 'SPICE', color: '#D2691E' },
-        // On landing counter
-        { x: 10400, y: GROUND_Y - 88, label: 'SPONGE', color: '#FFD700' },
-        { x: 10460, y: GROUND_Y - 88, label: 'TEA_TOWEL', color: '#FF6347' },
+        // On counter (y=465)
+        { x: 9660, y: 433, label: 'PLATE', color: '#E8E8E8' },
+        { x: 9710, y: 433, label: 'CUP', color: '#F5F5DC' },
+        // Near hanging pot (y=270)
+        { x: 9960, y: 238, label: 'POT', color: '#808080' },
+        // On crumbling plate (y=385)
+        { x: 10085, y: 353, label: 'PAN', color: '#696969' },
+        // On static shelf (y=290)
+        { x: 10205, y: 258, label: 'UTENSIL', color: '#C0C0C0' },
+        // Near second pot (y=270)
+        { x: 10340, y: 238, label: 'SPICE', color: '#D2691E' },
+        // On landing counter (y=465)
+        { x: 10420, y: 433, label: 'SPONGE', color: '#FFD700' },
+        { x: 10500, y: 433, label: 'TEA_TOWEL', color: '#FF6347' },
 
         // === Screen 12 (0 standard collectables - boss arena) ===
 
         // === SPECIAL PICKUPS ===
-        // +HEALTH on screen 5 rest area (easy to grab)
-        { x: 4160, y: GROUND_Y - 34, label: '+HEALTH', color: '#00FF00' },
-        // +HEALTH on screen 8 upper path (risk/reward)
-        { x: 7130, y: GROUND_Y - 222, label: '+HEALTH', color: '#00FF00' },
-        // +HEALTH on screen 10 (mid-crumble run)
-        { x: 9100, y: GROUND_Y - 142, label: '+HEALTH', color: '#00FF00' },
-        // +LIFE at the very top of screen 7 shelf tower
-        { x: 5900, y: GROUND_Y - 482, label: '+LIFE', color: '#FF1493' },
+        // +HEALTH on screen 5 rest area — easy grab on T2 shelf
+        { x: 4040, y: 348, label: '+HEALTH', color: '#00FF00' },
+        // +HEALTH on screen 8 upper path (risk/reward near pot)
+        { x: 7110, y: 228, label: '+HEALTH', color: '#00FF00' },
+        // +HEALTH on screen 10 (mid-crumble run, on static shelf)
+        { x: 9085, y: 368, label: '+HEALTH', color: '#00FF00' },
+        // +LIFE at the very top of screen 7 shelf tower (T4)
+        { x: 5870, y: 148, label: '+LIFE', color: '#FF1493' },
     ],
 
     // ========== OBSTACLES ==========
+    // All placed ON platform surfaces
     obstacles: [
-        // === Screen 1 ===
-        { x: 430, y: GROUND_Y - 25, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
+        // === Screen 1 — WET_FLOOR on dining table (y=470) ===
+        { x: 430, y: 445, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
 
-        // === Screen 2 ===
-        { x: 1320, y: GROUND_Y - 30, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
+        // === Screen 2 — timed KNIFE on chair (y=400) ===
+        { x: 1310, y: 370, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
           timerOn: 1.5, timerOff: 2.0, timerOffset: 0 },
 
-        // === Screen 3 ===
-        { x: 2250, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
+        // === Screen 3 — CABLE on counter (y=465) ===
+        { x: 2600, y: 440, width: 40, height: 25, label: 'CABLE', color: '#333' },
 
-        // === Screen 4 ===
-        { x: 3180, y: GROUND_Y - 30, width: 35, height: 30, label: 'BOILING_POT', color: '#FF4500',
+        // === Screen 4 — BOILING_POT on shelf (y=390) ===
+        { x: 3100, y: 360, width: 35, height: 30, label: 'BOILING_POT', color: '#FF4500',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.5 },
 
-        // === Screen 5 ===
-        { x: 4600, y: GROUND_Y - 25, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
+        // === Screen 5 — WET_FLOOR on counter (y=465) ===
+        { x: 4550, y: 440, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
 
-        // === Screen 6 ===
-        { x: 5120, y: GROUND_Y - 30, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
+        // === Screen 6 — KNIFE on middle counter (y=465) + BOILING_POT on shelf ===
+        { x: 5180, y: 435, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
           timerOn: 1.5, timerOff: 1.8, timerOffset: 0 },
-        { x: 5450, y: GROUND_Y - 30, width: 35, height: 30, label: 'BOILING_POT', color: '#FF4500',
+        { x: 5620, y: 350, width: 35, height: 30, label: 'BOILING_POT', color: '#FF4500',
           timerOn: 2.0, timerOff: 1.5, timerOffset: 0.8 },
 
-        // === Screen 7 ===
-        { x: 6180, y: GROUND_Y - 30, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
+        // === Screen 7 — KNIFE on T2 shelf (y=390) ===
+        { x: 5970, y: 360, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
           timerOn: 1.8, timerOff: 2.0, timerOffset: 0 },
 
-        // === Screen 8 ===
-        { x: 7150, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
+        // === Screen 8 — CABLE on lower path counter (y=465) ===
+        { x: 7180, y: 440, width: 40, height: 25, label: 'CABLE', color: '#333' },
 
-        // === Screen 9 ===
-        { x: 8130, y: GROUND_Y - 30, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
+        // === Screen 9 — KNIFE on counter + WET_FLOOR on shelf ===
+        { x: 7760, y: 435, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
           timerOn: 1.5, timerOff: 1.5, timerOffset: 0 },
-        { x: 8400, y: GROUND_Y - 25, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
+        { x: 8080, y: 375, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
 
-        // === Screen 10 ===
-        { x: 9100, y: GROUND_Y - 30, width: 40, height: 30, label: 'OVEN', color: '#333',
+        // === Screen 10 — OVEN on counter (y=465) ===
+        { x: 8700, y: 435, width: 40, height: 30, label: 'OVEN', color: '#333',
           timerOn: 2.5, timerOff: 2.0, timerOffset: 0 },
 
-        // === Screen 11 ===
-        { x: 9780, y: GROUND_Y - 25, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
-        { x: 10050, y: GROUND_Y - 30, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
+        // === Screen 11 — WET_FLOOR + KNIFE + CABLE ===
+        { x: 9660, y: 440, width: 40, height: 25, label: 'WET_FLOOR', color: '#87CEEB' },
+        { x: 10210, y: 260, width: 30, height: 30, label: 'KNIFE', color: '#C0C0C0',
           timerOn: 1.5, timerOff: 1.8, timerOffset: 0.5 },
-        { x: 10300, y: GROUND_Y - 25, width: 40, height: 25, label: 'CABLE', color: '#333' },
+        { x: 10440, y: 440, width: 40, height: 25, label: 'CABLE', color: '#333' },
     ],
 
     // ========== ENEMIES ==========
+    // All placed ON platforms
     enemies: [
-        // === Screen 1 ===
-        { x: 550, y: GROUND_Y - 15, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80 },
+        // === Screen 1 — COCKROACH on dining table (y=470) ===
+        { x: 420, y: 455, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 60 },
 
-        // === Screen 2 ===
-        { x: 1450, y: GROUND_Y - 30, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 60 },
+        // === Screen 2 — BLENDER on counter (y=465) ===
+        { x: 1850, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 50 },
 
-        // === Screen 3 ===
-        { x: 2500, y: GROUND_Y - 12, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 100 },
+        // === Screen 3 — ANTS on counter (y=465) ===
+        { x: 2600, y: 453, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 80 },
 
-        // === Screen 4 ===
-        { x: 3350, y: GROUND_Y - 15, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80 },
+        // === Screen 4 — COCKROACH on T2 shelf (y=390) ===
+        { x: 3270, y: 375, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 50 },
 
-        // === Screen 5 ===
-        { x: 4500, y: GROUND_Y - 30, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 60 },
+        // === Screen 5 — BLENDER on counter (y=465) ===
+        { x: 4450, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 50 },
 
-        // === Screen 6 ===
-        { x: 4950, y: GROUND_Y - 15, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80 },
-        { x: 5600, y: GROUND_Y - 12, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 100 },
+        // === Screen 6 — COCKROACH + ANTS on platforms ===
+        { x: 4900, y: 450, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 60 },
+        { x: 5620, y: 368, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 50 },
 
-        // === Screen 7 ===
-        { x: 6350, y: GROUND_Y - 30, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 60 },
+        // === Screen 7 — BLENDER on shelf (y=390) ===
+        { x: 6450, y: 360, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 50 },
 
-        // === Screen 8 ===
-        { x: 7100, y: GROUND_Y - 15, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80 },
+        // === Screen 8 — COCKROACH on counter (y=465) ===
+        { x: 7180, y: 450, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 60 },
 
-        // === Screen 9 ===
-        { x: 7850, y: GROUND_Y - 12, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 100 },
-        { x: 8300, y: GROUND_Y - 30, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 60 },
+        // === Screen 9 — ANTS + BLENDER on platforms ===
+        { x: 8480, y: 453, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 80 },
+        { x: 8220, y: 260, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 40 },
 
-        // === Screen 10 ===
-        { x: 9250, y: GROUND_Y - 15, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80 },
+        // === Screen 10 — COCKROACH on static shelf (y=400) ===
+        { x: 9080, y: 385, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 40 },
 
-        // === Screen 11 ===
-        { x: 9750, y: GROUND_Y - 15, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80 },
-        { x: 10150, y: GROUND_Y - 15, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80 },
-        { x: 10400, y: GROUND_Y - 30, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 60 },
+        // === Screen 11 — COCKROACH x2 + BLENDER ===
+        { x: 9830, y: 375, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 50 },
+        { x: 10180, y: 275, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 50 },
+        { x: 10430, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 60 },
     ],
 };
