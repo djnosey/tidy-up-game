@@ -371,9 +371,9 @@ function drawHair(ctx, cx, props, character, animState) {
 
     if (character.hairStyle === 'long') {
         // Long flowing hair (Hara, Juno)
-        // Top of head
+        // Full hair cap covering entire top of head
         ctx.beginPath();
-        ctx.ellipse(cx, headCY - headRY * 0.15, headRX + 2, headRY * 0.65, 0, Math.PI, Math.PI * 2);
+        ctx.ellipse(cx, headCY - headRY * 0.05, headRX + 3, headRY * 0.75, 0, Math.PI, Math.PI * 2);
         ctx.fill();
 
         // Side hair flowing down
