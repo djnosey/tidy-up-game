@@ -240,11 +240,21 @@ class Game {
         this.menu.selectedCharacterName = selectedChar.name;
 
         const result = this.menu.handleInput(this.input);
-        if (result && result.action === 'start') {
+        if (result && (result.action === 'start' || result.action === 'new_game' || result.action === 'start_level')) {
             this.audio.init();
-            const nextLevel = this.menu.completedLevels.length;
             this._pendingCharacter = result.character;
-            this._pendingLevelIndex = Math.min(nextLevel, ALL_LEVELS.length - 1);
+
+            if (result.action === 'new_game') {
+                // Reset completed levels for this character's session and start from level 0
+                this.menu.completedLevels = [];
+                this._pendingLevelIndex = 0;
+            } else if (result.action === 'start_level') {
+                this._pendingLevelIndex = result.levelIndex;
+            } else {
+                // 'start' = continue from next uncompleted level
+                const nextLevel = this.menu.completedLevels.length;
+                this._pendingLevelIndex = Math.min(nextLevel, ALL_LEVELS.length - 1);
+            }
 
             if (!this.hasSeenOpening) {
                 // First time: show opening story, then level intro

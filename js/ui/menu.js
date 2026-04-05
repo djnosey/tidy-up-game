@@ -5,7 +5,7 @@ import { HubWorld } from './hub-world.js';
 export class Menu {
     constructor() {
         this.selectedIndex = 0;
-        this.state = 'title'; // 'title', 'select', 'hub'
+        this.state = 'title'; // 'title', 'select', 'mode_select', 'level_select', 'hub'
         this.enterPressed = false;
         this.loadCodeMode = false;
         this.loadCodeInput = '';
@@ -14,6 +14,14 @@ export class Menu {
         this.hubWorld = new HubWorld();
         this.saveManager = null;
         this.selectedCharacterName = '';
+
+        // Mode select state (Continue / New Game / Level Select)
+        this.modeOptions = [];
+        this.modeIndex = 0;
+
+        // Level select state
+        this.levelSelectIndex = 0;
+        this.unlockedLevels = []; // boolean array [true, false, ...]
     }
 
     // Proxy shared properties to hubWorld so external code (main.js) can
@@ -52,35 +60,130 @@ export class Menu {
             return result;
         }
 
-        if (input.wasPressed('Enter') || input.wasPressed(' ')) {
-            if (this.state === 'title') {
+        if (this.state === 'title') {
+            if (input.wasPressed('Enter') || input.wasPressed(' ')) {
                 this.state = 'select';
                 return null;
             }
-            if (this.state === 'select') {
-                return { action: 'start', character: CHARACTERS[this.selectedIndex] };
+            if (input.wasPressed('l') && this.saveManager) {
+                this.enableLoadCodeInput();
             }
+            return null;
         }
 
         if (this.state === 'select') {
+            if (input.wasPressed('Enter') || input.wasPressed(' ')) {
+                this._enterModeSelect();
+                return null;
+            }
             if (input.wasPressed('ArrowLeft')) {
                 this.selectedIndex = (this.selectedIndex - 1 + CHARACTERS.length) % CHARACTERS.length;
             }
             if (input.wasPressed('ArrowRight')) {
                 this.selectedIndex = (this.selectedIndex + 1) % CHARACTERS.length;
             }
+            if (input.wasPressed('Escape')) {
+                this.state = 'title';
+            }
+            return null;
         }
 
-        // "L" on title screen to enter a save code
-        if (this.state === 'title' && input.wasPressed('l') && this.saveManager) {
-            this.enableLoadCodeInput();
+        if (this.state === 'mode_select') {
+            if (input.wasPressed('ArrowUp')) {
+                this.modeIndex = (this.modeIndex - 1 + this.modeOptions.length) % this.modeOptions.length;
+            }
+            if (input.wasPressed('ArrowDown')) {
+                this.modeIndex = (this.modeIndex + 1) % this.modeOptions.length;
+            }
+            if (input.wasPressed('Escape')) {
+                this.state = 'select';
+                return null;
+            }
+            if (input.wasPressed('Enter') || input.wasPressed(' ')) {
+                const chosen = this.modeOptions[this.modeIndex];
+                if (chosen.id === 'continue') {
+                    return { action: 'start', character: CHARACTERS[this.selectedIndex] };
+                }
+                if (chosen.id === 'new_game') {
+                    return { action: 'new_game', character: CHARACTERS[this.selectedIndex] };
+                }
+                if (chosen.id === 'level_select') {
+                    this._enterLevelSelect();
+                    return null;
+                }
+            }
+            return null;
         }
 
-        if (input.wasPressed('Escape') && this.state === 'select') {
-            this.state = 'title';
+        if (this.state === 'level_select') {
+            if (input.wasPressed('ArrowLeft')) {
+                this._moveLevelCursor(-1);
+            }
+            if (input.wasPressed('ArrowRight')) {
+                this._moveLevelCursor(1);
+            }
+            if (input.wasPressed('ArrowUp') && this.levelSelectIndex >= 3) {
+                this.levelSelectIndex -= 3;
+            }
+            if (input.wasPressed('ArrowDown') && this.levelSelectIndex < 3) {
+                this.levelSelectIndex += 3;
+            }
+            if (input.wasPressed('Escape')) {
+                this._enterModeSelect();
+                return null;
+            }
+            if (input.wasPressed('Enter') || input.wasPressed(' ')) {
+                if (this.unlockedLevels[this.levelSelectIndex]) {
+                    return {
+                        action: 'start_level',
+                        character: CHARACTERS[this.selectedIndex],
+                        levelIndex: this.levelSelectIndex
+                    };
+                }
+            }
+            return null;
         }
 
         return null;
+    }
+
+    /** Build mode options and enter mode_select state */
+    _enterModeSelect() {
+        const charName = CHARACTERS[this.selectedIndex].name;
+        const completed = this.saveManager ? this.saveManager.getCompletedLevels(charName) : [];
+        this.modeOptions = [];
+        if (completed.length > 0) {
+            this.modeOptions.push({ id: 'continue', label: 'Continue' });
+        }
+        this.modeOptions.push({ id: 'new_game', label: 'New Game' });
+        if (completed.length > 0) {
+            this.modeOptions.push({ id: 'level_select', label: 'Level Select' });
+        }
+        this.modeIndex = 0;
+        this.state = 'mode_select';
+    }
+
+    /** Build unlocked levels list and enter level_select state */
+    _enterLevelSelect() {
+        const charName = CHARACTERS[this.selectedIndex].name;
+        const completed = this.saveManager ? this.saveManager.getCompletedLevels(charName) : [];
+        this.unlockedLevels = [];
+        for (let i = 0; i < 6; i++) {
+            // Level 0 always unlocked; others need previous level completed
+            this.unlockedLevels[i] = i === 0 || completed.includes(i - 1);
+        }
+        // Default cursor to first unlocked level
+        this.levelSelectIndex = 0;
+        this.state = 'level_select';
+    }
+
+    /** Move level cursor, skipping locked levels */
+    _moveLevelCursor(dir) {
+        let next = this.levelSelectIndex + dir;
+        // Wrap
+        if (next < 0) next = 5;
+        if (next > 5) next = 0;
+        this.levelSelectIndex = next;
     }
 
     enableLoadCodeInput() {
@@ -133,6 +236,10 @@ export class Menu {
             this.renderTitle(ctx, canvasWidth, canvasHeight);
         } else if (this.state === 'select') {
             this.renderSelect(ctx, canvasWidth, canvasHeight);
+        } else if (this.state === 'mode_select') {
+            this.renderModeSelect(ctx, canvasWidth, canvasHeight);
+        } else if (this.state === 'level_select') {
+            this.renderLevelSelect(ctx, canvasWidth, canvasHeight);
         } else if (this.state === 'hub') {
             this.hubWorld.render(ctx, canvasWidth, canvasHeight);
         }
@@ -317,6 +424,165 @@ export class Menu {
         ctx.font = '12px monospace';
         ctx.fillStyle = '#666';
         ctx.fillText('Controls: ← → Move  |  S Jump  |  ↓ Crouch  |  D Shoot', w / 2, h - 30);
+    }
+
+    renderModeSelect(ctx, w, h) {
+        ctx.fillStyle = '#2a2a3a';
+        ctx.fillRect(0, 0, w, h);
+
+        const ch = CHARACTERS[this.selectedIndex];
+
+        // Character preview
+        drawCharacter(ctx, w / 2 - 40, 40, 80, 110, ch, 1, null);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 26px sans-serif';
+        ctx.fillText(ch.name, w / 2, 180);
+
+        // Show save stats if they exist
+        if (this.saveManager) {
+            const completed = this.saveManager.getCompletedLevels(ch.name);
+            if (completed.length > 0) {
+                const overall = this.saveManager.getOverallPercent(ch.name);
+                ctx.font = '14px monospace';
+                ctx.fillStyle = overall >= 90 ? '#00FF00' : overall >= 50 ? '#FFD700' : '#FF6644';
+                ctx.fillText(`${completed.length}/6 rooms cleared  •  ${overall}% tidy`, w / 2, 210);
+            }
+        }
+
+        // Mode options
+        const optionY = 260;
+        const optionGap = 50;
+        for (let i = 0; i < this.modeOptions.length; i++) {
+            const opt = this.modeOptions[i];
+            const y = optionY + i * optionGap;
+            const selected = i === this.modeIndex;
+
+            if (selected) {
+                // Highlight box
+                ctx.fillStyle = 'rgba(255, 215, 0, 0.12)';
+                ctx.fillRect(w / 2 - 150, y - 18, 300, 36);
+                ctx.strokeStyle = '#FFD700';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(w / 2 - 150, y - 18, 300, 36);
+            }
+
+            ctx.font = selected ? 'bold 22px monospace' : '20px monospace';
+            ctx.fillStyle = selected ? '#FFD700' : '#999';
+            ctx.fillText(opt.label, w / 2, y + 6);
+        }
+
+        // Descriptions
+        ctx.font = '12px monospace';
+        ctx.fillStyle = '#666';
+        const desc = {
+            continue: 'Pick up where you left off',
+            new_game: 'Start fresh from the Living Room',
+            level_select: 'Replay a room you\'ve unlocked'
+        };
+        const currentDesc = desc[this.modeOptions[this.modeIndex]?.id] || '';
+        ctx.fillText(currentDesc, w / 2, optionY + this.modeOptions.length * optionGap + 20);
+
+        // Navigation hints
+        ctx.font = '14px monospace';
+        ctx.fillStyle = '#888';
+        ctx.fillText('↑ ↓ to choose  •  ENTER to confirm  •  ESC to go back', w / 2, h - 40);
+    }
+
+    renderLevelSelect(ctx, w, h) {
+        const LEVEL_NAMES = ['Living Room', 'Kitchen', 'Bathroom', 'Kids\' Room', 'Parents\' Room', 'Terrace'];
+        const LEVEL_ICONS = ['🛋️', '🍳', '🛁', '🧸', '🛏️', '☀️'];
+
+        ctx.fillStyle = '#2a2a3a';
+        ctx.fillRect(0, 0, w, h);
+
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText('CHOOSE YOUR ROOM', w / 2, 60);
+
+        const ch = CHARACTERS[this.selectedIndex];
+        const charName = ch.name;
+
+        const cardW = 130;
+        const cardH = 150;
+        const gap = 15;
+        const totalW = 3 * cardW + 2 * gap;
+        const startX = (w - totalW) / 2;
+
+        for (let i = 0; i < 6; i++) {
+            const col = i % 3;
+            const row = Math.floor(i / 3);
+            const cx = startX + col * (cardW + gap);
+            const cy = 90 + row * (cardH + 20);
+            const unlocked = this.unlockedLevels[i];
+            const selected = i === this.levelSelectIndex;
+
+            // Card background
+            if (!unlocked) {
+                ctx.fillStyle = '#1a1a2a';
+            } else if (selected) {
+                ctx.fillStyle = '#444466';
+            } else {
+                ctx.fillStyle = '#333344';
+            }
+            ctx.fillRect(cx, cy, cardW, cardH);
+
+            // Selection border
+            if (selected && unlocked) {
+                ctx.strokeStyle = '#FFD700';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(cx - 2, cy - 2, cardW + 4, cardH + 4);
+            } else if (selected && !unlocked) {
+                ctx.strokeStyle = '#555';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(cx - 2, cy - 2, cardW + 4, cardH + 4);
+            }
+
+            // Level number
+            ctx.font = 'bold 14px monospace';
+            ctx.fillStyle = unlocked ? '#aaa' : '#444';
+            ctx.fillText(`Room ${i + 1}`, cx + cardW / 2, cy + 22);
+
+            // Icon
+            ctx.font = '32px sans-serif';
+            ctx.fillText(unlocked ? LEVEL_ICONS[i] : '🔒', cx + cardW / 2, cy + 65);
+
+            // Name
+            ctx.font = 'bold 13px monospace';
+            ctx.fillStyle = unlocked ? '#fff' : '#555';
+            ctx.fillText(LEVEL_NAMES[i], cx + cardW / 2, cy + 95);
+
+            // Stars / score if available
+            if (unlocked && this.saveManager) {
+                const lvData = this.saveManager.getLevel(charName, i);
+                if (lvData) {
+                    ctx.font = '12px monospace';
+                    ctx.fillStyle = '#FFD700';
+                    ctx.fillText('★'.repeat(lvData.stars) + '☆'.repeat(3 - lvData.stars), cx + cardW / 2, cy + 115);
+                    ctx.font = '10px monospace';
+                    ctx.fillStyle = lvData.best >= 90 ? '#00FF00' : lvData.best >= 50 ? '#FFD700' : '#FF6644';
+                    ctx.fillText(`${lvData.best}%`, cx + cardW / 2, cy + 132);
+                } else {
+                    ctx.font = '11px monospace';
+                    ctx.fillStyle = '#666';
+                    ctx.fillText('Not played', cx + cardW / 2, cy + 120);
+                }
+            }
+        }
+
+        // Bottom hint
+        ctx.font = '14px monospace';
+        ctx.fillStyle = '#888';
+        ctx.fillText('← → to choose  •  ENTER to play  •  ESC to go back', w / 2, h - 40);
+
+        // Locked warning if selected is locked
+        if (!this.unlockedLevels[this.levelSelectIndex]) {
+            ctx.font = '13px monospace';
+            ctx.fillStyle = '#FF6644';
+            ctx.fillText(`Defeat the ${LEVEL_NAMES[this.levelSelectIndex - 1]} boss to unlock`, w / 2, h - 65);
+        }
     }
 
 }
