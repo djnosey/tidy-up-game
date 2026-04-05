@@ -313,15 +313,15 @@ export class TransitionManager {
             const btnY = 14;
             this._skipBtnRect = { x: btnX, y: btnY, w: btnW, h: btnH };
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
             roundRect(ctx, btnX, btnY, btnW, btnH, 6);
             ctx.fill();
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.lineWidth = 1;
+            ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
+            ctx.lineWidth = 2;
             roundRect(ctx, btnX, btnY, btnW, btnH, 6);
             ctx.stroke();
 
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.fillStyle = '#FFD700';
             ctx.textAlign = 'center';
             ctx.fillText(btnText + ' \u25B8', btnX + btnW / 2, btnY + btnH / 2 + 5);
         }
