@@ -3,7 +3,7 @@ import { Input } from './engine/input.js';
 import { Camera } from './engine/camera.js';
 import { renderBoss } from './engine/renderers/boss-renderer.js';
 import { clearCharacterCache } from './engine/renderers/character-renderer.js';
-import { drawPlatform, drawPlatformSurface, drawBackground, drawDecoration } from './engine/sprites.js';
+import { drawPlatform, drawPlatformSurface, drawBackground, drawFloorHazard, drawDecoration } from './engine/sprites.js';
 import { Player } from './entities/player.js';
 import { loadLevel } from './levels/level-loader.js';
 import { setActiveTheme } from './engine/renderers/level-themes.js';
@@ -66,6 +66,29 @@ class Game {
         this.scoreScreen = new ScoreScreen();
         this.victoryScreen = new VictoryScreen();
         this.transitions = new TransitionManager();
+
+        // Click/hover handlers for skip button on transitions
+        const canvasCoords = (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            return {
+                x: (e.clientX - rect.left) * (this.canvas.width / rect.width),
+                y: (e.clientY - rect.top) * (this.canvas.height / rect.height),
+            };
+        };
+        this.canvas.addEventListener('click', (e) => {
+            const { x, y } = canvasCoords(e);
+            this.transitions.handleClick(x, y);
+        });
+        this.canvas.addEventListener('mousemove', (e) => {
+            const { x, y } = canvasCoords(e);
+            const r = this.transitions._skipBtnRect;
+            if (r && this.transitions.active && this.transitions.type === 'opening'
+                && x >= r.x && x <= r.x + r.w && y >= r.y && y <= r.y + r.h) {
+                this.canvas.style.cursor = 'pointer';
+            } else {
+                this.canvas.style.cursor = '';
+            }
+        });
 
         this.state = STATE_MENU;
         this.hasSeenOpening = false;
@@ -463,7 +486,7 @@ class Game {
         carryPlayerOnPlatforms(player, level.platforms, dt);
 
         // Update crumbling platforms
-        updateCrumblingPlatforms(level.platforms, player, particles, dt);
+        updateCrumblingPlatforms(level.platforms, player, particles, dt, camera, audio);
 
         // BED bouncy mechanic (Parents' Room)
         checkBedBounce(player, level.platforms, input);
@@ -606,8 +629,25 @@ class Game {
             this.audio.stopMusic();
         }
 
+        // Floor hazard — touching the ground damages the player (except during boss fights)
+        if (player.alive && this.state !== STATE_BOSS &&
+            player.y + player.height > level.groundY && player.invincibleTimer <= 0) {
+            if (player.takeDamage()) {
+                player.vy = -500; // bounce up
+                player.y = level.groundY - player.height - 5;
+                camera.shake(4, 0.3);
+                audio.playSFX('takeDamage');
+                particles.emit({
+                    x: player.x + player.width / 2, y: level.groundY,
+                    count: 10, colors: ['#FF4444', '#FF6600', '#FFD700'],
+                    speedX: 80, speedY: 100, gravity: 300, life: 0.4,
+                    sizeMin: 2, sizeMax: 4,
+                });
+            }
+        }
+
         // Player fell off screen
-        if (player.y > level.groundY + 200) {
+        if (player.y > level.groundY + 80) {
             player.alive = false;
             this._diedDuringBoss = (this.state === STATE_BOSS);
             this.state = STATE_GAMEOVER;
@@ -851,6 +891,11 @@ class Game {
         // Parallax layers
         this.parallax.render(ctx, camera.x, canvas.width, canvas.height, level.name, level.backgroundColor);
 
+        // Floor hazard zone (deadly floor visual)
+        if (this.state !== STATE_BOSS) {
+            drawFloorHazard(ctx, level.groundY - camera.y, canvas.width, level.name, this._frameCount / 60);
+        }
+
         // Decorations — static from cache, animated drawn live
         const camX = Math.floor(camera.x);
         const camY = Math.floor(camera.y);
@@ -885,7 +930,30 @@ class Game {
             if (sx + plat.width < -50 || sx > cw + 50) continue;
             const sy = plat.y - camera.y;
             if (plat._crumbleState === 'shaking') {
-                sx += (Math.random() - 0.5) * 4;
+                const progress = plat._crumbleProgress || 0;
+                // Escalating shake: 4px → 10px as progress increases
+                const shakeAmt = 4 + progress * 6;
+                sx += (Math.random() - 0.5) * shakeAmt;
+                // Red tint overlay after drawing
+                drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
+                // Visual escalation: red flash intensifies with progress
+                const flashAlpha = progress > 0.7
+                    ? (Math.sin(this._frameCount * 0.8) > 0 ? 0.4 : 0.1)
+                    : progress * 0.25;
+                ctx.fillStyle = `rgba(255, 50, 30, ${flashAlpha})`;
+                ctx.fillRect(sx, sy, plat.width, plat.height);
+                // Crack lines
+                if (progress > 0.3) {
+                    ctx.strokeStyle = `rgba(80, 40, 20, ${0.3 + progress * 0.4})`;
+                    ctx.lineWidth = 1 + progress;
+                    ctx.beginPath();
+                    ctx.moveTo(sx + plat.width * 0.2, sy);
+                    ctx.lineTo(sx + plat.width * 0.5, sy + plat.height);
+                    ctx.moveTo(sx + plat.width * 0.7, sy);
+                    ctx.lineTo(sx + plat.width * 0.4, sy + plat.height);
+                    ctx.stroke();
+                }
+                continue;
             }
             drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
         }

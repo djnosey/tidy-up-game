@@ -199,5 +199,50 @@ export const SFX_RECIPES = {
 
         rumble.onended = () => { rumble.disconnect(); rumbleGain.disconnect(); };
         rise.onended = () => { rise.disconnect(); riseGain.disconnect(); };
+    },
+
+    platformCrumble(ctx, dest) {
+        // Short creak/crack — descending noise burst
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(80, ctx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(dest);
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.25);
+        osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+    },
+
+    platformBreak(ctx, dest) {
+        // Crumble/collapse — low rumble with crunch
+        const noise = ctx.createOscillator();
+        const noiseGain = ctx.createGain();
+        noise.type = 'sawtooth';
+        noise.frequency.setValueAtTime(150, ctx.currentTime);
+        noise.frequency.exponentialRampToValueAtTime(30, ctx.currentTime + 0.3);
+        noiseGain.gain.setValueAtTime(0.2, ctx.currentTime);
+        noiseGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+        noise.connect(noiseGain);
+        noiseGain.connect(dest);
+        noise.start(ctx.currentTime);
+        noise.stop(ctx.currentTime + 0.35);
+        // Crunch overlay
+        const crunch = ctx.createOscillator();
+        const crunchGain = ctx.createGain();
+        crunch.type = 'square';
+        crunch.frequency.setValueAtTime(80, ctx.currentTime);
+        crunch.frequency.exponentialRampToValueAtTime(20, ctx.currentTime + 0.15);
+        crunchGain.gain.setValueAtTime(0.12, ctx.currentTime);
+        crunchGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.2);
+        crunch.connect(crunchGain);
+        crunchGain.connect(dest);
+        crunch.start(ctx.currentTime);
+        crunch.stop(ctx.currentTime + 0.2);
+        noise.onended = () => { noise.disconnect(); noiseGain.disconnect(); };
+        crunch.onended = () => { crunch.disconnect(); crunchGain.disconnect(); };
     }
 };

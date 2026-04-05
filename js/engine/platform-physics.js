@@ -32,7 +32,7 @@ export function carryPlayerOnPlatforms(player, platforms, dt) {
     }
 }
 
-export function updateCrumblingPlatforms(platforms, player, particles, dt) {
+export function updateCrumblingPlatforms(platforms, player, particles, dt, camera, audio) {
     for (const plat of platforms) {
         if (!plat.crumble) continue;
         if (plat._crumbleState === undefined) plat._crumbleState = 'solid';
@@ -43,20 +43,28 @@ export function updateCrumblingPlatforms(platforms, player, particles, dt) {
                 player.x + player.width > plat.x && player.x < plat.x + plat.width &&
                 Math.abs((player.y + player.height) - plat.y) < 4) {
                 plat._crumbleState = 'shaking';
-                plat._crumbleTimer = plat.crumbleDelay || 0.6;
+                plat._crumbleTimer = plat.crumbleDelay || 0.8;
+                plat._crumbleDelay = plat.crumbleDelay || 0.8;
+                // Camera micro-shake + SFX on trigger
+                if (camera) camera.shake(3, 0.3);
+                if (audio) audio.playSFX('platformCrumble');
             }
         } else if (plat._crumbleState === 'shaking') {
             plat._crumbleTimer -= dt;
+            // Track progress for visual escalation (0.0 = just triggered, 1.0 = about to break)
+            plat._crumbleProgress = 1 - (plat._crumbleTimer / plat._crumbleDelay);
             if (plat._crumbleTimer <= 0) {
                 plat._crumbleState = 'gone';
                 plat._crumbleTimer = plat.crumbleRespawn || 3.0;
                 plat._disabled = true;
-                // Crumble particles
+                plat._crumbleProgress = 0;
+                // Break particles — larger burst
                 particles.emit({
                     x: plat.x + plat.width / 2, y: plat.y,
-                    count: 8, speedX: 60, speedY: 40, life: 0.6,
+                    count: 12, speedX: 80, speedY: 60, life: 0.7,
                     colors: [plat.color, '#AAA', '#888'],
                 });
+                if (audio) audio.playSFX('platformBreak');
             }
         } else if (plat._crumbleState === 'gone') {
             plat._crumbleTimer -= dt;

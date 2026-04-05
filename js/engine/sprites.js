@@ -8,5 +8,5 @@ export { drawCollectable } from './renderers/collectable-renderer.js';
 export { drawObstacle } from './renderers/obstacle-renderer.js';
 export { drawProjectile } from './renderers/projectile-renderer.js';
 export { drawDecoration } from './renderers/decoration-renderer.js';
-export { drawBackground } from './renderers/background-renderer.js';
+export { drawBackground, drawFloorHazard } from './renderers/background-renderer.js';
 export { setActiveTheme, getTheme, LEVEL_THEMES } from './renderers/level-themes.js';
