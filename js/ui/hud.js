@@ -4,7 +4,7 @@ export class HUD {
         this.padding = 16;
     }
 
-    render(ctx, player, tidyPercent, collected, total, canvasWidth) {
+    render(ctx, player, tidyPercent, collected, total, canvasWidth, comboCount) {
         ctx.save();
 
         // === Top Left: Character portrait + Hearts ===
@@ -88,6 +88,25 @@ export class HUD {
         ctx.font = '10px monospace';
         ctx.fillStyle = '#ccc';
         ctx.fillText('ITEMS', canvasWidth - this.padding, this.padding + 12);
+
+        // Collect combo indicator
+        if (comboCount >= 2) {
+            ctx.textAlign = 'right';
+            ctx.font = `bold ${14 + Math.min(comboCount, 6)}px monospace`;
+            const pulse = 1 + Math.sin(Date.now() / 100) * 0.1;
+            ctx.save();
+            const comboX = canvasWidth - this.padding;
+            const comboY = this.padding + 44;
+            ctx.translate(comboX, comboY);
+            ctx.scale(pulse, pulse);
+            ctx.translate(-comboX, -comboY);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 3;
+            ctx.strokeText(`x${comboCount}`, comboX, comboY);
+            ctx.fillStyle = comboCount >= 5 ? '#FF4444' : '#FFD700';
+            ctx.fillText(`x${comboCount}`, comboX, comboY);
+            ctx.restore();
+        }
 
         // Low-health red vignette warning
         if (lowHealth) {

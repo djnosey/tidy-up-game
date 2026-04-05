@@ -7,7 +7,7 @@ const JUMP_VELOCITY = -720;
 const SHORT_JUMP_VELOCITY = -430;
 const CROUCH_HEIGHT_RATIO = 0.6;
 const INVINCIBILITY_DURATION = 1.5;
-const SHOOT_COOLDOWN = 0.5;
+const SHOOT_COOLDOWN = 0.25;
 
 export class Player {
     constructor(x, y, character) {

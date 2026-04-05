@@ -8,6 +8,9 @@ export class GameLoop {
         this.running = false;
         this.rafId = null;
         this._boundLoop = this.loop.bind(this); // avoid per-frame allocation
+
+        // Hitstop — freezes game updates for N frames for impact feel
+        this.hitstopFrames = 0;
     }
 
     start() {
@@ -22,11 +25,24 @@ export class GameLoop {
         if (this.rafId) cancelAnimationFrame(this.rafId);
     }
 
+    hitstop(frames = 3) {
+        this.hitstopFrames = Math.max(this.hitstopFrames, frames);
+    }
+
     loop(now) {
         if (!this.running) return;
 
         const elapsed = Math.min((now - this.lastTime) / 1000, 0.1); // cap at 100ms
         this.lastTime = now;
+
+        // Hitstop: skip update ticks while frozen, still render
+        if (this.hitstopFrames > 0) {
+            this.hitstopFrames--;
+            this.render();
+            this.rafId = requestAnimationFrame(this._boundLoop);
+            return;
+        }
+
         this.accumulator += elapsed;
 
         while (this.accumulator >= this.fixedDt) {

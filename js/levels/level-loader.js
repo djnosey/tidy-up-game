@@ -13,7 +13,7 @@ export function loadLevel(levelData) {
     );
 
     const enemies = levelData.enemies.map(e =>
-        new Enemy(e.x, e.y, e.width, e.height, e.label, e.color, e.patrolRange)
+        new Enemy(e.x, e.y, e.width, e.height, e.label, e.color, e.patrolRange, e.behavior)
     );
 
     const boss = new Boss(

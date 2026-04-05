@@ -1,6 +1,6 @@
 // Level 6: Outdoor Terrace
 // 13 screen widths (12,480px at 960px canvas width)
-// FINAL and HARDEST level — 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// FINAL and HARDEST level — 129 standard collectables + 3 +HEALTH + 1 +LIFE
 // Difficulty: 5% easy, 20% moderate, 40% challenging, 35% expert
 // DEADLY FLOOR — no full-width ground platform. Boss arena gets solid ground only.
 
@@ -729,6 +729,10 @@ export const level6 = {
         { x: 860, y: 475 - 32, label: 'ROPE', color: '#D2B48C' },
         // On exit (T1)
         { x: 945, y: 465 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // Air cluster between table and chair
+        { x: 520, y: 340 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 560, y: 330 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 600, y: 340 - 32, label: 'SHOE', color: '#4169E1' },
 
         // === SCREEN 2 (9 items) ===
         // On entry railing (T1)
@@ -749,6 +753,10 @@ export const level6 = {
         { x: 1885, y: 475 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         // On static planter T2
         { x: 1245, y: 395 - 32, label: 'ROPE', color: '#D2B48C' },
+        // Air arc between planters
+        { x: 1320, y: 350 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 1370, y: 335 - 32, label: 'SHOE', color: '#8B4513' },
+        { x: 1420, y: 350 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
 
         // === SCREEN 3 (9 items) ===
         // On entry railing (T1)
@@ -768,6 +776,9 @@ export const level6 = {
         { x: 2855, y: 470 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         // On bridge railing
         { x: 2640, y: 385 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // High air cluster near clothesline 2
+        { x: 2470, y: 240 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 2510, y: 230 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
 
         // === SCREEN 4 (8 items) ===
         // On ascending railings
@@ -783,6 +794,10 @@ export const level6 = {
         { x: 3570, y: 470 - 32, label: 'ROPE', color: '#D2B48C' },
         // On exit
         { x: 3830, y: 475 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // Descent air trail
+        { x: 3310, y: 240 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 3370, y: 300 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 3430, y: 340 - 32, label: 'SHOE', color: '#8B4513' },
 
         // === SCREEN 5 (8 items + 1 +HEALTH) ===
         // Rest screen — generous, easy collecting
@@ -796,6 +811,10 @@ export const level6 = {
         { x: 4720, y: 390 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         // +HEALTH on rest table
         { x: 4440, y: 385 - 32, label: '+HEALTH', color: '#00FF00' },
+        // Rest screen bonus cluster on ground
+        { x: 4030, y: 470 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 4500, y: 470 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 4650, y: 390 - 32, label: 'SHOE', color: '#4169E1' },
 
         // === SCREEN 6 (8 items) ===
         // On crumbling planters (must grab fast!)
@@ -807,6 +826,9 @@ export const level6 = {
         { x: 5560, y: 375 - 32, label: 'SHOE', color: '#8B4513' },
         { x: 5725, y: 390 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         { x: 5745, y: 470 - 32, label: 'ROPE', color: '#D2B48C' },
+        // Air arc over crumble planters
+        { x: 5100, y: 340 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 5150, y: 325 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
 
         // === SCREEN 7 (8 items) ===
         // On moving clotheslines (challenge!)
@@ -819,6 +841,10 @@ export const level6 = {
         { x: 6720, y: 470 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         // On high clothesline 3 bonus
         { x: 6330, y: 270 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        // Air trail between clotheslines
+        { x: 6050, y: 340 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 6100, y: 320 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        { x: 6440, y: 330 - 32, label: 'SHOE', color: '#4169E1' },
 
         // === SCREEN 8 (8 items) ===
         // On vertical climb
@@ -832,6 +858,10 @@ export const level6 = {
         { x: 7225, y: 150 - 32, label: 'ROPE', color: '#D2B48C' },
         // On bridge shelf
         { x: 7595, y: 395 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // Vertical climb air cluster
+        { x: 7000, y: 340 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 7050, y: 240 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
+        { x: 7250, y: 220 - 32, label: 'ROPE', color: '#D2B48C' },
 
         // === SCREEN 9 (8 items + 1 +HEALTH) ===
         // Lower safe path (~4 items)
@@ -846,6 +876,9 @@ export const level6 = {
         { x: 8475, y: 190 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         // +HEALTH on high path
         { x: 8110, y: 200 - 32, label: '+HEALTH', color: '#00FF00' },
+        // Upper path bonus arc
+        { x: 8200, y: 220 - 32, label: 'SHOE', color: '#4169E1' },
+        { x: 8380, y: 210 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
 
         // === SCREEN 10 (7 items + 1 +HEALTH) ===
         // Along crumble + moving gauntlet
@@ -858,6 +891,9 @@ export const level6 = {
         { x: 9515, y: 380 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
         // +HEALTH on T3 moving clothesline
         { x: 9390, y: 270 - 32, label: '+HEALTH', color: '#00FF00' },
+        // Gauntlet air trail
+        { x: 8750, y: 340 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 9100, y: 240 - 32, label: 'SHOE', color: '#8B4513' },
 
         // === SCREEN 11 (7 items) ===
         // BBQ area
@@ -868,6 +904,9 @@ export const level6 = {
         { x: 10085, y: 260 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
         { x: 10285, y: 470 - 32, label: 'SHOE', color: '#8B4513' },
         { x: 10415, y: 385 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
+        // BBQ area high cluster
+        { x: 9870, y: 340 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 10130, y: 320 - 32, label: 'WATERING_CAN', color: '#2E8B57' },
 
         // === SCREEN 12 (10 items + 1 +LIFE) ===
         // Hardest section — every collectable is a challenge
@@ -884,6 +923,10 @@ export const level6 = {
         { x: 11300, y: 280 - 32, label: 'GARDEN_TOOL', color: '#228B22' },
         // +LIFE on T4 high moving clothesline — hardest grab in the game!
         { x: 11050, y: 160 - 32, label: '+LIFE', color: '#FF1493' },
+        // Final screen air clusters — reward for pushing through
+        { x: 10700, y: 340 - 32, label: 'ROPE', color: '#D2B48C' },
+        { x: 10900, y: 240 - 32, label: 'FOOTBALL', color: '#F5F5F5' },
+        { x: 11100, y: 330 - 32, label: 'SHOE', color: '#4169E1' },
     ],
 
     // ========== OBSTACLES ==========
@@ -950,49 +993,49 @@ export const level6 = {
     // ========== ENEMIES ==========
     enemies: [
         // Screen 1: 1 CAT on T2 table
-        { x: 420, y: 380 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 60 },
+        { x: 420, y: 380 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 120, behavior: 'shooter' },
 
         // Screen 2: 1 WASP near T2
-        { x: 1500, y: 370 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
+        { x: 1500, y: 370 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 120, behavior: 'charger' },
 
         // Screen 3: 1 PIGEON on T1 mid railing
-        { x: 2280, y: 480 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 40 },
+        { x: 2280, y: 480 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 80, behavior: 'jumper' },
 
         // Screen 4: 1 CAT on T1 bench + 1 WASP near T3
-        { x: 3560, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 50 },
-        { x: 3420, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
+        { x: 3560, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 100, behavior: 'shooter' },
+        { x: 3420, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 120, behavior: 'charger' },
 
         // Screen 5: 1 PIGEON on T1
-        { x: 4260, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 50 },
+        { x: 4260, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 100, behavior: 'jumper' },
 
         // Screen 6: 1 CAT on T1 + 1 WASP near T2
-        { x: 5330, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
-        { x: 5560, y: 365 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
+        { x: 5330, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80, behavior: 'shooter' },
+        { x: 5560, y: 365 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 120, behavior: 'charger' },
 
         // Screen 7: 1 PIGEON on T1 + 1 WASP near T3
-        { x: 6715, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 40 },
-        { x: 6350, y: 260 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
+        { x: 6715, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 80, behavior: 'jumper' },
+        { x: 6350, y: 260 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 120, behavior: 'charger' },
 
         // Screen 8: 1 CAT on T1 + 1 PIGEON on T3
-        { x: 6780, y: 475 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 30 },
-        { x: 7330, y: 270 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 30 },
+        { x: 6780, y: 475 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 60, behavior: 'shooter' },
+        { x: 7330, y: 270 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 60, behavior: 'jumper' },
 
         // Screen 9: 1 WASP near upper path
-        { x: 8280, y: 250 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 80 },
+        { x: 8280, y: 250 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 160, behavior: 'charger' },
 
         // Screen 10: 1 CAT on T1 + 1 WASP near T3
-        { x: 9280, y: 475 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
-        { x: 9020, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
+        { x: 9280, y: 475 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80, behavior: 'shooter' },
+        { x: 9020, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 120, behavior: 'charger' },
 
         // Screen 11: 1 PIGEON on T1 + 1 WASP near T3 + 1 CAT on T1
-        { x: 9650, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 50 },
-        { x: 10070, y: 250 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
-        { x: 10280, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 30 },
+        { x: 9650, y: 470 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 100, behavior: 'jumper' },
+        { x: 10070, y: 250 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 120, behavior: 'charger' },
+        { x: 10280, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 60, behavior: 'shooter' },
 
         // Screen 12: 2 CAT + 1 WASP + 1 PIGEON — HARDEST screen
-        { x: 10610, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
-        { x: 11360, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 40 },
-        { x: 11040, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 60 },
-        { x: 11240, y: 385 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 30 },
+        { x: 10610, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80, behavior: 'shooter' },
+        { x: 11360, y: 470 - 25, width: 35, height: 25, label: 'CAT', color: '#FF8800', speed: 40, patrolRange: 80, behavior: 'shooter' },
+        { x: 11040, y: 270 - 20, width: 25, height: 20, label: 'WASP', color: '#FFD700', speed: 60, patrolRange: 120, behavior: 'charger' },
+        { x: 11240, y: 385 - 25, width: 30, height: 25, label: 'PIGEON', color: '#808080', speed: 45, patrolRange: 60, behavior: 'jumper' },
     ],
 };

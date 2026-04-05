@@ -20,19 +20,34 @@ export const SFX_RECIPES = {
     },
 
     shoot(ctx, dest) {
-        // Quick descending "pew" — square wave
+        // Snappy, punchy "pew" — faster and tighter
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
         osc.type = 'square';
-        osc.frequency.setValueAtTime(900, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.1);
-        gain.gain.setValueAtTime(0.2, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+        osc.frequency.setValueAtTime(1200, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
         osc.connect(gain);
         gain.connect(dest);
         osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.12);
+        osc.stop(ctx.currentTime + 0.08);
+        // Noise click for punch
+        const bufSize = ctx.sampleRate * 0.02;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) d[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const nGain = ctx.createGain();
+        nGain.gain.setValueAtTime(0.1, ctx.currentTime);
+        nGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.03);
+        noise.connect(nGain);
+        nGain.connect(dest);
+        noise.start(ctx.currentTime);
+        noise.stop(ctx.currentTime + 0.03);
         osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+        noise.onended = () => { noise.disconnect(); nGain.disconnect(); };
     },
 
     takeDamage(ctx, dest) {
@@ -98,21 +113,145 @@ export const SFX_RECIPES = {
         noise.onended = () => { noise.disconnect(); noiseGain.disconnect(); };
     },
 
-    collect(ctx, dest) {
-        // Quick ascending arpeggio — happy "ding-ding-ding"
-        const notes = [523, 659, 784]; // C5, E5, G5
+    enemyDefeat(ctx, dest) {
+        // Meaty pop + rising confirmation tone — satisfying "splat-ding"
+        // Low pop
+        const pop = ctx.createOscillator();
+        const popGain = ctx.createGain();
+        pop.type = 'triangle';
+        pop.frequency.setValueAtTime(300, ctx.currentTime);
+        pop.frequency.exponentialRampToValueAtTime(60, ctx.currentTime + 0.08);
+        popGain.gain.setValueAtTime(0.35, ctx.currentTime);
+        popGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+        pop.connect(popGain);
+        popGain.connect(dest);
+        pop.start(ctx.currentTime);
+        pop.stop(ctx.currentTime + 0.1);
+
+        // Noise crunch
+        const bufSize = ctx.sampleRate * 0.05;
+        const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        const d = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) d[i] = Math.random() * 2 - 1;
+        const noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        const nGain = ctx.createGain();
+        nGain.gain.setValueAtTime(0.2, ctx.currentTime);
+        nGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.05);
+        noise.connect(nGain);
+        nGain.connect(dest);
+        noise.start(ctx.currentTime);
+        noise.stop(ctx.currentTime + 0.05);
+
+        // Rising confirmation tone
+        const conf = ctx.createOscillator();
+        const confGain = ctx.createGain();
+        conf.type = 'square';
+        conf.frequency.setValueAtTime(500, ctx.currentTime + 0.05);
+        conf.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.12);
+        confGain.gain.setValueAtTime(0.15, ctx.currentTime + 0.05);
+        confGain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+        conf.connect(confGain);
+        confGain.connect(dest);
+        conf.start(ctx.currentTime + 0.05);
+        conf.stop(ctx.currentTime + 0.15);
+
+        pop.onended = () => { pop.disconnect(); popGain.disconnect(); };
+        noise.onended = () => { noise.disconnect(); nGain.disconnect(); };
+        conf.onended = () => { conf.disconnect(); confGain.disconnect(); };
+    },
+
+    bounceCombo(ctx, dest) {
+        // Ascending triumphant chirp — rewards chained stomps
+        const notes = [880, 1175, 1397]; // A5, D6, F6
         notes.forEach((freq, i) => {
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'square';
             osc.frequency.value = freq;
-            const t = ctx.currentTime + i * 0.06;
-            gain.gain.setValueAtTime(0.18, t);
-            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
+            const t = ctx.currentTime + i * 0.04;
+            gain.gain.setValueAtTime(0.2, t);
+            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
             osc.connect(gain);
             gain.connect(dest);
             osc.start(t);
-            osc.stop(t + 0.1);
+            osc.stop(t + 0.08);
+            osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+        });
+    },
+
+    collect(ctx, dest) {
+        // Snappy ascending chime — bright and quick
+        const notes = [659, 880]; // E5, A5
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = freq;
+            const t = ctx.currentTime + i * 0.04;
+            gain.gain.setValueAtTime(0.22, t);
+            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.08);
+            osc.connect(gain);
+            gain.connect(dest);
+            osc.start(t);
+            osc.stop(t + 0.08);
+            osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+        });
+    },
+
+    collectCombo1(ctx, dest) {
+        // 2-3 combo — higher pitch
+        const notes = [784, 988]; // G5, B5
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = freq;
+            const t = ctx.currentTime + i * 0.035;
+            gain.gain.setValueAtTime(0.22, t);
+            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.07);
+            osc.connect(gain);
+            gain.connect(dest);
+            osc.start(t);
+            osc.stop(t + 0.07);
+            osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+        });
+    },
+
+    collectCombo2(ctx, dest) {
+        // 3-4 combo — even higher, 3 notes
+        const notes = [988, 1175, 1319]; // B5, D6, E6
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = freq;
+            const t = ctx.currentTime + i * 0.03;
+            gain.gain.setValueAtTime(0.2, t);
+            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.06);
+            osc.connect(gain);
+            gain.connect(dest);
+            osc.start(t);
+            osc.stop(t + 0.06);
+            osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+        });
+    },
+
+    collectCombo3(ctx, dest) {
+        // 5+ combo — sparkling arpeggio
+        const notes = [1319, 1568, 1760, 2093]; // E6, G6, A6, C7
+        notes.forEach((freq, i) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.value = freq;
+            const t = ctx.currentTime + i * 0.025;
+            gain.gain.setValueAtTime(0.18, t);
+            gain.gain.exponentialRampToValueAtTime(0.01, t + 0.06);
+            osc.connect(gain);
+            gain.connect(dest);
+            osc.start(t);
+            osc.stop(t + 0.06);
             osc.onended = () => { osc.disconnect(); gain.disconnect(); };
         });
     },

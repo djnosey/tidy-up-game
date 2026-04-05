@@ -649,6 +649,62 @@ export const level3 = {
 
         // === SCREEN 11 (9600-10560): 0 standard collectables (boss arena) ===
 
+        // === EXTRA COLLECTABLES (air trails, clusters on platforms, jump paths) ===
+
+        // Screen 1: Air trail between bathtub and shelf
+        { x: 350, y: 430 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 400, y: 410 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 450, y: 390 - 32, label: 'TOWEL', color: '#F0D8C0' },
+
+        // Screen 2: Cluster on high shelf (T4, y=170) jump path
+        { x: 1170, y: 170 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 1210, y: 170 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // Air arc between towel racks
+        { x: 1180, y: 330 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+
+        // Screen 3: Air trail over crumbling soaps
+        { x: 2310, y: 340 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        { x: 2470, y: 330 - 32, label: 'SOAP', color: '#C8E8C0' },
+        { x: 2630, y: 340 - 32, label: 'DUCK', color: '#FFE040' },
+
+        // Screen 4: Cluster on bonus cabinet (T3, y=270)
+        { x: 3240, y: 270 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        { x: 3360, y: 270 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        // Air trail between sink and bathtub
+        { x: 3040, y: 440 - 32, label: 'SOAP', color: '#C8E8C0' },
+
+        // Screen 5: Air arc between moving towel racks
+        { x: 4340, y: 240 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 4580, y: 230 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+        // Cluster on bonus shelf (T4, y=170)
+        { x: 4500, y: 170 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+
+        // Screen 6: Air trail over crumbling section
+        { x: 5160, y: 340 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 5270, y: 330 - 32, label: 'DUCK', color: '#FFE040' },
+        // Cluster near T4 alternative
+        { x: 5350, y: 180 - 32, label: 'SOAP', color: '#C8E8C0' },
+
+        // Screen 7: Air arc on high path (risk/reward)
+        { x: 6180, y: 160 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        { x: 6340, y: 160 - 32, label: 'TOWEL', color: '#E8C8B0' },
+        // Lower path cluster between toilet and sink
+        { x: 6150, y: 440 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+
+        // Screen 8: Zigzag climb air items
+        { x: 6880, y: 340 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 7080, y: 230 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+        { x: 7250, y: 220 - 32, label: 'SOAP', color: '#C8E8C0' },
+
+        // Screen 9: Air trail between moving platforms
+        { x: 7990, y: 340 - 32, label: 'TOWEL', color: '#F0D8C0' },
+        { x: 8440, y: 330 - 32, label: 'SHAMPOO', color: '#80C0E8' },
+
+        // Screen 10: Gauntlet air trail
+        { x: 8950, y: 340 - 32, label: 'DUCK', color: '#FFE040' },
+        { x: 9100, y: 320 - 32, label: 'TOOTHBRUSH', color: '#60D0A0' },
+        { x: 9300, y: 330 - 32, label: 'BATH_TOY', color: '#FF80A0' },
+
         // === SPECIAL PICKUPS ===
         // +HEALTH in Screen 4 (rest area) - on towel rack (T2, y=380)
         { x: 3110, y: 380 - 32, label: '+HEALTH', color: '#FF6060' },
@@ -737,57 +793,57 @@ export const level3 = {
     // All on platforms, not ground
     enemies: [
         // === SCREEN 1 ===
-        // Spider on shelf (T2, y=380)
-        { x: 520, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Spider on shelf (T2, y=380) - charger rushes at player
+        { x: 520, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 140, speed: 40, behavior: 'charger' },
 
         // === SCREEN 2 ===
-        // Rubber duck on bathtub (T1, y=480)
-        { x: 1060, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
-        // Mould on towel rack (T2, y=370)
-        { x: 1260, y: 370 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Rubber duck on bathtub (T1, y=480) - jumper hops around
+        { x: 1060, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 180, speed: 50, behavior: 'jumper' },
+        // Mould on towel rack (T2, y=370) - shooter fires spores
+        { x: 1260, y: 370 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 100, speed: 25, behavior: 'shooter' },
 
         // === SCREEN 3 ===
-        // Spider on static shelf (T2, y=390)
-        { x: 2550, y: 390 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Spider on static shelf (T2, y=390) - charger
+        { x: 2550, y: 390 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 140, speed: 40, behavior: 'charger' },
 
         // === SCREEN 4 ===
-        // Rubber duck on bathtub (T1, y=480) - mild in rest area
-        { x: 3200, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
+        // Rubber duck on bathtub (T1, y=480) - mild jumper in rest area
+        { x: 3200, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 180, speed: 50, behavior: 'jumper' },
 
         // === SCREEN 5 ===
-        // Spider on static rest shelf (T2, y=380)
-        { x: 4360, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
-        // Mould on shelf (T2, y=390)
-        { x: 4630, y: 390 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Spider on static rest shelf (T2, y=380) - charger
+        { x: 4360, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 140, speed: 40, behavior: 'charger' },
+        // Mould on shelf (T2, y=390) - shooter
+        { x: 4630, y: 390 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 100, speed: 25, behavior: 'shooter' },
 
         // === SCREEN 6 ===
-        // Spider on T2 static shelf (y=390)
-        { x: 5060, y: 390 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Spider on T2 static shelf (y=390) - charger
+        { x: 5060, y: 390 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 140, speed: 40, behavior: 'charger' },
 
         // === SCREEN 7 ===
-        // Rubber duck on bathtub (T1, y=480)
-        { x: 6420, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
+        // Rubber duck on bathtub (T1, y=480) - jumper
+        { x: 6420, y: 480 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 180, speed: 50, behavior: 'jumper' },
 
         // === SCREEN 8 ===
-        // Mould on towel rack (T2, y=380)
-        { x: 7440, y: 380 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
-        // Spider on cabinet (T3, y=260)
-        { x: 7300, y: 260 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Mould on towel rack (T2, y=380) - shooter
+        { x: 7440, y: 380 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 100, speed: 25, behavior: 'shooter' },
+        // Spider on cabinet (T3, y=260) - charger
+        { x: 7300, y: 260 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 140, speed: 40, behavior: 'charger' },
 
         // === SCREEN 9 ===
-        // Rubber duck on static towel rack (T2, y=380)
-        { x: 8220, y: 380 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 90, speed: 50 },
-        // Spider on exit bathtub (T1, y=470)
-        { x: 8600, y: 470 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
+        // Rubber duck on static towel rack (T2, y=380) - jumper
+        { x: 8220, y: 380 - 25, width: 25, height: 25, label: 'RUBBER_DUCK', color: '#FFD030', patrolRange: 180, speed: 50, behavior: 'jumper' },
+        // Spider on exit bathtub (T1, y=470) - charger
+        { x: 8600, y: 470 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 140, speed: 40, behavior: 'charger' },
 
         // === SCREEN 10 ===
-        // Spider x2 + mould on platforms
-        { x: 8840, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 70, speed: 40 },
-        { x: 9170, y: 370 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 60, speed: 40 },
-        { x: 9460, y: 380 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Spider x2 + mould on platforms - gauntlet
+        { x: 8840, y: 380 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 140, speed: 40, behavior: 'charger' },
+        { x: 9170, y: 370 - 25, width: 30, height: 25, label: 'SPIDER', color: '#3A3A3A', patrolRange: 120, speed: 40, behavior: 'charger' },
+        { x: 9460, y: 380 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 100, speed: 25, behavior: 'shooter' },
 
         // === SCREEN 11 ===
-        // Mould in boss room on shelf
-        { x: CANVAS_W * 10 + 440, y: 370 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 50, speed: 25 },
+        // Mould in boss room on shelf - shooter
+        { x: CANVAS_W * 10 + 440, y: 370 - 20, width: 35, height: 20, label: 'MOULD', color: '#2A6030', patrolRange: 100, speed: 25, behavior: 'shooter' },
     ],
 };

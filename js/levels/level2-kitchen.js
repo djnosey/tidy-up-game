@@ -682,6 +682,58 @@ export const level2 = {
         { x: 9085, y: 368, label: '+HEALTH', color: '#00FF00' },
         // +LIFE at the very top of screen 7 shelf tower (T4)
         { x: 5870, y: 148, label: '+LIFE', color: '#FF1493' },
+
+        // === EXTRA COLLECTABLES — jump arcs, high platforms, exploration rewards ===
+
+        // Screen 1: arc between spawn counter and dining table
+        { x: 300, y: 390, label: 'CUP', color: '#87CEEB' },
+        { x: 340, y: 370, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 380, y: 390, label: 'SPONGE', color: '#FFD700' },
+
+        // Screen 2: arc between stepping-stone stools
+        { x: 1260, y: 380, label: 'PLATE', color: '#E8E8E8' },
+        { x: 1300, y: 350, label: 'SPICE', color: '#D2691E' },
+        { x: 1340, y: 380, label: 'CUP', color: '#F5F5DC' },
+        // Screen 2: high shelf exploration reward
+        { x: 1360, y: 258, label: 'PAN', color: '#696969' },
+        { x: 1400, y: 258, label: 'POT', color: '#808080' },
+
+        // Screen 3: arc over zigzag drawers
+        { x: 2060, y: 300, label: 'PLATE', color: '#E8E8E8' },
+        { x: 2100, y: 280, label: 'SPONGE', color: '#FFD700' },
+        { x: 2140, y: 300, label: 'TEA_TOWEL', color: '#FF6347' },
+
+        // Screen 4: arc between hanging pots
+        { x: 3300, y: 220, label: 'CUP', color: '#87CEEB' },
+        { x: 3340, y: 200, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 3380, y: 200, label: 'SPICE', color: '#D2691E' },
+        { x: 3420, y: 220, label: 'PLATE', color: '#E8E8E8' },
+
+        // Screen 5: cluster on dining table area
+        { x: 4120, y: 400, label: 'PAN', color: '#696969' },
+        { x: 4160, y: 380, label: 'POT', color: '#808080' },
+        { x: 4200, y: 400, label: 'CUP', color: '#87CEEB' },
+
+        // Screen 6: arc between crumbling plate stacks
+        { x: 5120, y: 310, label: 'UTENSIL', color: '#C0C0C0' },
+        { x: 5160, y: 290, label: 'SPONGE', color: '#FFD700' },
+        { x: 5200, y: 310, label: 'SPICE', color: '#8B4513' },
+
+        // Screen 8: high exploration cluster above upper pot path
+        { x: 6880, y: 190, label: 'TEA_TOWEL', color: '#FF6347' },
+        { x: 6920, y: 190, label: 'PLATE', color: '#E8E8E8' },
+        { x: 6960, y: 190, label: 'CUP', color: '#F5F5DC' },
+
+        // Screen 9: arc between crumbling plates and hanging pots
+        { x: 8120, y: 290, label: 'PAN', color: '#696969' },
+        { x: 8160, y: 270, label: 'POT', color: '#808080' },
+        { x: 8200, y: 270, label: 'PLATE', color: '#E8E8E8' },
+        { x: 8240, y: 290, label: 'SPICE', color: '#D2691E' },
+
+        // Screen 11: arc between hanging pot and crumbling plate
+        { x: 10020, y: 280, label: 'SPONGE', color: '#FFD700' },
+        { x: 10060, y: 260, label: 'TEA_TOWEL', color: '#FF6347' },
+        { x: 10100, y: 280, label: 'UTENSIL', color: '#C0C0C0' },
     ],
 
     // ========== OBSTACLES ==========
@@ -737,40 +789,40 @@ export const level2 = {
     // All placed ON platforms
     enemies: [
         // === Screen 1 — COCKROACH on dining table (y=470) ===
-        { x: 420, y: 455, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 60 },
+        { x: 420, y: 455, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 120, behavior: 'charger' },
 
         // === Screen 2 — BLENDER on counter (y=465) ===
-        { x: 1850, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 50 },
+        { x: 1850, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 100, behavior: 'shooter' },
 
         // === Screen 3 — ANTS on counter (y=465) ===
-        { x: 2600, y: 453, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 80 },
+        { x: 2600, y: 453, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 160, behavior: 'jumper' },
 
         // === Screen 4 — COCKROACH on T2 shelf (y=390) ===
-        { x: 3270, y: 375, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 50 },
+        { x: 3270, y: 375, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 100, behavior: 'charger' },
 
         // === Screen 5 — BLENDER on counter (y=465) ===
-        { x: 4450, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 50 },
+        { x: 4450, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 100, behavior: 'shooter' },
 
         // === Screen 6 — COCKROACH + ANTS on platforms ===
-        { x: 4900, y: 450, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 60 },
-        { x: 5620, y: 368, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 50 },
+        { x: 4900, y: 450, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 120, behavior: 'charger' },
+        { x: 5620, y: 368, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 100, behavior: 'jumper' },
 
         // === Screen 7 — BLENDER on shelf (y=390) ===
-        { x: 6450, y: 360, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 50 },
+        { x: 6450, y: 360, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 100, behavior: 'shooter' },
 
         // === Screen 8 — COCKROACH on counter (y=465) ===
-        { x: 7180, y: 450, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 60 },
+        { x: 7180, y: 450, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 120, behavior: 'charger' },
 
         // === Screen 9 — ANTS + BLENDER on platforms ===
-        { x: 8480, y: 453, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 80 },
-        { x: 8220, y: 260, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 40 },
+        { x: 8480, y: 453, width: 40, height: 12, label: 'ANTS', color: '#2F1F0F', patrolRange: 160, behavior: 'jumper' },
+        { x: 8220, y: 260, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 80, behavior: 'shooter' },
 
         // === Screen 10 — COCKROACH on static shelf (y=400) ===
-        { x: 9080, y: 385, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 40 },
+        { x: 9080, y: 385, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 80, behavior: 'charger' },
 
         // === Screen 11 — COCKROACH x2 + BLENDER ===
-        { x: 9830, y: 375, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 50 },
-        { x: 10180, y: 275, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 50 },
-        { x: 10430, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 60 },
+        { x: 9830, y: 375, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 100, behavior: 'charger' },
+        { x: 10180, y: 275, width: 30, height: 15, label: 'COCKROACH', color: '#4A3728', patrolRange: 100, behavior: 'charger' },
+        { x: 10430, y: 435, width: 30, height: 30, label: 'BLENDER', color: '#A0A0A0', patrolRange: 120, behavior: 'shooter' },
     ],
 };

@@ -232,10 +232,53 @@ class Game {
         events.clear();
         const { particles, particleTheme, audio, camera } = this;
 
+        // Collect combo tracking
+        this._collectCombo = 0;
+        this._collectComboTimer = 0;
+
+        // Floating popups (combo text, bonus text)
+        this._popups = [];
+
         events.on('item-collected', ({ player, x, y, label }) => {
             this.collected++;
-            particles.emit({ x, y, ...particleTheme.collect });
-            audio.playSFX('collect');
+
+            // Collect combo — rapid picks escalate feedback
+            this._collectCombo++;
+            this._collectComboTimer = 0.8; // reset window
+
+            // Bigger particle burst, scales with combo
+            const comboScale = Math.min(this._collectCombo, 8);
+            particles.emit({ x, y, count: 8 + comboScale * 2,
+                colors: ['#FFD700', '#FFC800', '#FFE44D', '#FFF8CC', '#FFFFFF'],
+                speedX: 80 + comboScale * 10, speedY: 100 + comboScale * 15,
+                gravity: 60, sizeMin: 2, sizeMax: 5 + comboScale * 0.5, life: 0.7 });
+
+            // Sparkle ring burst
+            particles.emit({ x, y, count: 6, colors: ['#FFFFFF', '#FFFACD'],
+                speedX: 120, speedY: 120, gravity: 0, friction: 0.92,
+                sizeMin: 1, sizeMax: 3, life: 0.4 });
+
+            // Escalating pitch SFX
+            if (this._collectCombo >= 5) {
+                audio.playSFX('collectCombo3');
+            } else if (this._collectCombo >= 3) {
+                audio.playSFX('collectCombo2');
+            } else if (this._collectCombo >= 2) {
+                audio.playSFX('collectCombo1');
+            } else {
+                audio.playSFX('collect');
+            }
+
+            // Floating combo popup
+            if (this._collectCombo >= 3) {
+                this._popups.push({
+                    x, y: y - 20, life: 1.0, maxLife: 1.0,
+                    text: `x${this._collectCombo} COMBO!`,
+                    color: this._collectCombo >= 5 ? '#FF4444' : '#FFD700',
+                    size: 14 + Math.min(this._collectCombo, 8) * 2,
+                });
+            }
+
             if (label === '+HEALTH') player.heal();
             if (label === '+LIFE') player.addLife();
         });
@@ -255,17 +298,37 @@ class Game {
         });
 
         events.on('enemy-stomped', ({ enemy, player }) => {
-            particles.emit({ x: enemy.x + enemy.width / 2, y: enemy.y + enemy.height / 2, ...particleTheme.enemyHit });
+            const ex = enemy.x + enemy.width / 2;
+            const ey = enemy.y + enemy.height / 2;
+            particles.emit({ x: ex, y: ey, ...particleTheme.enemyHit });
+            // Big burst for satisfying stomp
+            particles.emit({ x: ex, y: ey, count: 12, colors: ['#FFF', '#FFD700', '#FF8800'],
+                speedX: 150, speedY: 120, gravity: 400, sizeMin: 3, sizeMax: 6, life: 0.5 });
             enemy.die();
-            player.vy = -350;
-            audio.playSFX('giveDamage');
+            player.vy = -400;
+            camera.shake(5, 0.2);
+            this.gameLoop.hitstop(3);
+            audio.playSFX('enemyDefeat');
+
+            // Bounce combo tracking
+            if (!player._bounceCombo) player._bounceCombo = 0;
+            player._bounceCombo++;
+            if (player._bounceCombo > 1) {
+                events.emit('bounce-combo', { count: player._bounceCombo, x: ex, y: ey });
+            }
         });
 
         events.on('enemy-killed', ({ enemy, projectile }) => {
-            particles.emit({ x: enemy.x + enemy.width / 2, y: enemy.y + enemy.height / 2, ...particleTheme.enemyHit });
+            const ex = enemy.x + enemy.width / 2;
+            const ey = enemy.y + enemy.height / 2;
+            particles.emit({ x: ex, y: ey, ...particleTheme.enemyHit });
+            particles.emit({ x: ex, y: ey, count: 10, colors: ['#FFF', '#FFD700', '#FF4444'],
+                speedX: 140, speedY: 100, gravity: 350, sizeMin: 2, sizeMax: 5, life: 0.5 });
             enemy.die();
             projectile.alive = false;
-            audio.playSFX('giveDamage');
+            camera.shake(4, 0.15);
+            this.gameLoop.hitstop(2);
+            audio.playSFX('enemyDefeat');
         });
 
         events.on('player-hit', ({ source, player, sourceX }) => {
@@ -281,6 +344,23 @@ class Game {
                     player.knockback(sourceX);
                 }
             }
+        });
+
+        events.on('bounce-combo', ({ count, x, y }) => {
+            // Escalating feedback for consecutive stomps without touching ground
+            const comboColors = ['#FFD700', '#FF8800', '#FF4444', '#FF00FF', '#00FFFF'];
+            particles.emit({ x, y: y - 20, count: 6 + count * 4,
+                colors: comboColors, speedX: 100 + count * 30, speedY: 80 + count * 20,
+                gravity: 200, sizeMin: 3, sizeMax: 7, life: 0.6 });
+            audio.playSFX('bounceCombo');
+
+            // Floating bounce combo popup
+            this._popups.push({
+                x, y: y - 30, life: 1.2, maxLife: 1.2,
+                text: `BOUNCE x${count}!`,
+                color: count >= 3 ? '#FF00FF' : '#00FFCC',
+                size: 18 + count * 3,
+            });
         });
 
         events.on('boss-stomped', ({ boss, player }) => {
@@ -463,6 +543,19 @@ class Game {
         const { player, level, camera, input, particles, particleTheme, audio } = this;
         const wasOnGround = player.wasOnGround;
 
+        // Decay collect combo
+        if (this._collectComboTimer > 0) {
+            this._collectComboTimer -= dt;
+            if (this._collectComboTimer <= 0) this._collectCombo = 0;
+        }
+
+        // Update floating popups
+        for (let i = this._popups.length - 1; i >= 0; i--) {
+            this._popups[i].life -= dt;
+            this._popups[i].y -= 40 * dt;
+            if (this._popups[i].life <= 0) this._popups.splice(i, 1);
+        }
+
         // Mute toggle
         if (input.mutePressed) this.audio.toggleMute();
 
@@ -480,6 +573,8 @@ class Game {
         // Particle: land impact
         if (player.onGround && !wasOnGround) {
             particles.emit({ x: player.x + player.width / 2, y: player.y + player.height, ...particleTheme.landImpact });
+            // Reset bounce combo on ground touch
+            player._bounceCombo = 0;
         }
 
         // Carry player on moving platforms
@@ -521,7 +616,7 @@ class Game {
         this.collisionManager.checkObstacles(player, level.obstacles);
 
         // Update enemies
-        for (const e of level.enemies) e.update(dt);
+        for (const e of level.enemies) e.update(dt, player);
         this.collisionManager.checkEnemies(player, level.enemies, this.projectiles);
         // Swap-and-pop dead enemies
         let enemyWrite = 0;
@@ -1008,7 +1103,25 @@ class Game {
         const tidyPercent = level.totalCollectables > 0
             ? (this.collected / level.totalCollectables) * 100
             : 0;
-        this.hud.render(ctx, player, tidyPercent, this.collected, level.totalCollectables, canvas.width);
+        this.hud.render(ctx, player, tidyPercent, this.collected, level.totalCollectables, canvas.width, this._collectCombo || 0);
+
+        // Render floating popups (combo text)
+        for (const popup of this._popups) {
+            const alpha = Math.min(1, popup.life / popup.maxLife * 2);
+            const scale = 1 + (1 - popup.life / popup.maxLife) * 0.3;
+            const sx = popup.x - camera.x;
+            const sy = popup.y - camera.y;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            ctx.font = `bold ${Math.round(popup.size * scale)}px monospace`;
+            ctx.textAlign = 'center';
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 3;
+            ctx.strokeText(popup.text, sx, sy);
+            ctx.fillStyle = popup.color;
+            ctx.fillText(popup.text, sx, sy);
+            ctx.restore();
+        }
     }
 
     renderGameOver() {

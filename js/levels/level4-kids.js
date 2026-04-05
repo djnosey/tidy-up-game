@@ -1,7 +1,7 @@
 // Level 4: Kids' Room
 // 12 screen widths (~11520px at 960px canvas width)
 // Signature: BED bounce (225px!), most vertical "maze-like", dense platform grids
-// 100 standard collectables + 3 +HEALTH + 1 +LIFE
+// 128 standard collectables + 3 +HEALTH + 1 +LIFE
 // ~90 static + ~14 crumbling + ~12 moving platforms
 
 const GROUND_Y = 520;
@@ -746,6 +746,55 @@ export const level4 = {
         // On final landing (T1, y=470)
         { x: 10470, y: 470 - 32, label: 'TOY_CAR', color: '#FF4500' },
 
+        // === EXTRA CLUSTERS: air trails, high platforms, jump paths ===
+
+        // SCREEN 1 air trail between toy box and desk (y=440, mid-air)
+        { x: 220, y: 440 - 32, label: 'CRAYON', color: '#FF4500' },
+        { x: 260, y: 430 - 32, label: 'BLOCK', color: '#1E90FF' },
+        { x: 300, y: 420 - 32, label: 'PENCIL', color: '#FFD700' },
+
+        // SCREEN 2 arc above tower climb (y=230-200, between T3 and T4)
+        { x: 1460, y: 230 - 32, label: 'TOY_CAR', color: '#FF0000' },
+        { x: 1520, y: 210 - 32, label: 'STICKER', color: '#FF69B4' },
+        { x: 1580, y: 230 - 32, label: 'TEDDY', color: '#DEB887' },
+
+        // SCREEN 3 cluster on upper bunk path (y=240, air trail)
+        { x: 2030, y: 240 - 32, label: 'BLOCK', color: '#FF6347' },
+        { x: 2060, y: 230 - 32, label: 'CRAYON', color: '#FF8C00' },
+
+        // SCREEN 4 high path bonus cluster (y=150-160, above center path)
+        { x: 3140, y: 160 - 32, label: 'TOY_CAR', color: '#DC143C' },
+        { x: 3200, y: 150 - 32, label: 'ACTION_FIG', color: '#8B008B' },
+        { x: 3260, y: 160 - 32, label: 'TEDDY', color: '#8B6914' },
+
+        // SCREEN 5 air trail between moving shelves (y=330-340)
+        { x: 4150, y: 330 - 32, label: 'PUZZLE', color: '#20B2AA' },
+        { x: 4200, y: 340 - 32, label: 'PENCIL', color: '#FFD700' },
+        { x: 4500, y: 330 - 32, label: 'STICKER', color: '#FF1493' },
+
+        // SCREEN 6 crumbling platform risk-reward cluster (y=350, mid-air)
+        { x: 5100, y: 350 - 32, label: 'ACTION_FIG', color: '#4169E1' },
+        { x: 5150, y: 340 - 32, label: 'BLOCK', color: '#32CD32' },
+        { x: 5350, y: 350 - 32, label: 'TOY_CAR', color: '#FF4500' },
+
+        // SCREEN 7 bonus high trail above bunk (y=210-220)
+        { x: 6280, y: 220 - 32, label: 'CRAYON', color: '#9400D3' },
+        { x: 6340, y: 210 - 32, label: 'TEDDY', color: '#CD853F' },
+        { x: 6400, y: 220 - 32, label: 'PENCIL', color: '#FFD700' },
+
+        // SCREEN 8 maze grid bonus (y=230, between T3 and T4)
+        { x: 6980, y: 230 - 32, label: 'STICKER', color: '#FF1493' },
+        { x: 7080, y: 230 - 32, label: 'BLOCK', color: '#1E90FF' },
+
+        // SCREEN 9 high bonus arc (y=240-220)
+        { x: 7950, y: 240 - 32, label: 'TOY_CAR', color: '#DC143C' },
+        { x: 8020, y: 220 - 32, label: 'CRAYON', color: '#FF4500' },
+        { x: 8090, y: 240 - 32, label: 'PUZZLE', color: '#20B2AA' },
+
+        // SCREEN 10 vertical climb air trail (y=230-250)
+        { x: 8970, y: 250 - 32, label: 'ACTION_FIG', color: '#8B008B' },
+        { x: 9060, y: 230 - 32, label: 'TEDDY', color: '#DEB887' },
+
         // === SCREEN 12 (10560-11520): 0 standard collectables (boss arena) ===
     ],
 
@@ -805,43 +854,43 @@ export const level4 = {
     // All on platforms, not ground
     enemies: [
         // === SCREEN 1: TOY_SOLDIER on desk ===
-        { x: 340, y: 475 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 70 },
+        { x: 340, y: 475 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 140 },
 
         // === SCREEN 2: BOUNCING_BALL on desk ===
-        { x: 1280, y: 475 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', patrolRange: 80 },
+        { x: 1280, y: 475 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', behavior: 'jumper', patrolRange: 160 },
 
         // === SCREEN 3: TOY_SOLDIER on shelf ===
-        { x: 2420, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 70 },
+        { x: 2420, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 140 },
 
         // === SCREEN 4: BOUNCING_BALL on center desk ===
-        { x: 3150, y: 390 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', patrolRange: 80 },
+        { x: 3150, y: 390 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', behavior: 'jumper', patrolRange: 160 },
 
         // === SCREEN 5: RC_HELICOPTER + TOY_SOLDIER ===
-        { x: 4220, y: 390 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', patrolRange: 100 },
-        { x: 4800, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 70 },
+        { x: 4220, y: 390 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', behavior: 'charger', patrolRange: 200 },
+        { x: 4800, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 140 },
 
         // === SCREEN 6: BOUNCING_BALL + TOY_SOLDIER ===
-        { x: 5300, y: 470 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', patrolRange: 70 },
-        { x: 5580, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 70 },
+        { x: 5300, y: 470 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', behavior: 'jumper', patrolRange: 140 },
+        { x: 5580, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 140 },
 
         // === SCREEN 7: RC_HELICOPTER on desk ===
-        { x: 6140, y: 390 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', patrolRange: 90 },
+        { x: 6140, y: 390 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', behavior: 'charger', patrolRange: 180 },
 
         // === SCREEN 8: TOY_SOLDIER + BOUNCING_BALL in maze ===
-        { x: 7060, y: 380 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 60 },
-        { x: 7340, y: 475 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', patrolRange: 50 },
+        { x: 7060, y: 380 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 120 },
+        { x: 7340, y: 475 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', behavior: 'jumper', patrolRange: 100 },
 
         // === SCREEN 9: RC_HELICOPTER + TOY_SOLDIER ===
-        { x: 8200, y: 390 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', patrolRange: 100 },
-        { x: 8480, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 70 },
+        { x: 8200, y: 390 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', behavior: 'charger', patrolRange: 200 },
+        { x: 8480, y: 470 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 140 },
 
         // === SCREEN 10: BOUNCING_BALL + RC_HELICOPTER ===
-        { x: 8860, y: 390 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', patrolRange: 50 },
-        { x: 9300, y: 270 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', patrolRange: 60 },
+        { x: 8860, y: 390 - 25, width: 25, height: 25, label: 'BOUNCING_BALL', color: '#FF4500', behavior: 'jumper', patrolRange: 100 },
+        { x: 9300, y: 270 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', behavior: 'charger', patrolRange: 120 },
 
         // === SCREEN 11: 2 TOY_SOLDIER + 1 RC_HELICOPTER ===
-        { x: 9920, y: 390 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 60 },
-        { x: 10220, y: 390 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', patrolRange: 60 },
-        { x: 10360, y: 480 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', patrolRange: 50 },
+        { x: 9920, y: 390 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 120 },
+        { x: 10220, y: 390 - 30, width: 25, height: 30, label: 'TOY_SOLDIER', color: '#B22222', behavior: 'shooter', patrolRange: 120 },
+        { x: 10360, y: 480 - 20, width: 30, height: 20, label: 'RC_HELICOPTER', color: '#4682B4', behavior: 'charger', patrolRange: 100 },
     ],
 };

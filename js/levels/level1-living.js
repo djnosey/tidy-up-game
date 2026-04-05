@@ -423,7 +423,7 @@ export const level1 = {
     ],
 
     // ========== COLLECTABLES ==========
-    // 100 standard items + 3 +HEALTH + 1 +LIFE = 104 total
+    // 132 standard items + 3 +HEALTH + 1 +LIFE = 136 total
     collectables: [
         // === SCREEN 1 (12 items) ===
         // On spawn sofa (y=460, items at 460-32=428)
@@ -442,6 +442,9 @@ export const level1 = {
         { x: 740, y: 348, label: 'BOOK', color: '#8B0000' },
         { x: 790, y: 348, label: 'GLASS', color: '#87CEEB' },
         { x: 260, y: 428, label: 'KEYS', color: '#FFD700' },
+        // Airborne between T1 and T2 (jump reward)
+        { x: 740, y: 388, label: 'COASTER', color: '#D2691E' },
+        { x: 780, y: 388, label: 'PHONE', color: '#333' },
 
         // === SCREEN 2 (12 items) ===
         // On sofa (y=470, items at 438)
@@ -462,6 +465,10 @@ export const level1 = {
         // On T2 books (y=370)
         { x: 1340, y: 338, label: 'HEADPHONES', color: '#333' },
         { x: 1900, y: 428, label: 'KEYS', color: '#FFD700' },
+        // Airborne cluster between T1 sofa and T2 shelf
+        { x: 1100, y: 388, label: 'GLASS', color: '#87CEEB' },
+        { x: 1140, y: 388, label: 'REMOTE', color: '#333' },
+        { x: 1180, y: 388, label: 'COASTER', color: '#D2691E' },
 
         // === SCREEN 3 (10 items) ===
         // On T1 sofa (y=470)
@@ -481,6 +488,10 @@ export const level1 = {
         { x: 2640, y: 438, label: 'SOCKS', color: '#4169E1' },
         // On T3 moving frame (y=280)
         { x: 2720, y: 248, label: 'GLASSES', color: '#C0C0C0' },
+        // Airborne trail between T2 and T3 (precision jump reward)
+        { x: 2170, y: 308, label: 'SOCKS', color: '#4169E1' },
+        { x: 2210, y: 288, label: 'MUG', color: '#8B4513' },
+        { x: 2250, y: 268, label: 'MAGAZINE', color: '#4682B4' },
 
         // === SCREEN 4 (10 items) ===
         // On wide rest sofa (y=470)
@@ -501,6 +512,11 @@ export const level1 = {
         { x: 3800, y: 448, label: 'SOCKS', color: '#228B22' },
         // On T2 landing (y=370)
         { x: 3530, y: 338, label: 'GLASSES', color: '#C0C0C0' },
+        // Cluster on T1 path between sofa and table
+        { x: 3740, y: 433, label: 'BLANKET', color: '#FFB6C1' },
+        { x: 3770, y: 433, label: 'PHONE', color: '#333' },
+        // Airborne between T2 shelf and T3 frame
+        { x: 3350, y: 288, label: 'REMOTE', color: '#333' },
 
         // === SCREEN 5 (10 items) ===
         // On T1 entry armchair (y=470)
@@ -517,6 +533,12 @@ export const level1 = {
         { x: 4270, y: 168, label: 'KEYS', color: '#FFD700' },
         { x: 4450, y: 138, label: 'CUSHION', color: '#CD853F' },
         { x: 4630, y: 228, label: 'SOCKS', color: '#4169E1' },
+        // Airborne arc between T2 gauntlet platforms
+        { x: 4190, y: 328, label: 'GLASSES', color: '#C0C0C0' },
+        { x: 4230, y: 318, label: 'KEYS', color: '#FFD700' },
+        { x: 4270, y: 328, label: 'COASTER', color: '#D2691E' },
+        // On T1 TV unit extra cluster
+        { x: 4760, y: 438, label: 'CUSHION', color: '#CD853F' },
 
         // === SCREEN 6 (10 items) ===
         // On T1 armchair (y=465)
@@ -534,6 +556,12 @@ export const level1 = {
         { x: 5290, y: 128, label: 'BOOK', color: '#006400' },
         // +HEALTH on T3 upper path (risk/reward)
         { x: 5370, y: 218, label: '+HEALTH', color: '#00FF00' },
+        // Lower path cluster (exploration reward)
+        { x: 5150, y: 358, label: 'BOOK', color: '#654321' },
+        { x: 5200, y: 358, label: 'SOCKS', color: '#228B22' },
+        { x: 5350, y: 358, label: 'BLANKET', color: '#FFB6C1' },
+        // Upper path airborne between T3 platforms
+        { x: 5200, y: 238, label: 'CUSHION', color: '#CD853F' },
 
         // === SCREEN 7 (10 items) ===
         // On T1 entry (y=470)
@@ -555,6 +583,11 @@ export const level1 = {
         { x: 6730, y: 428, label: 'KEYS', color: '#FFD700' },
         // +LIFE on hardest T4 crumbling shelf
         { x: 5870, y: 158, label: '+LIFE', color: '#FF1493' },
+        // Airborne trail on tower descent (T3 to T2)
+        { x: 6270, y: 298, label: 'MAGAZINE', color: '#4682B4' },
+        { x: 6310, y: 318, label: 'GLASS', color: '#87CEEB' },
+        // Extra cluster on T1 landing
+        { x: 6650, y: 438, label: 'PHONE', color: '#333' },
 
         // === SCREEN 8 (9 items) ===
         // On T1 start (y=470)
@@ -568,6 +601,10 @@ export const level1 = {
         { x: 7480, y: 248, label: 'KEYS', color: '#FFD700' },
         { x: 7650, y: 368, label: 'GLASS', color: '#87CEEB' },
         { x: 7650, y: 438, label: 'CUSHION', color: '#CD853F' },
+        // Airborne arc between moving frames
+        { x: 7000, y: 298, label: 'HEADPHONES', color: '#333' },
+        { x: 7100, y: 278, label: 'REMOTE', color: '#333' },
+        { x: 7270, y: 288, label: 'COASTER', color: '#D2691E' },
 
         // === SCREEN 9 (8 items) ===
         // On T1 entry (y=465)
@@ -584,6 +621,10 @@ export const level1 = {
         { x: 8090, y: 248, label: 'COASTER', color: '#D2691E' },
         // +HEALTH
         { x: 8330, y: 238, label: '+HEALTH', color: '#00FF00' },
+        // Airborne cluster along crumble sprint path
+        { x: 7940, y: 338, label: 'KEYS', color: '#FFD700' },
+        { x: 8100, y: 328, label: 'MAGAZINE', color: '#4682B4' },
+        { x: 8400, y: 338, label: 'GLASSES', color: '#C0C0C0' },
 
         // === SCREEN 10 (10 items) ===
         // Mixed across gauntlet platforms
@@ -599,6 +640,12 @@ export const level1 = {
         { x: 9210, y: 138, label: 'BOOK', color: '#006400' },
         // +HEALTH on T4
         { x: 9200, y: 138, label: '+HEALTH', color: '#00FF00' },
+        // Gauntlet airborne trail between T2 and T3
+        { x: 8970, y: 308, label: 'MUG', color: '#8B4513' },
+        { x: 9050, y: 298, label: 'BLANKET', color: '#FFB6C1' },
+        { x: 9480, y: 308, label: 'BOOK', color: '#8B0000' },
+        // Final T1 cluster near boss door
+        { x: 9650, y: 438, label: 'MAGAZINE', color: '#4682B4' },
     ],
 
     // ========== OBSTACLES ==========
@@ -651,40 +698,41 @@ export const level1 = {
 
     // ========== ENEMIES ==========
     // All placed ON platforms, not on non-existent ground
+    // Behaviors: 'patrol' (default), 'charger', 'jumper', 'shooter'
     enemies: [
-        // Screen 1: ROOMBA on table (y=470, enemy on surface)
-        { x: 470, y: 440, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 80 },
+        // Screen 1: ROOMBA shooter on table (y=470, enemy on surface)
+        { x: 470, y: 440, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 160, behavior: 'shooter' },
 
-        // Screen 2: DUST on sofa (y=470)
-        { x: 1050, y: 450, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 60 },
+        // Screen 2: DUST jumper on sofa (y=470)
+        { x: 1050, y: 450, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 130, behavior: 'jumper' },
 
-        // Screen 3: RC CAR on T1 landing sofa (y=470)
-        { x: 2580, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
+        // Screen 3: RC CAR charger on T1 landing sofa (y=470)
+        { x: 2580, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 180, behavior: 'charger' },
 
         // Screen 4: ROOMBA on wide rest sofa (y=470)
-        { x: 3000, y: 440, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 100 },
+        { x: 3000, y: 440, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 200 },
 
-        // Screen 5: DUST on T2 shelf + RC CAR on TV unit
-        { x: 4080, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 60 },
-        { x: 4740, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
+        // Screen 5: DUST jumper on T2 shelf + RC CAR charger on TV unit
+        { x: 4080, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 130, behavior: 'jumper' },
+        { x: 4740, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 180, behavior: 'charger' },
 
-        // Screen 6: ROOMBA on lower path sofa (y=390)
-        { x: 5100, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 60 },
+        // Screen 6: ROOMBA shooter on lower path sofa (y=390)
+        { x: 5100, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 130, behavior: 'shooter' },
 
-        // Screen 7: DUST on T2 descent + RC CAR on T1 table
-        { x: 6340, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 60 },
-        { x: 6530, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
+        // Screen 7: DUST patrol on T2 descent + RC CAR charger on T1 table
+        { x: 6340, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 120 },
+        { x: 6530, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 160, behavior: 'charger' },
 
-        // Screen 8: 2 DUST on T2 platforms
-        { x: 6930, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 50 },
-        { x: 7580, y: 380, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 50 },
+        // Screen 8: DUST jumper + DUST patrol on T2 platforms
+        { x: 6930, y: 370, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 110, behavior: 'jumper' },
+        { x: 7580, y: 380, width: 30, height: 20, label: 'DUST', color: '#C0C0C0', patrolRange: 100 },
 
-        // Screen 9: RC CAR on T1 landing (y=470)
-        { x: 8640, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 60 },
+        // Screen 9: RC CAR charger on T1 landing (y=470)
+        { x: 8640, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 140, behavior: 'charger' },
 
-        // Screen 10: 2 ROOMBA + 1 RC CAR
-        { x: 8870, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 60 },
-        { x: 9320, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 60 },
-        { x: 9550, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 80 },
+        // Screen 10: 2 ROOMBA (1 shooter, 1 patrol) + 1 RC CAR charger
+        { x: 8870, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 130, behavior: 'shooter' },
+        { x: 9320, y: 360, width: 40, height: 30, label: 'ROOMBA', color: '#555', patrolRange: 120 },
+        { x: 9550, y: 445, width: 35, height: 25, label: 'RC CAR', color: '#FF0000', patrolRange: 160, behavior: 'charger' },
     ],
 };

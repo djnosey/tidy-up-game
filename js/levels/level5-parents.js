@@ -765,6 +765,57 @@ export const level5 = {
         { x: 10370, y: 465 - 32, label: 'SLIPPER', color: '#D2691E' },
 
         // =====================================================================
+        // ADDITIONAL COLLECTABLES — air trails, jump arcs, high platform clusters
+        // =====================================================================
+
+        // SCREEN 1: Air trail between spawn dresser and BED
+        { x: 200, y: 440 - 32, label: 'CLOTHES', color: '#556B2F' },
+        { x: 260, y: 420 - 32, label: 'PILLOW', color: '#E0D0E8' },
+        { x: 320, y: 400 - 32, label: 'LAUNDRY', color: '#9370DB' },
+
+        // SCREEN 2: Arc from BED bounce to T3 shelf
+        { x: 1310, y: 330 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 1350, y: 300 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        { x: 1460, y: 260 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+
+        // SCREEN 3: Vertical cluster up wardrobe shelves
+        { x: 2060, y: 340 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 2060, y: 250 - 32, label: 'PILLOW', color: '#F0E0D0' },
+        { x: 2200, y: 230 - 32, label: 'SLIPPER', color: '#D2691E' },
+
+        // SCREEN 4: Air trail between baskets
+        { x: 3050, y: 440 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+        { x: 3100, y: 430 - 32, label: 'CLOTHES', color: '#4169E1' },
+        { x: 3300, y: 440 - 32, label: 'PILLOW', color: '#E8D8E0' },
+
+        // SCREEN 5: Arc above moving shelves
+        { x: 4250, y: 330 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 4350, y: 310 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        { x: 4550, y: 320 - 32, label: 'CLOTHES', color: '#8B6914' },
+
+        // SCREEN 6: High risk cluster near T4
+        { x: 5100, y: 220 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 5140, y: 200 - 32, label: 'PILLOW', color: '#E0D0E8' },
+
+        // SCREEN 7: Air trail on high reward path
+        { x: 5920, y: 250 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 6080, y: 230 - 32, label: 'CLOTHES', color: '#6B4470' },
+        { x: 6250, y: 250 - 32, label: 'LAUNDRY', color: '#B0C4DE' },
+
+        // SCREEN 8: Between T2 platforms (jump arc)
+        { x: 7100, y: 340 - 32, label: 'PILLOW', color: '#E8D8E0' },
+        { x: 7180, y: 330 - 32, label: 'SLIPPER', color: '#D2691E' },
+        { x: 7400, y: 340 - 32, label: 'LAUNDRY', color: '#8FBC8F' },
+
+        // SCREEN 9: Air trail near moving T3 shelves
+        { x: 7950, y: 310 - 32, label: 'CLOTHES', color: '#CD5C5C' },
+        { x: 8150, y: 300 - 32, label: 'CHARGER', color: '#333333' },
+        { x: 8350, y: 310 - 32, label: 'PILLOW', color: '#F0E0D0' },
+
+        // SCREEN 10: Cluster on T2 jump paths
+        { x: 9050, y: 340 - 32, label: 'LAUNDRY', color: '#9370DB' },
+        { x: 9380, y: 330 - 32, label: 'CLOTHES', color: '#556B2F' },
+
         // SCREEN 12 (10560-11520): BOSS ARENA — 0 standard collectables
         // =====================================================================
     ],
@@ -831,42 +882,48 @@ export const level5 = {
     // ========== ENEMIES ==========
     enemies: [
         // === SCREEN 1: 1 MOTH on BED (T2) ===
-        { x: 450, y: 390 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 60 },
+        { x: 450, y: 390 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 120, behavior: 'jumper' },
 
         // === SCREEN 2: 1 ALARM_CLOCK on T2 landing shelf ===
-        { x: 1560, y: 370 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 50 },
+        { x: 1560, y: 370 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 100, behavior: 'charger' },
 
         // === SCREEN 3: 1 LAUNDRY_MONSTER on T2 wardrobe right ===
-        { x: 2430, y: 370 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
+        { x: 2430, y: 370 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 100, behavior: 'shooter' },
 
-        // === SCREEN 4: 1 MOTH on T1 basket ===
-        { x: 3180, y: 475 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
+        // === SCREEN 4: 1 MOTH on T1 basket + 1 ALARM_CLOCK on T2 ===
+        { x: 3180, y: 475 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80, behavior: 'jumper' },
+        { x: 3420, y: 380 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 90, behavior: 'charger' },
 
         // === SCREEN 5: 1 ALARM_CLOCK on T1 + 1 MOTH on T2 moving ===
-        { x: 4190, y: 470 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 40 },
-        { x: 4720, y: 390 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 50 },
+        { x: 4190, y: 470 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 80, behavior: 'charger' },
+        { x: 4720, y: 390 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 100, behavior: 'jumper' },
 
-        // === SCREEN 6: 1 LAUNDRY_MONSTER on T2 ===
-        { x: 5320, y: 380 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
+        // === SCREEN 6: 1 LAUNDRY_MONSTER on T2 + 1 MOTH on T1 ===
+        { x: 5320, y: 380 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 100, behavior: 'shooter' },
+        { x: 5500, y: 465 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 90, behavior: 'jumper' },
 
-        // === SCREEN 7: 1 MOTH on T1 dresser ===
-        { x: 6420, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 50 },
+        // === SCREEN 7: 1 MOTH on T1 dresser + 1 ALARM_CLOCK on T2 ===
+        { x: 6420, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 100, behavior: 'jumper' },
+        { x: 6290, y: 385 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 80, behavior: 'charger' },
 
         // === SCREEN 8: 1 ALARM_CLOCK on T1 + 1 LAUNDRY_MONSTER on T2 ===
-        { x: 7040, y: 475 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 40 },
-        { x: 7460, y: 385 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
+        { x: 7040, y: 475 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 80, behavior: 'charger' },
+        { x: 7460, y: 385 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 100, behavior: 'shooter' },
 
-        // === SCREEN 9: 1 MOTH on T1 + 1 SPIDER on T2 ===
-        { x: 8120, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
-        { x: 8400, y: 385 - 22, width: 22, height: 22, label: 'SPIDER', color: '#333333', patrolRange: 40 },
+        // === SCREEN 9: 1 MOTH on T1 + 1 SPIDER on T2 + 1 LAUNDRY_MONSTER on T2 ===
+        { x: 8120, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80, behavior: 'jumper' },
+        { x: 8400, y: 385 - 22, width: 22, height: 22, label: 'SPIDER', color: '#333333', patrolRange: 80 },
+        { x: 8200, y: 390 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 80, behavior: 'shooter' },
 
-        // === SCREEN 10: 1 LAUNDRY_MONSTER on T2 + 1 MOTH on T1 ===
-        { x: 8830, y: 380 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 40 },
-        { x: 9310, y: 480 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
+        // === SCREEN 10: 1 LAUNDRY_MONSTER on T2 + 1 MOTH on T1 + 1 ALARM_CLOCK on T2 ===
+        { x: 8830, y: 380 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 80, behavior: 'shooter' },
+        { x: 9310, y: 480 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80, behavior: 'jumper' },
+        { x: 9150, y: 375 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 90, behavior: 'charger' },
 
-        // === SCREEN 11: 2 MOTH on T1 + 1 LAUNDRY_MONSTER on T2 ===
-        { x: 9940, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
-        { x: 10490, y: 475 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 40 },
-        { x: 10270, y: 465 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 50 },
+        // === SCREEN 11: 2 MOTH on T1 + 1 LAUNDRY_MONSTER on T2 + 1 ALARM_CLOCK on T1 ===
+        { x: 9940, y: 470 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80, behavior: 'jumper' },
+        { x: 10490, y: 475 - 25, width: 25, height: 20, label: 'MOTH', color: '#C0B090', patrolRange: 80, behavior: 'jumper' },
+        { x: 10270, y: 465 - 30, width: 35, height: 30, label: 'LAUNDRY_MONSTER', color: '#8B6E8B', patrolRange: 100, behavior: 'shooter' },
+        { x: 10120, y: 470 - 25, width: 25, height: 25, label: 'ALARM_CLOCK', color: '#B0B0B0', patrolRange: 80, behavior: 'charger' },
     ],
 };

@@ -1,7 +1,7 @@
 import { drawProjectile } from '../engine/renderers/projectile-renderer.js';
 
-const PROJECTILE_SPEED = 500;
-const MAX_DISTANCE = 500;
+const PROJECTILE_SPEED = 850;
+const MAX_DISTANCE = 700;
 
 export class Projectile {
     constructor(x, y, direction, character) {
