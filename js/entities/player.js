@@ -142,8 +142,8 @@ export class Player {
         if (input.left) { this.vx = -MOVE_SPEED; this.facing = -1; }
         if (input.right) { this.vx = MOVE_SPEED; this.facing = 1; }
 
-        // Crouching
-        if (input.down && this.onGround) {
+        // Crouching — use wasOnGround to avoid flicker from collision reset order
+        if (input.down && (this.onGround || this.wasOnGround || this.crouching)) {
             if (!this.crouching) {
                 this.crouching = true;
                 const diff = this.standingHeight - this.crouchHeight;
