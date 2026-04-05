@@ -93,57 +93,44 @@ export function drawPlatform(ctx, x, y, w, h, label, color, groundY) {
         return;
     }
 
-    // Specific furniture drawing — routes by label
-    const FURNITURE = {
-        'SOFA': () => drawSofa(ctx, x, y, w, h, color, floorY),
-        'SOFA ARM': () => drawSofa(ctx, x, y, w, h, color, floorY),
-        'ARMCHAIR': () => drawArmchair(ctx, x, y, w, h, color, floorY),
-        'TABLE': () => drawTable(ctx, x, y, w, h, color, floorY),
-        'DINING_TABLE': () => drawTable(ctx, x, y, w, h, color, floorY),
-        'GARDEN_TABLE': () => drawTable(ctx, x, y, w, h, color, floorY),
-        'TV UNIT': () => drawTVUnit(ctx, x, y, w, h, floorY),
-        'SHELF': () => drawShelf(ctx, x, y, w, h, color),
-        'TOP SHELF': () => drawShelf(ctx, x, y, w, h, color),
-        'SHOWER_SHELF': () => drawShelf(ctx, x, y, w, h, color),
-        'BOOKS': () => drawBookShelf(ctx, x, y, w, h),
-        'FRAME': () => drawPictureFrame(ctx, x, y, w, h),
-        'CUSHION': () => drawCushionPlatform(ctx, x, y, w, h, color),
-        'PILLOW_FORT': () => drawCushionPlatform(ctx, x, y, w, h, color),
-        'CHAIR': () => drawChair(ctx, x, y, w, h, color, floorY),
-        'GARDEN_CHAIR': () => drawChair(ctx, x, y, w, h, color, floorY),
-        'LAMP': () => drawLampPlatform(ctx, x, y, w, h),
-        // Kitchen
-        'COUNTER': () => drawCounter(ctx, x, y, w, h, color, floorY),
-        'DRAWER': () => drawDrawer(ctx, x, y, w, h, color),
-        'FRIDGE': () => drawFridge(ctx, x, y, w, h, floorY),
-        'HANGING_POT': () => drawHangingPot(ctx, x, y, w, h),
-        'STOOL': () => drawStool(ctx, x, y, w, h, color, floorY),
-        // Bathroom
-        'BATHTUB': () => drawBathtub(ctx, x, y, w, h, floorY),
-        'TOILET': () => drawToilet(ctx, x, y, w, h, floorY),
-        'SINK': () => drawSink(ctx, x, y, w, h),
-        'TOWEL_RACK': () => drawTowelRack(ctx, x, y, w, h),
-        // Kids
-        'BUNK_BED': () => drawBunkBed(ctx, x, y, w, h, color, floorY),
-        'TOY_CHEST': () => drawToyChest(ctx, x, y, w, h, color, floorY),
-        'DESK': () => drawTable(ctx, x, y, w, h, color, floorY),
-        'BOARD_GAMES': () => drawBoardGames(ctx, x, y, w, h),
-        // Parents
-        'BED': () => drawBed(ctx, x, y, w, h, color, floorY),
-        'BEDSIDE_TABLE': () => drawTable(ctx, x, y, w, h, color, floorY),
-        'DRESSER': () => drawDresser(ctx, x, y, w, h, color, floorY),
-        'LAUNDRY_BASKET': () => drawLaundryBasket(ctx, x, y, w, h, floorY),
-        'WARDROBE': () => drawWardrobe(ctx, x, y, w, h, floorY),
-        // Terrace
-        'PLANT_POT': () => drawPlantPot(ctx, x, y, w, h, color, floorY),
-        'RAILING': () => drawRailing(ctx, x, y, w, h),
-        'CLOTHESLINE': () => drawClothesline(ctx, x, y, w, h),
-        'BBQ_SHELF': () => drawShelf(ctx, x, y, w, h, color),
-    };
+    // Specific furniture drawing — routes by label (switch avoids per-call closure allocation)
+    let matched = true;
+    switch (label) {
+        case 'SOFA': case 'SOFA ARM': drawSofa(ctx, x, y, w, h, color, floorY); break;
+        case 'ARMCHAIR': drawArmchair(ctx, x, y, w, h, color, floorY); break;
+        case 'TABLE': case 'DINING_TABLE': case 'GARDEN_TABLE': case 'DESK': case 'BEDSIDE_TABLE':
+            drawTable(ctx, x, y, w, h, color, floorY); break;
+        case 'TV UNIT': drawTVUnit(ctx, x, y, w, h, floorY); break;
+        case 'SHELF': case 'TOP SHELF': case 'SHOWER_SHELF': case 'BBQ_SHELF':
+            drawShelf(ctx, x, y, w, h, color); break;
+        case 'BOOKS': drawBookShelf(ctx, x, y, w, h); break;
+        case 'FRAME': drawPictureFrame(ctx, x, y, w, h); break;
+        case 'CUSHION': case 'PILLOW_FORT': drawCushionPlatform(ctx, x, y, w, h, color); break;
+        case 'CHAIR': case 'GARDEN_CHAIR': drawChair(ctx, x, y, w, h, color, floorY); break;
+        case 'LAMP': drawLampPlatform(ctx, x, y, w, h); break;
+        case 'COUNTER': drawCounter(ctx, x, y, w, h, color, floorY); break;
+        case 'DRAWER': drawDrawer(ctx, x, y, w, h, color); break;
+        case 'FRIDGE': drawFridge(ctx, x, y, w, h, floorY); break;
+        case 'HANGING_POT': drawHangingPot(ctx, x, y, w, h); break;
+        case 'STOOL': drawStool(ctx, x, y, w, h, color, floorY); break;
+        case 'BATHTUB': drawBathtub(ctx, x, y, w, h, floorY); break;
+        case 'TOILET': drawToilet(ctx, x, y, w, h, floorY); break;
+        case 'SINK': drawSink(ctx, x, y, w, h); break;
+        case 'TOWEL_RACK': drawTowelRack(ctx, x, y, w, h); break;
+        case 'BUNK_BED': drawBunkBed(ctx, x, y, w, h, color, floorY); break;
+        case 'TOY_CHEST': drawToyChest(ctx, x, y, w, h, color, floorY); break;
+        case 'BOARD_GAMES': drawBoardGames(ctx, x, y, w, h); break;
+        case 'BED': drawBed(ctx, x, y, w, h, color, floorY); break;
+        case 'DRESSER': drawDresser(ctx, x, y, w, h, color, floorY); break;
+        case 'LAUNDRY_BASKET': drawLaundryBasket(ctx, x, y, w, h, floorY); break;
+        case 'WARDROBE': drawWardrobe(ctx, x, y, w, h, floorY); break;
+        case 'PLANT_POT': drawPlantPot(ctx, x, y, w, h, color, floorY); break;
+        case 'RAILING': drawRailing(ctx, x, y, w, h); break;
+        case 'CLOTHESLINE': drawClothesline(ctx, x, y, w, h); break;
+        default: matched = false;
+    }
 
-    if (FURNITURE[label]) {
-        FURNITURE[label]();
-    } else {
+    if (!matched) {
         // Generic platform
         const gradient = ctx.createLinearGradient(x, y, x, y + h);
         gradient.addColorStop(0, lighten(color, 20));

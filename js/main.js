@@ -120,6 +120,65 @@ class Game {
         this.state = STATE_PLAYING;
         this.audio.playMusic(this.currentLevelIndex);
         this.setupEventListeners();
+        this._buildStaticCache();
+    }
+
+    // Pre-render static furniture and decorations to offscreen canvases (drawn once, blitted each frame)
+    _buildStaticCache() {
+        const level = this.level;
+        const groundY = level.groundY;
+
+        // Determine total level width from platforms + boss arena
+        let maxX = 0;
+        for (const p of level.platforms) {
+            const right = p.x + p.width;
+            if (right > maxX) maxX = right;
+        }
+        if (level.bossArena) maxX = Math.max(maxX, level.bossArena.x + level.bossArena.width);
+        const levelW = maxX + 100;
+
+        // Decorations: split into static (cached) and animated (drawn live each frame)
+        const ANIMATED_TYPES = new Set([
+            'paper_airplane', 'dust_bunny', 'dust_motes', 'steam_wisps',
+            'water_puddle', 'floating_bubbles', 'grass_tuft', 'butterfly', 'dripping_tap'
+        ]);
+        this._animatedDecos = [];
+        const decCanvas = document.createElement('canvas');
+        decCanvas.width = levelW;
+        decCanvas.height = this.canvas.height;
+        const decCtx = decCanvas.getContext('2d');
+        for (const dec of level.decorations) {
+            if (dec.type && ANIMATED_TYPES.has(dec.type)) {
+                this._animatedDecos.push(dec);
+            } else {
+                drawDecoration(decCtx, dec, 0, 0);
+            }
+        }
+        this._decoCache = decCanvas;
+
+        // Static furniture backdrop cache
+        const furCanvas = document.createElement('canvas');
+        furCanvas.width = levelW;
+        furCanvas.height = this.canvas.height;
+        const furCtx = furCanvas.getContext('2d');
+        for (const plat of level.platforms) {
+            if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
+            drawPlatform(furCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color, groundY);
+        }
+        this._furnitureCache = furCanvas;
+        this._furnitureCacheCtx = furCtx;
+
+        // Static platform surfaces cache
+        const surfCanvas = document.createElement('canvas');
+        surfCanvas.width = levelW;
+        surfCanvas.height = this.canvas.height;
+        const surfCtx = surfCanvas.getContext('2d');
+        for (const plat of level.platforms) {
+            if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
+            drawPlatformSurface(surfCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color);
+        }
+        this._surfaceCache = surfCanvas;
+        this._surfaceCacheCtx = surfCtx;
     }
 
     setupEventListeners() {
@@ -585,40 +644,43 @@ class Game {
         // Parallax layers
         this.parallax.render(ctx, camera.x, canvas.width, canvas.height, level.name, level.backgroundColor);
 
-        // Decorations (behind platforms)
-        for (const dec of level.decorations) {
+        // Decorations — static from cache, animated drawn live
+        const camX = Math.floor(camera.x);
+        const camY = Math.floor(camera.y);
+        const cw = canvas.width;
+        const ch = canvas.height;
+        if (this._decoCache) {
+            ctx.drawImage(this._decoCache, camX, camY, cw, ch, 0, 0, cw, ch);
+        }
+        for (let i = 0; i < this._animatedDecos.length; i++) {
+            const dec = this._animatedDecos[i];
             const dx = dec.x - camera.x;
-            if (dx < -200 || dx > canvas.width + 200) continue;
+            if (dx < -200 || dx > cw + 200) continue;
             drawDecoration(ctx, dec, camera.x, camera.y);
         }
 
-        // Platforms — single pass: backdrop for static, full art for dynamic
-        const screenGroundY = level.groundY - camera.y;
-        const cameraRight = camera.x + canvas.width;
-        // Pass 1: static furniture backdrops
-        for (let i = 0; i < level.platforms.length; i++) {
-            const plat = level.platforms[i];
-            if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
-            const sx = plat.x - camera.x;
-            if (sx + plat.width < -50 || sx > canvas.width + 50) continue;
-            const sy = plat.y - camera.y;
-            drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
+        // Static furniture backdrops — blit from pre-rendered cache
+        const screenGroundY = level.groundY - camY;
+        if (this._furnitureCache) {
+            ctx.drawImage(this._furnitureCache, camX, camY, cw, ch, 0, 0, cw, ch);
         }
-        // Pass 2: surfaces for static + full art for dynamic (must be separate for layering)
+
+        // Platform surfaces: static from cache, dynamic drawn live
+        if (this._surfaceCache) {
+            ctx.drawImage(this._surfaceCache, camX, camY, cw, ch, 0, 0, cw, ch);
+        }
+        // Dynamic platforms only (moving, crumbling)
         for (let i = 0; i < level.platforms.length; i++) {
             const plat = level.platforms[i];
             if (plat._disabled) continue;
+            if (!plat.moveX && !plat.moveY && !plat.crumble) continue;
             let sx = plat.x - camera.x;
-            if (sx + plat.width < -50 || sx > canvas.width + 50) continue;
+            if (sx + plat.width < -50 || sx > cw + 50) continue;
             const sy = plat.y - camera.y;
-            if (plat.moveX || plat.moveY || plat.crumble) {
-                if (plat._crumbleState === 'shaking') {
-                    sx += (Math.random() - 0.5) * 4;
-                }
-                drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
-            } else {
-                drawPlatformSurface(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color);
+            if (plat._crumbleState === 'shaking') {
+                sx += (Math.random() - 0.5) * 4;
             }
+            drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
         }
 
         // Collectables
