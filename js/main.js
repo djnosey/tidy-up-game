@@ -717,7 +717,7 @@ class Game {
         ctx.font = '18px monospace';
         ctx.fillStyle = '#888';
         const stage = this._loadingStage || 0;
-        const msg = stage === 0 ? 'Loading assets' + dots : 'Tidying up' + dots;
+        const msg = stage === 0 ? 'Loading assets' + dots : 'Creating mess' + dots;
         ctx.fillText(msg, w / 2, h / 2 + 15);
 
         // Progress bar frame
