@@ -143,3 +143,33 @@ See the `docs/` folder for comprehensive documentation:
 - Renderers pull colors from `level-themes.js` for visual coherence
 - All sprite paths are declared in `sprite-manifest.js` and preloaded on startup
 - The game is exposed as `window._game` for debug access in the browser console
+
+## Shipping Rules (Git Workflow)
+
+Every feature, fix, or change gets its own branch. No working directly on `master`.
+
+### Branch-per-change workflow
+
+1. **Create a branch** before starting any work:
+   - `git checkout -b feature/short-description` (or `fix/`, `refactor/`, etc.)
+   - Branch names should be lowercase kebab-case: `feature/boss-shake-effect`, `fix/crouch-flicker`
+
+2. **One logical change per branch.** Don't mix unrelated features. If a task touches unrelated systems, split it into separate branches.
+
+3. **Use git worktrees for parallel work.** When working on multiple features simultaneously, use `isolation: "worktree"` (Agent tool) or manual `git worktree add` so changes don't collide:
+   - `git worktree add ../dereks-feature-name feature/feature-name`
+   - This lets multiple features be developed and tested independently
+
+4. **Commit often on the branch.** Small, meaningful commits with clear messages.
+
+5. **Merge to master only when the feature is complete and verified:**
+   - `git checkout master && git merge feature/short-description`
+   - Delete the branch after merge: `git branch -d feature/short-description`
+
+### Rules for Claude
+
+- **Never commit directly to `master`** unless explicitly told to.
+- Before starting work, check `git status` and `git branch` — if there are uncommitted changes on master, ask the user what to do with them before branching.
+- When given a new task, create a feature branch from the latest `master` first.
+- When using the Agent tool for implementation work, prefer `isolation: "worktree"` so parallel tasks don't interfere with each other.
+- If the user asks for multiple independent changes in one conversation, use separate branches (and worktrees if parallel).
