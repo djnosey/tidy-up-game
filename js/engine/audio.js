@@ -23,6 +23,11 @@ export class AudioManager {
         this.loadingMusic = false;
         this.channelPrograms = {};   // tracks program changes per channel
 
+        // Per-file blocked instruments (will not sound)
+        this.blockedInstruments = {
+            'assets/music/level1.mid': ['string_ensemble_1'],
+        };
+
         // Per-file track gain (configured via MIDI Mixer)
         this.trackGains = {
             'assets/music/level1.mid': {
@@ -168,6 +173,32 @@ export class AudioManager {
             'synth_drum',
         ];
         await Promise.all(needed.map(n => this._loadInstrument(n)));
+
+        // Preload all MIDI files so level transitions don't wait on network
+        await this._preloadAllMidiFiles();
+    }
+
+    async _preloadAllMidiFiles() {
+        const allFiles = [
+            'assets/music/level1.mid',
+            'assets/music/level2.mid',
+            'assets/music/level3.mid',
+            'assets/music/level4.mid',
+            'assets/music/level5.mid',
+            'assets/music/level6.mid',
+            'assets/music/boss.mid',
+        ];
+        await Promise.all(allFiles.map(async (path) => {
+            if (this.midiFiles[path]) return;
+            try {
+                const response = await fetch(path);
+                if (response.ok) {
+                    this.midiFiles[path] = await response.arrayBuffer();
+                }
+            } catch (e) {
+                console.warn('MIDI preload failed:', path, e);
+            }
+        }));
     }
 
     // Map GM program numbers to soundfont instrument names
@@ -223,6 +254,14 @@ export class AudioManager {
             118: 'synth_drum',
         };
         return map[program] || 'acoustic_grand_piano';
+    }
+
+    _resolveInstrumentName(event) {
+        const ch = event.channel - 1;
+        if (ch === 9) return 'synth_drum';
+        const program = this.channelPrograms[ch];
+        if (program !== undefined) return this._programToInstrument(program);
+        return 'acoustic_grand_piano';
     }
 
     _getInstrumentForEvent(event) {
@@ -335,9 +374,17 @@ export class AudioManager {
                         : this._getInstrumentForEvent(event);
                     if (!instrument) return;
 
+                    // Check blocked instruments for this file
+                    const blocked = this.blockedInstruments[path];
+                    if (blocked) {
+                        const instName = overrideName || this._resolveInstrumentName(event);
+                        if (blocked.includes(instName)) return;
+                    }
+
                     const fileGains = this.trackGains[path] || {};
                     const trackMult = fileGains[event.track] !== undefined ? fileGains[event.track] : 1.0;
-                    const note = instrument.play(event.noteName, this.ctx.currentTime, {
+                    // Schedule slightly ahead to align all tracks
+                    const note = instrument.play(event.noteName, this.ctx.currentTime + 0.05, {
                         gain: (event.velocity / 127) * 1.5 * trackMult,
                         duration: 2
                     });
