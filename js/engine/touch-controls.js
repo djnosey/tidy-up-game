@@ -81,7 +81,7 @@ export class TouchControls {
         this.canvas = canvas;
         this.input = input;
         this.enabled = detectTablet();
-        this.mode = 'gameplay';
+        this._mode = 'gameplay';
         this.activeTouches = new Map(); // touchId -> button name or null
 
         this._onStart = this._handleStart.bind(this);
@@ -94,8 +94,22 @@ export class TouchControls {
         canvas.addEventListener('touchcancel', this._onEnd, { passive: false });
     }
 
+    get mode() { return this._mode; }
+    set mode(newMode) {
+        if (this._mode === newMode) return;
+        // Release all active buttons using the OLD layout before switching
+        for (const [id, btnName] of this.activeTouches) {
+            if (btnName) {
+                const btn = this.buttons.find(b => b.name === btnName);
+                if (btn) this.input.keys[btn.key] = false;
+            }
+        }
+        this.activeTouches.clear();
+        this._mode = newMode;
+    }
+
     get buttons() {
-        return MODE_MAP[this.mode] || GAMEPLAY_BUTTONS;
+        return MODE_MAP[this._mode] || GAMEPLAY_BUTTONS;
     }
 
     toggle() {
