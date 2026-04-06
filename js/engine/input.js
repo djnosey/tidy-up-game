@@ -29,6 +29,7 @@ export class Input {
     get left() { return this.isDown('ArrowLeft'); }
     get right() { return this.isDown('ArrowRight'); }
     get down() { return this.isDown('ArrowDown'); }
+    get downPressed() { return this.wasPressed('ArrowDown'); }
     get jump() { return this.isDown('s') || this.isDown('S'); }
     get jumpPressed() { return this.wasPressed('s') || this.wasPressed('S'); }
     get shoot() { return this.wasPressed('d') || this.wasPressed('D'); }
