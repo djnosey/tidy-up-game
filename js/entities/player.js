@@ -193,7 +193,7 @@ export class Player {
                 resolvePlatformCollision(this, plat);
             } else {
                 // Drop through if pressing down while standing on this platform
-                if (input.downPressed && this._standingOnPlatform === plat) continue;
+                if (input.downPressed && this._standingOnPlatform === plat && !this.crouching) continue;
                 resolveOneWayPlatform(this, plat);
             }
         }
