@@ -188,10 +188,23 @@ class Game {
             'water_puddle', 'floating_bubbles', 'grass_tuft', 'butterfly', 'dripping_tap'
         ]);
         this._animatedDecos = [];
+        this._staticDecos = [];
         const decCanvas = document.createElement('canvas');
         decCanvas.width = this._cacheLevelW;
         decCanvas.height = this.canvas.height;
         const decCtx = decCanvas.getContext('2d');
+        if (!decCtx) {
+            // Tablet fallback: cache allocation failed, render live per-frame
+            this._decoCache = null;
+            for (const dec of this.level.decorations) {
+                if (dec.type && ANIMATED_TYPES.has(dec.type)) {
+                    this._animatedDecos.push(dec);
+                } else {
+                    this._staticDecos.push(dec);
+                }
+            }
+            return;
+        }
         for (const dec of this.level.decorations) {
             if (dec.type && ANIMATED_TYPES.has(dec.type)) {
                 this._animatedDecos.push(dec);
@@ -208,6 +221,11 @@ class Game {
         furCanvas.width = this._cacheLevelW;
         furCanvas.height = this.canvas.height;
         const furCtx = furCanvas.getContext('2d');
+        if (!furCtx) {
+            // Tablet fallback: cache allocation failed, render live per-frame
+            this._furnitureCache = null;
+            return;
+        }
         const groundY = this.level.groundY;
         for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
@@ -222,6 +240,12 @@ class Game {
         surfCanvas.width = this._cacheLevelW;
         surfCanvas.height = this.canvas.height;
         const surfCtx = surfCanvas.getContext('2d');
+        if (!surfCtx) {
+            // Tablet fallback: cache allocation failed, render live per-frame
+            this._surfaceCache = null;
+            this._surfaceCacheCtx = null;
+            return;
+        }
         for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             drawPlatformSurface(surfCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color);
@@ -1023,6 +1047,14 @@ class Game {
         const ch = canvas.height;
         if (this._decoCache) {
             ctx.drawImage(this._decoCache, camX, camY, cw, ch, 0, 0, cw, ch);
+        } else if (this._staticDecos) {
+            // Tablet fallback: render static decorations live with viewport culling
+            for (let i = 0; i < this._staticDecos.length; i++) {
+                const dec = this._staticDecos[i];
+                const dx = dec.x - camera.x;
+                if (dx < -200 || dx > cw + 200) continue;
+                drawDecoration(ctx, dec, camera.x, camera.y);
+            }
         }
         for (let i = 0; i < this._animatedDecos.length; i++) {
             const dec = this._animatedDecos[i];
@@ -1035,11 +1067,32 @@ class Game {
         const screenGroundY = level.groundY - camY;
         if (this._furnitureCache) {
             ctx.drawImage(this._furnitureCache, camX, camY, cw, ch, 0, 0, cw, ch);
+        } else {
+            // Tablet fallback: render furniture live with viewport culling
+            const groundY = level.groundY;
+            for (let i = 0; i < level.platforms.length; i++) {
+                const plat = level.platforms[i];
+                if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
+                const sx = plat.x - camera.x;
+                if (sx + plat.width < -50 || sx > cw + 50) continue;
+                const sy = plat.y - camera.y;
+                drawPlatform(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color, screenGroundY);
+            }
         }
 
         // Platform surfaces: static from cache, dynamic drawn live
         if (this._surfaceCache) {
             ctx.drawImage(this._surfaceCache, camX, camY, cw, ch, 0, 0, cw, ch);
+        } else {
+            // Tablet fallback: render surfaces live with viewport culling
+            for (let i = 0; i < level.platforms.length; i++) {
+                const plat = level.platforms[i];
+                if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
+                const sx = plat.x - camera.x;
+                if (sx + plat.width < -50 || sx > cw + 50) continue;
+                const sy = plat.y - camera.y;
+                drawPlatformSurface(ctx, sx, sy, plat.width, plat.height, plat.label, plat.color);
+            }
         }
         // Dynamic platforms only (moving, crumbling)
         for (let i = 0; i < level.platforms.length; i++) {
