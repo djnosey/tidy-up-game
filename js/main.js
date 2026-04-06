@@ -181,21 +181,42 @@ class Game {
         this._cacheLevelW = maxX + 100;
     }
 
-    // Stage 1: decoration cache
-    // Try to allocate an offscreen canvas and return its 2d context.
-    // Returns null on memory-constrained devices (tablet OOM or null context).
-    _tryCreateOffscreen(w, h) {
+    // Detect whether large offscreen canvases are safe to allocate.
+    // Probes once with a small test canvas; caches the result.
+    // Mobile Safari and Android WebView OOM-kill the tab before JS can
+    // catch the error, so we must avoid even attempting the allocation.
+    _canUseOffscreenCache() {
+        if (this._offscreenCacheOk !== undefined) return this._offscreenCacheOk;
+
+        // 1) Device-memory hint (Chrome/Edge/Android): <= 2 GB → skip
+        if (navigator.deviceMemory && navigator.deviceMemory <= 2) {
+            this._offscreenCacheOk = false;
+            return false;
+        }
+
+        // 2) Touch-primary + small screen → likely a tablet/phone
+        const isTouch = navigator.maxTouchPoints > 0;
+        const isSmallScreen = Math.max(screen.width, screen.height) <= 1400;
+        if (isTouch && isSmallScreen) {
+            this._offscreenCacheOk = false;
+            return false;
+        }
+
+        // 3) Probe: try a moderately large canvas (2048x600 ≈ 5 MB).
+        //    If this fails, the full 12 000+ px caches certainly will.
         try {
-            const c = document.createElement('canvas');
-            c.width = w;
-            c.height = h;
-            const ctx = c.getContext('2d');
-            if (!ctx) return null;
-            // Probe: some browsers defer allocation until first draw call
-            ctx.clearRect(0, 0, 1, 1);
-            return { canvas: c, ctx };
+            const probe = document.createElement('canvas');
+            probe.width = 2048;
+            probe.height = 600;
+            const pCtx = probe.getContext('2d');
+            if (!pCtx) { this._offscreenCacheOk = false; return false; }
+            pCtx.fillRect(0, 0, 1, 1);           // force allocation
+            probe.width = 0; probe.height = 0;    // release immediately
+            this._offscreenCacheOk = true;
+            return true;
         } catch (_) {
-            return null;
+            this._offscreenCacheOk = false;
+            return false;
         }
     }
 
@@ -206,9 +227,8 @@ class Game {
         ]);
         this._animatedDecos = [];
         this._staticDecos = [];
-        const offscreen = this._tryCreateOffscreen(this._cacheLevelW, this.canvas.height);
-        if (!offscreen) {
-            // Tablet fallback: cache allocation failed, render live per-frame
+
+        if (!this._canUseOffscreenCache()) {
             this._decoCache = null;
             for (const dec of this.level.decorations) {
                 if (dec.type && ANIMATED_TYPES.has(dec.type)) {
@@ -219,7 +239,23 @@ class Game {
             }
             return;
         }
-        const decCtx = offscreen.ctx;
+
+        const decCanvas = document.createElement('canvas');
+        decCanvas.width = this._cacheLevelW;
+        decCanvas.height = this.canvas.height;
+        const decCtx = decCanvas.getContext('2d');
+        if (!decCtx) {
+            this._decoCache = null;
+            this._offscreenCacheOk = false;  // don't attempt the next two
+            for (const dec of this.level.decorations) {
+                if (dec.type && ANIMATED_TYPES.has(dec.type)) {
+                    this._animatedDecos.push(dec);
+                } else {
+                    this._staticDecos.push(dec);
+                }
+            }
+            return;
+        }
         for (const dec of this.level.decorations) {
             if (dec.type && ANIMATED_TYPES.has(dec.type)) {
                 this._animatedDecos.push(dec);
@@ -227,41 +263,54 @@ class Game {
                 drawDecoration(decCtx, dec, 0, 0);
             }
         }
-        this._decoCache = offscreen.canvas;
+        this._decoCache = decCanvas;
     }
 
     // Stage 2: furniture backdrop cache
     _buildFurnitureCache() {
-        const offscreen = this._tryCreateOffscreen(this._cacheLevelW, this.canvas.height);
-        if (!offscreen) {
-            // Tablet fallback: cache allocation failed, render live per-frame
+        if (!this._canUseOffscreenCache()) {
             this._furnitureCache = null;
             return;
         }
-        const furCtx = offscreen.ctx;
+        const furCanvas = document.createElement('canvas');
+        furCanvas.width = this._cacheLevelW;
+        furCanvas.height = this.canvas.height;
+        const furCtx = furCanvas.getContext('2d');
+        if (!furCtx) {
+            this._furnitureCache = null;
+            this._offscreenCacheOk = false;
+            return;
+        }
         const groundY = this.level.groundY;
         for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             drawPlatform(furCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color, groundY);
         }
-        this._furnitureCache = offscreen.canvas;
+        this._furnitureCache = furCanvas;
     }
 
     // Stage 3: platform surface cache
     _buildSurfaceCache() {
-        const offscreen = this._tryCreateOffscreen(this._cacheLevelW, this.canvas.height);
-        if (!offscreen) {
-            // Tablet fallback: cache allocation failed, render live per-frame
+        if (!this._canUseOffscreenCache()) {
             this._surfaceCache = null;
             this._surfaceCacheCtx = null;
             return;
         }
-        const surfCtx = offscreen.ctx;
+        const surfCanvas = document.createElement('canvas');
+        surfCanvas.width = this._cacheLevelW;
+        surfCanvas.height = this.canvas.height;
+        const surfCtx = surfCanvas.getContext('2d');
+        if (!surfCtx) {
+            this._surfaceCache = null;
+            this._surfaceCacheCtx = null;
+            this._offscreenCacheOk = false;
+            return;
+        }
         for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             drawPlatformSurface(surfCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color);
         }
-        this._surfaceCache = offscreen.canvas;
+        this._surfaceCache = surfCanvas;
         this._surfaceCacheCtx = surfCtx;
     }
 
