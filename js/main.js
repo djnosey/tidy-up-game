@@ -1,5 +1,6 @@
 import { GameLoop } from './engine/game-loop.js';
 import { Input } from './engine/input.js';
+import { TouchControls } from './engine/touch-controls.js';
 import { Camera } from './engine/camera.js';
 import { renderBoss } from './engine/renderers/boss-renderer.js';
 import { clearCharacterCache } from './engine/renderers/character-renderer.js';
@@ -60,6 +61,7 @@ class Game {
         window.addEventListener('resize', () => this.resize());
 
         this.input = new Input();
+        this.touchControls = new TouchControls(this.canvas, this.input);
         this.camera = new Camera(this.canvas.width, this.canvas.height);
         this.hud = new HUD();
         this.menu = new Menu();
@@ -942,6 +944,10 @@ class Game {
 
         // Cheat code panel overlay
         this.cheats.render(ctx, canvas.width, canvas.height);
+
+        // Touch controls overlay (tablet only)
+        this._updateTouchMode();
+        this.touchControls.render(ctx);
     }
 
     renderLoading() {
@@ -1146,6 +1152,32 @@ class Game {
             ctx.fillStyle = popup.color;
             ctx.fillText(popup.text, sx, sy);
             ctx.restore();
+        }
+    }
+
+    _updateTouchMode() {
+        switch (this.state) {
+            case STATE_MENU:
+                // Menu has sub-states: title, select, mode_select, level_select, hub
+                this.touchControls.mode = this.menu.state;
+                break;
+            case STATE_PLAYING:
+            case STATE_BOSS:
+                this.touchControls.mode = 'gameplay';
+                break;
+            case STATE_GAMEOVER:
+                this.touchControls.mode = this._diedDuringBoss ? 'boss_gameover' : 'continue';
+                break;
+            case STATE_INTRO:
+            case STATE_LEVEL_INTRO:
+            case STATE_BOSS_INTRO:
+            case STATE_SCORE:
+            case STATE_VICTORY:
+                this.touchControls.mode = 'continue';
+                break;
+            default:
+                this.touchControls.mode = 'continue';
+                break;
         }
     }
 
