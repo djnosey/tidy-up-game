@@ -459,13 +459,13 @@ class Game {
                 this._pendingLevelIndex = Math.min(nextLevel, ALL_LEVELS.length - 1);
             }
 
-            if (!this.hasSeenOpening) {
-                // First time: show opening story, then level intro
+            if (result.action === 'new_game' && !this.hasSeenOpening) {
+                // New game: show opening story, then level intro
                 this.hasSeenOpening = true;
                 this.transitions.startOpening();
                 this.state = STATE_INTRO;
             } else {
-                // Returning from hub: show level intro
+                // Continue or level select: skip opening, go straight to level intro
                 this.transitions.startLevelIntro(this._pendingLevelIndex);
                 this.state = STATE_LEVEL_INTRO;
             }
