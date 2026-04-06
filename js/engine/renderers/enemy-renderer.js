@@ -1,5 +1,5 @@
 // Enemy drawing — uses unified theme system for visual coherence
-import { roundRect } from './shared.js';
+import { roundRect, drawDropShadowFast } from './shared.js';
 import { getTheme } from './level-themes.js';
 import { getImage } from '../asset-loader.js';
 import { ENEMY_SPRITES } from '../sprite-manifest.js';
@@ -36,14 +36,9 @@ function drawEyes(ctx, cx, cy, direction, eyeSpacing, eyeRadius, pupilRadius) {
     ctx.beginPath(); ctx.arc(cx + eyeSpacing + pupilShift, cy, pupilRadius, 0, Math.PI * 2); ctx.fill();
 }
 
-// Themed grounding shadow under enemy
+// Themed grounding shadow under enemy (bitmap blit — no per-frame gradient creation)
 function drawGroundingShadow(ctx, cx, floorY, radiusX) {
-    const theme = getTheme();
-    // Use wall base to tint the shadow slightly toward the room color
-    ctx.fillStyle = 'rgba(0,0,0,0.15)';
-    ctx.beginPath();
-    ctx.ellipse(cx, floorY + 2, radiusX, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
+    drawDropShadowFast(ctx, cx, floorY + 2, radiusX, 4);
 }
 
 export function drawEnemy(ctx, x, y, w, h, label, color, direction, alive, deathTimer) {

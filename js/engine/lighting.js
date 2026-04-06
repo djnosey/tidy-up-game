@@ -23,6 +23,7 @@ export class LightingRenderer {
         this._lightGlowCanvas = null; // offscreen canvas for light glows
         this._lightGlowCtx = null;
         this._lightGlowLastCamX = -Infinity;
+        this._lightGlowLastTime = 0; // time-based invalidation for animation
     }
 
     render(ctx, canvasW, canvasH, levelName, decorations, cameraX, cameraY, isBoss) {
@@ -37,9 +38,12 @@ export class LightingRenderer {
     }
 
     _drawLightSources(ctx, canvasW, canvasH, decorations, cameraX, cameraY) {
-        // Re-render offscreen glow canvas only when camera moves significantly (>2px)
+        const now = Date.now();
+        const nowSec = now * 0.001;
+        // Re-render offscreen glow canvas when camera moves >2px or every ~80ms for animation
         const camDelta = Math.abs(cameraX - this._lightGlowLastCamX);
-        if (!this._lightGlowCanvas || camDelta > 2) {
+        const timeDelta = now - this._lightGlowLastTime;
+        if (!this._lightGlowCanvas || camDelta > 2 || timeDelta > 80) {
             if (!this._lightGlowCanvas) {
                 this._lightGlowCanvas = document.createElement('canvas');
                 this._lightGlowCanvas.width = canvasW;
@@ -55,15 +59,30 @@ export class LightingRenderer {
                 const sy = (dec.y || 0) - cameraY;
                 if (sx < -150 || sx > canvasW + 150) continue;
 
-                const radius = dec.type === 'ceiling_light' ? 120 : 80;
+                const isCeiling = dec.type === 'ceiling_light';
+                const baseRadius = isCeiling ? 120 : 80;
+
+                // Subtle pulse for ceiling lights, flicker for lamps
+                const pulse = isCeiling
+                    ? 1 + Math.sin(nowSec * 1.5 + dec.x * 0.01) * 0.08
+                    : 1;
+                const flicker = !isCeiling
+                    ? 0.9 + Math.sin(nowSec * 4 + dec.x * 0.02) * 0.1
+                    : 1;
+
+                const radius = baseRadius * pulse;
+                const centerAlpha = 0.18 * flicker;
+                const midAlpha = 0.08 * flicker;
+
                 const glow = offCtx.createRadialGradient(sx, sy + 10, 0, sx, sy + 10, radius);
-                glow.addColorStop(0, 'rgba(255, 240, 200, 0.08)');
-                glow.addColorStop(0.5, 'rgba(255, 220, 160, 0.03)');
+                glow.addColorStop(0, `rgba(255, 240, 200, ${centerAlpha.toFixed(3)})`);
+                glow.addColorStop(0.5, `rgba(255, 220, 160, ${midAlpha.toFixed(3)})`);
                 glow.addColorStop(1, 'rgba(255, 220, 160, 0)');
                 offCtx.fillStyle = glow;
                 offCtx.fillRect(sx - radius, sy + 10 - radius, radius * 2, radius * 2);
             }
             this._lightGlowLastCamX = cameraX;
+            this._lightGlowLastTime = now;
         }
         ctx.save();
         ctx.globalCompositeOperation = 'screen';

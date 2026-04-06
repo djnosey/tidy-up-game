@@ -1,5 +1,5 @@
 // Obstacle/hazard drawing
-import { roundRect, drawEmojiScaled } from './shared.js';
+import { roundRect, drawEmojiScaled, drawDropShadowFast } from './shared.js';
 import { getTheme } from './level-themes.js';
 
 const OBSTACLE_EMOJI = {
@@ -15,6 +15,9 @@ export function drawObstacle(ctx, x, y, w, h, label, color, animTimer) {
     const cy = y + h / 2;
     const pulse = Math.sin(animTimer * 5) * 0.15;
     const theme = getTheme();
+
+    // Grounding shadow
+    drawDropShadowFast(ctx, cx, y + h + 2, w / 2 + 3, 3);
 
     // --- Danger indicators (drawn behind the obstacle) ---
 

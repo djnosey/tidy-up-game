@@ -1,6 +1,6 @@
 // Seating furniture: sofa, armchair, cushion, chair, stool
 import { roundRect, lighten, darken } from '../shared.js';
-import { getTheme, drawWoodGrain, drawFabricTexture, drawFurnitureShadow, drawLegs } from '../level-themes.js';
+import { getTheme, drawWoodGrain, drawFabricTexture, drawFurnitureShadow, drawLegs, drawAmbientOcclusion, drawSideShading, drawTopHighlight } from '../level-themes.js';
 
 export function drawSofa(ctx, x, y, w, h, color, floorY) {
     const theme = getTheme();
@@ -36,9 +36,10 @@ export function drawSofa(ctx, x, y, w, h, color, floorY) {
     roundRect(ctx, x - 8, seatTop - 10, 14, armH, 5);
     roundRect(ctx, x + w - 6, seatTop - 10, 14, armH, 5);
 
-    // Highlight on seat
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    ctx.fillRect(x + 10, seatTop + 2, w - 20, 2);
+    // Depth effects
+    drawTopHighlight(ctx, x, seatTop, w);
+    drawSideShading(ctx, x, seatTop, w, h);
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawArmchair(ctx, x, y, w, h, color, floorY) {
@@ -60,8 +61,10 @@ export function drawArmchair(ctx, x, y, w, h, color, floorY) {
     const armH = h + 15;
     roundRect(ctx, x - 6, y - 14, 18, armH, 6);
     roundRect(ctx, x + w - 12, y - 14, 18, armH, 6);
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    ctx.fillRect(x + 16, y + 2, w - 32, 2);
+    // Depth effects
+    drawTopHighlight(ctx, x, y, w);
+    drawSideShading(ctx, x, y, w, h);
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawCushionPlatform(ctx, x, y, w, h, color) {

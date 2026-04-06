@@ -11,35 +11,34 @@ export class ParticleSystem {
     }
 
     emit({ x, y, count = 6, colors = ['#FFD700'], speedX = 100, speedY = 100,
-           gravity = 300, friction = 0.98, sizeMin = 2, sizeMax = 5, life = 0.6 }) {
+           gravity = 300, friction = 0.98, sizeMin = 2, sizeMax = 5, life = 0.6,
+           trail = 0, shape = 'circle', fadeEase = 'linear' }) {
         for (let i = 0; i < count; i++) {
+            const p = {
+                x,
+                y,
+                vx: (Math.random() - 0.5) * 2 * speedX,
+                vy: -Math.random() * speedY - speedY * 0.2,
+                life,
+                maxLife: life,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                size: sizeMin + Math.random() * (sizeMax - sizeMin),
+                gravity,
+                friction,
+                trail,
+                shape,
+                fadeEase,
+                _trailBuf: trail > 0 ? new Float32Array(trail * 2) : null,
+                _trailLen: 0,
+                _trailHead: 0,
+            };
             if (this._alive >= MAX_PARTICLES) {
                 // Overwrite at rotating index — O(1) instead of O(n) shift
-                const oldest = this.particles[this._overwriteIdx];
-                oldest.x = x;
-                oldest.y = y;
-                oldest.vx = (Math.random() - 0.5) * 2 * speedX;
-                oldest.vy = -Math.random() * speedY - speedY * 0.2;
-                oldest.life = life;
-                oldest.maxLife = life;
-                oldest.color = colors[Math.floor(Math.random() * colors.length)];
-                oldest.size = sizeMin + Math.random() * (sizeMax - sizeMin);
-                oldest.gravity = gravity;
-                oldest.friction = friction;
+                const slot = this.particles[this._overwriteIdx];
+                Object.assign(slot, p);
                 this._overwriteIdx = (this._overwriteIdx + 1) % MAX_PARTICLES;
             } else {
-                this.particles.push({
-                    x,
-                    y,
-                    vx: (Math.random() - 0.5) * 2 * speedX,
-                    vy: -Math.random() * speedY - speedY * 0.2,
-                    life,
-                    maxLife: life,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    size: sizeMin + Math.random() * (sizeMax - sizeMin),
-                    gravity,
-                    friction,
-                });
+                this.particles.push(p);
                 this._alive++;
             }
         }
@@ -50,6 +49,16 @@ export class ParticleSystem {
         let writeIdx = 0;
         for (let i = 0; i < this.particles.length; i++) {
             const p = this.particles[i];
+
+            // Store position in trail ring buffer before moving
+            if (p._trailBuf) {
+                const idx = p._trailHead * 2;
+                p._trailBuf[idx] = p.x;
+                p._trailBuf[idx + 1] = p.y;
+                p._trailHead = (p._trailHead + 1) % p.trail;
+                if (p._trailLen < p.trail) p._trailLen++;
+            }
+
             p.vy += p.gravity * dt;
             p.vx *= p.friction;
             p.vy *= p.friction;
@@ -73,13 +82,51 @@ export class ParticleSystem {
             const sx = p.x - camX;
             const sy = p.y - camY;
             if (sx < -10 || sx > 970 || sy < -10 || sy > 610) continue;
-            ctx.globalAlpha = p.life / p.maxLife;
+
+            // Fade curve
+            const t = p.life / p.maxLife;
+            const alpha = p.fadeEase === 'easeOut' ? t * t : t;
+
             ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(sx, sy, p.size, 0, TWO_PI);
-            ctx.fill();
+
+            // Draw trail (older positions at decreasing alpha/size)
+            if (p._trailBuf && p._trailLen > 0) {
+                for (let j = 0; j < p._trailLen; j++) {
+                    // Read from ring buffer: oldest first
+                    const readIdx = ((p._trailHead - p._trailLen + j + p.trail) % p.trail) * 2;
+                    const tx = p._trailBuf[readIdx] - camX;
+                    const ty = p._trailBuf[readIdx + 1] - camY;
+                    const frac = (j + 1) / (p._trailLen + 1);
+                    ctx.globalAlpha = alpha * frac * 0.5;
+                    ctx.beginPath();
+                    ctx.arc(tx, ty, p.size * frac * 0.7, 0, TWO_PI);
+                    ctx.fill();
+                }
+            }
+
+            ctx.globalAlpha = alpha;
+
+            // Shape: streak (velocity-aligned) or circle
+            if (p.shape === 'streak') {
+                const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+                if (speed > 20) {
+                    const angle = Math.atan2(p.vy, p.vx);
+                    ctx.save();
+                    ctx.translate(sx, sy);
+                    ctx.rotate(angle);
+                    ctx.fillRect(-p.size * 1.5, -p.size * 0.4, p.size * 3, p.size * 0.8);
+                    ctx.restore();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, p.size, 0, TWO_PI);
+                    ctx.fill();
+                }
+            } else {
+                ctx.beginPath();
+                ctx.arc(sx, sy, p.size, 0, TWO_PI);
+                ctx.fill();
+            }
         }
         ctx.globalAlpha = 1;
     }
 }
-

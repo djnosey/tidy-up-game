@@ -239,6 +239,9 @@ class Game {
         // Floating popups (combo text, bonus text)
         this._popups = [];
 
+        // White flash overlay for enemy defeat feedback
+        this._flashAlpha = 0;
+
         events.on('item-collected', ({ player, x, y, label }) => {
             this.collected++;
 
@@ -306,9 +309,14 @@ class Game {
                 speedX: 150, speedY: 120, gravity: 400, sizeMin: 3, sizeMax: 6, life: 0.5 });
             enemy.die();
             player.vy = -400;
-            camera.shake(5, 0.2);
-            this.gameLoop.hitstop(3);
+            // Scale shake/hitstop with bounce combo for escalating feedback
+            const bounceCount = (player._bounceCombo || 0) + 1; // +1 because we increment below
+            camera.shake(5 + Math.min(bounceCount - 1, 4) * 1.5, 0.2 + Math.min(bounceCount - 1, 4) * 0.04);
+            this.gameLoop.hitstop(3 + Math.min(bounceCount - 1, 4));
             audio.playSFX('enemyDefeat');
+
+            // White flash on enemy defeat (scales with combo)
+            this._flashAlpha = 0.10 + Math.min(bounceCount - 1, 5) * 0.03;
 
             // Bounce combo tracking
             if (!player._bounceCombo) player._bounceCombo = 0;
@@ -329,6 +337,7 @@ class Game {
             camera.shake(4, 0.15);
             this.gameLoop.hitstop(2);
             audio.playSFX('enemyDefeat');
+            this._flashAlpha = 0.10;
         });
 
         events.on('player-hit', ({ source, player, sourceX }) => {
@@ -555,6 +564,14 @@ class Game {
             this._popups[i].y -= 40 * dt;
             if (this._popups[i].life <= 0) this._popups.splice(i, 1);
         }
+
+        // Decay white flash overlay
+        if (this._flashAlpha > 0) this._flashAlpha = Math.max(0, this._flashAlpha - 4 * dt);
+
+        // Update HUD animations (tidy meter lerp, shake, sparkles, combo burst)
+        const tidyPercent = level.totalCollectables > 0
+            ? (this.collected / level.totalCollectables) * 100 : 0;
+        this.hud.update(dt, tidyPercent, this._collectCombo || 0);
 
         // Mute toggle
         if (input.mutePressed) this.audio.toggleMute();
@@ -1100,6 +1117,12 @@ class Game {
 
         // End screen shake transform before HUD
         ctx.restore();
+
+        // White flash overlay (enemy defeat feedback)
+        if (this._flashAlpha > 0) {
+            ctx.fillStyle = `rgba(255,255,255,${this._flashAlpha})`;
+            ctx.fillRect(0, 0, canvas.width, 600);
+        }
 
         // HUD
         const tidyPercent = level.totalCollectables > 0

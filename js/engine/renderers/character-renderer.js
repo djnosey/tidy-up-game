@@ -1,5 +1,5 @@
 // Character drawing — high-fidelity procedural player avatar rendering
-import { roundRect, darken, lighten } from './shared.js';
+import { roundRect, darken, lighten, drawDropShadow } from './shared.js';
 
 // --- OFFSCREEN CANVAS CACHE ---
 const _charCache = new Map();
@@ -73,10 +73,7 @@ function computeProportions(w, h, character) {
 // --- SUB-RENDERERS ---
 
 function drawShadow(ctx, cx, footY, w) {
-    ctx.fillStyle = 'rgba(0,0,0,0.18)';
-    ctx.beginPath();
-    ctx.ellipse(cx, footY + 2, w * 0.38, 4, 0, 0, Math.PI * 2);
-    ctx.fill();
+    drawDropShadow(ctx, cx, footY + 2, w * 0.38, 4, 0.18);
 }
 
 function drawLegs(ctx, cx, props, character, animState) {

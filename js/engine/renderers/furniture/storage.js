@@ -1,6 +1,6 @@
 // Storage furniture: shelf, bookshelf, drawer, fridge, toy chest, dresser, wardrobe, laundry basket
 import { roundRect, lighten, darken } from '../shared.js';
-import { getTheme, drawWoodGrain, drawMetalSurface, drawFabricTexture, drawFurnitureShadow, drawLegs } from '../level-themes.js';
+import { getTheme, drawWoodGrain, drawMetalSurface, drawFabricTexture, drawFurnitureShadow, drawLegs, drawAmbientOcclusion, drawSideShading, drawTopHighlight } from '../level-themes.js';
 
 export function drawShelf(ctx, x, y, w, h, color) {
     const theme = getTheme();
@@ -59,7 +59,10 @@ export function drawFridge(ctx, x, y, w, h, floorY) {
     drawMetalSurface(ctx, x + w/2 + 4, y + 12, 3, 20);
     ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
     ctx.fillText('🧲', x + 15, y + 25); ctx.fillText('📝', x + w - 15, y + 20);
-    ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.fillRect(x + 2, y, w - 4, 2);
+    // Depth effects
+    drawTopHighlight(ctx, x, y, w);
+    drawSideShading(ctx, x, y, w, Math.min(h + (floorY - (y + h)), 80));
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawToyChest(ctx, x, y, w, h, color, floorY) {
@@ -94,6 +97,10 @@ export function drawDresser(ctx, x, y, w, h, color, floorY) {
     // Mirror
     ctx.fillStyle = '#C0D0E0'; roundRect(ctx, x + w/2 - 12, y - 20, 24, 18, 3);
     ctx.strokeStyle = theme.metal.dark; ctx.lineWidth = 1; ctx.strokeRect(x + w/2 - 12, y - 20, 24, 18);
+    // Depth effects
+    drawTopHighlight(ctx, x, y, w);
+    drawSideShading(ctx, x, y, w, h + Math.min((floorY - (y+h))-5, 35));
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawLaundryBasket(ctx, x, y, w, h, floorY) {
@@ -122,5 +129,8 @@ export function drawWardrobe(ctx, x, y, w, h, floorY) {
     ctx.beginPath(); ctx.arc(x + w/2 + 8, y + 10, 3, 0, Math.PI*2); ctx.fill();
     // Crown molding — wood dark
     ctx.fillStyle = theme.wood.dark; ctx.fillRect(x - 3, y - 43, w + 6, 6);
-    ctx.fillStyle = 'rgba(255,255,255,0.1)'; ctx.fillRect(x, y - 43, w, 2);
+    // Depth effects
+    drawTopHighlight(ctx, x, y - 43, w);
+    drawSideShading(ctx, x, y - 40, w, h + (floorY - (y + h)) + 40);
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }

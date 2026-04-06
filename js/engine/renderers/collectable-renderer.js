@@ -1,5 +1,5 @@
 // Collectable item drawing
-import { lighten } from './shared.js';
+import { lighten, drawDropShadowFast } from './shared.js';
 import { getTheme } from './level-themes.js';
 
 const COLLECTABLE_EMOJI = {
@@ -31,11 +31,8 @@ export function drawCollectable(ctx, x, y, w, h, label, color, bobTimer) {
     const r = w / 2 + 4; // slightly larger than hitbox
     const theme = getTheme();
 
-    // Drop shadow behind the circle
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-    ctx.beginPath();
-    ctx.arc(cx + 2, cy + 3, r + 1, 0, Math.PI * 2);
-    ctx.fill();
+    // Drop shadow behind the circle (bitmap blit)
+    drawDropShadowFast(ctx, cx + 2, cy + 3, r + 1, r * 0.4);
 
     // Outer glow ring using theme accent
     ctx.strokeStyle = theme.accent1;

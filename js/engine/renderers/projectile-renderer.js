@@ -1,10 +1,14 @@
 // Projectile drawing
-import { roundRect, drawEmojiScaled } from './shared.js';
+import { roundRect, drawEmojiScaled, drawDropShadowFast } from './shared.js';
 
 export function drawProjectile(ctx, x, y, w, h, character) {
     ctx.save();
     const cx = x + w / 2;
     const cy = y + h / 2;
+
+    // Subtle grounding shadow
+    drawDropShadowFast(ctx, cx, y + h + 1, w / 3, 2);
+
     ctx.fillStyle = character.projectileColor;
 
     if (character.projectileLabel === 'SLIPPER') {

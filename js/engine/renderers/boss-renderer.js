@@ -1,5 +1,6 @@
 import { ROAMING, CHARGING, STUNNED, SPINNING, SHOOTING, VULNERABLE } from '../../entities/bosses/boss-states.js';
 import { BbqDragonBehavior } from '../../entities/bosses/bbq-dragon.js';
+import { drawDropShadowFast } from './shared.js';
 
 // ─── Boss Rendering ─────────────────────────────────────────────────
 // All visual/drawing code for bosses lives here, separated from
@@ -43,11 +44,8 @@ export function renderBoss(ctx, boss, camera, frame = 0) {
                        boss.state === SPINNING ? '#885588' :
                        boss.state === SHOOTING ? '#448888' : boss.color;
 
-    // Shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.25)';
-    ctx.beginPath();
-    ctx.ellipse(cx, sy + h + 4, w / 2 + 4, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
+    // Shadow (bitmap blit — no per-frame gradient creation)
+    drawDropShadowFast(ctx, cx, sy + h + 4, w / 2 + 4, 8);
 
     // Draw body based on boss type
     drawBossBody(ctx, boss, sx, sy, cx, cy, w, h, stateColor, frame);

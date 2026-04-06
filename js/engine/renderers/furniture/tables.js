@@ -1,6 +1,6 @@
 // Table furniture: table, TV unit, counter, desk (uses drawTable)
 import { roundRect, lighten, darken } from '../shared.js';
-import { getTheme, drawWoodGrain, drawMetalSurface, drawCeramicSurface, drawFurnitureShadow } from '../level-themes.js';
+import { getTheme, drawWoodGrain, drawMetalSurface, drawCeramicSurface, drawFurnitureShadow, drawAmbientOcclusion, drawTopHighlight } from '../level-themes.js';
 
 export function drawTable(ctx, x, y, w, h, color, floorY) {
     const theme = getTheme();
@@ -19,8 +19,8 @@ export function drawTable(ctx, x, y, w, h, color, floorY) {
 
     // Table top with wood grain
     drawWoodGrain(ctx, x - 5, y, w + 10, h);
-    ctx.fillStyle = 'rgba(255,255,255,0.2)';
-    ctx.fillRect(x - 3, y, w + 6, 2);
+    drawTopHighlight(ctx, x - 5, y, w + 10);
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawTVUnit(ctx, x, y, w, h, floorY) {
@@ -56,8 +56,8 @@ export function drawTVUnit(ctx, x, y, w, h, floorY) {
     ctx.textBaseline = 'bottom';
     ctx.fillText('📺', x + w / 2, y - 3);
 
-    ctx.fillStyle = 'rgba(255,255,255,0.1)';
-    ctx.fillRect(x + 2, y, w - 4, 2);
+    drawTopHighlight(ctx, x, y, w);
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawCounter(ctx, x, y, w, h, color, floorY) {

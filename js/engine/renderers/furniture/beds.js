@@ -1,6 +1,6 @@
 // Bed furniture: bed, bunk bed
 import { roundRect, lighten, darken } from '../shared.js';
-import { getTheme, drawWoodGrain, drawFabricTexture, drawFurnitureShadow } from '../level-themes.js';
+import { getTheme, drawWoodGrain, drawFabricTexture, drawFurnitureShadow, drawAmbientOcclusion, drawTopHighlight } from '../level-themes.js';
 
 export function drawBed(ctx, x, y, w, h, color, floorY) {
     const theme = getTheme();
@@ -22,6 +22,8 @@ export function drawBed(ctx, x, y, w, h, color, floorY) {
     ctx.fillStyle = '#FFFFF0'; roundRect(ctx, x + 6, y + 3, w*0.2, h - 6, 5);
     ctx.fillStyle = 'rgba(255,200,0,0.3)'; ctx.font = '9px monospace'; ctx.textAlign = 'center';
     ctx.fillText('↕ BOUNCY', x + w/2, y - 5);
+    drawTopHighlight(ctx, x, y, w);
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawBunkBed(ctx, x, y, w, h, color, floorY) {

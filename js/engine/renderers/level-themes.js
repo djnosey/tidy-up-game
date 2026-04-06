@@ -98,43 +98,43 @@ export const PARTICLE_THEMES = {
     'Living Room': {
         jumpDust:    { colors: ['#D4C4A8', '#C4B498', '#B8A888'], speedX: 60, speedY: 40, gravity: 200, sizeMin: 2, sizeMax: 4, life: 0.4, count: 6 },
         landImpact:  { colors: ['#8B6914', '#A07828', '#C4A050'], speedX: 80, speedY: 60, gravity: 250, sizeMin: 2, sizeMax: 5, life: 0.5, count: 8 },
-        enemyHit:    { colors: ['#FFFFFF', '#F0F0F0', '#E8E8E8'], speedX: 100, speedY: 80, gravity: 150, sizeMin: 2, sizeMax: 4, life: 0.5, count: 8 },
-        collect:     { colors: ['#FFD700', '#FFC800', '#FFE44D'], speedX: 80, speedY: 100, gravity: 80, sizeMin: 2, sizeMax: 4, life: 0.6, count: 10 },
+        enemyHit:    { colors: ['#FFFFFF', '#F0F0F0', '#E8E8E8'], speedX: 100, speedY: 80, gravity: 150, sizeMin: 2, sizeMax: 4, life: 0.5, count: 8, shape: 'streak', fadeEase: 'easeOut' },
+        collect:     { colors: ['#FFD700', '#FFC800', '#FFE44D'], speedX: 80, speedY: 100, gravity: 80, sizeMin: 2, sizeMax: 4, life: 0.6, count: 10, trail: 3, fadeEase: 'easeOut' },
         obstacleHit: { colors: ['#FF4444', '#FF6644', '#FFAA00'], speedX: 60, speedY: 50, gravity: 200, sizeMin: 2, sizeMax: 3, life: 0.3, count: 4 },
     },
     'Kitchen': {
         jumpDust:    { colors: ['#FFFFFF', '#F8F8F0', '#E8E0D0'], speedX: 50, speedY: 35, gravity: 180, sizeMin: 2, sizeMax: 4, life: 0.5, count: 6 },
         landImpact:  { colors: ['#B8D0D8', '#A0C0C8', '#90B0B8'], speedX: 70, speedY: 50, gravity: 200, sizeMin: 2, sizeMax: 4, life: 0.4, count: 8 },
-        enemyHit:    { colors: ['#C8A050', '#D4B060', '#B09040'], speedX: 90, speedY: 70, gravity: 200, sizeMin: 2, sizeMax: 5, life: 0.5, count: 8 },
-        collect:     { colors: ['#F0E0C0', '#E8D8B0', '#FFFFFF'], speedX: 60, speedY: 80, gravity: 40, sizeMin: 2, sizeMax: 4, life: 0.7, count: 10 },
+        enemyHit:    { colors: ['#C8A050', '#D4B060', '#B09040'], speedX: 90, speedY: 70, gravity: 200, sizeMin: 2, sizeMax: 5, life: 0.5, count: 8, shape: 'streak', fadeEase: 'easeOut' },
+        collect:     { colors: ['#F0E0C0', '#E8D8B0', '#FFFFFF'], speedX: 60, speedY: 80, gravity: 40, sizeMin: 2, sizeMax: 4, life: 0.7, count: 10, trail: 3, fadeEase: 'easeOut' },
         obstacleHit: { colors: ['#FF4444', '#FF6644', '#FF8844'], speedX: 60, speedY: 50, gravity: 200, sizeMin: 2, sizeMax: 3, life: 0.3, count: 4 },
     },
     'Bathroom': {
         jumpDust:    { colors: ['#A0D0E0', '#80C0D0', '#B0E0F0'], speedX: 50, speedY: 30, gravity: 100, sizeMin: 2, sizeMax: 4, life: 0.6, count: 6 },
         landImpact:  { colors: ['#A0D0E0', '#90C8D8', '#80B8C8'], speedX: 80, speedY: 60, gravity: 150, sizeMin: 3, sizeMax: 5, life: 0.5, count: 8 },
-        enemyHit:    { colors: ['#FFFFFF', '#E0F0FF', '#D0E8FF'], speedX: 80, speedY: 70, gravity: 50, sizeMin: 3, sizeMax: 6, life: 0.6, count: 8 },
-        collect:     { colors: ['#E0F0FF', '#C0E0F0', '#FFFFFF'], speedX: 60, speedY: 70, gravity: 30, sizeMin: 3, sizeMax: 5, life: 0.8, count: 10 },
+        enemyHit:    { colors: ['#FFFFFF', '#E0F0FF', '#D0E8FF'], speedX: 80, speedY: 70, gravity: 50, sizeMin: 3, sizeMax: 6, life: 0.6, count: 8, shape: 'streak', fadeEase: 'easeOut' },
+        collect:     { colors: ['#E0F0FF', '#C0E0F0', '#FFFFFF'], speedX: 60, speedY: 70, gravity: 30, sizeMin: 3, sizeMax: 5, life: 0.8, count: 10, trail: 3, fadeEase: 'easeOut' },
         obstacleHit: { colors: ['#FF4444', '#FF6644', '#FF8844'], speedX: 60, speedY: 50, gravity: 200, sizeMin: 2, sizeMax: 3, life: 0.3, count: 4 },
     },
     "Kids' Room": {
         jumpDust:    { colors: ['#FF88AA', '#88CCFF', '#AAFFAA', '#FFFF88', '#CC88FF'], speedX: 70, speedY: 50, gravity: 150, sizeMin: 2, sizeMax: 4, life: 0.5, count: 6 },
         landImpact:  { colors: ['#FF6688', '#6699FF', '#66CC66', '#FFCC33', '#CC66FF'], speedX: 90, speedY: 70, gravity: 200, sizeMin: 2, sizeMax: 5, life: 0.5, count: 8 },
-        enemyHit:    { colors: ['#FFB0C8', '#B0D8FF', '#B0FFB0', '#FFF0B0'], speedX: 100, speedY: 80, gravity: 120, sizeMin: 2, sizeMax: 5, life: 0.6, count: 8 },
-        collect:     { colors: ['#FFD700', '#FF69B4', '#00CED1', '#7FFF00'], speedX: 90, speedY: 110, gravity: 60, sizeMin: 2, sizeMax: 4, life: 0.7, count: 10 },
+        enemyHit:    { colors: ['#FFB0C8', '#B0D8FF', '#B0FFB0', '#FFF0B0'], speedX: 100, speedY: 80, gravity: 120, sizeMin: 2, sizeMax: 5, life: 0.6, count: 8, shape: 'streak', fadeEase: 'easeOut' },
+        collect:     { colors: ['#FFD700', '#FF69B4', '#00CED1', '#7FFF00'], speedX: 90, speedY: 110, gravity: 60, sizeMin: 2, sizeMax: 4, life: 0.7, count: 10, trail: 3, fadeEase: 'easeOut' },
         obstacleHit: { colors: ['#FF4444', '#FF66AA', '#FFAA00'], speedX: 60, speedY: 50, gravity: 200, sizeMin: 2, sizeMax: 3, life: 0.3, count: 4 },
     },
     "Parents' Room": {
         jumpDust:    { colors: ['#E8D8C8', '#D8C8B8', '#F0E0D0'], speedX: 40, speedY: 30, gravity: 80, sizeMin: 2, sizeMax: 4, life: 0.6, count: 6 },
         landImpact:  { colors: ['#B0A090', '#A09080', '#C0B0A0'], speedX: 60, speedY: 40, gravity: 150, sizeMin: 2, sizeMax: 4, life: 0.5, count: 8 },
-        enemyHit:    { colors: ['#D0D0D0', '#C0C0C0', '#E0E0E0'], speedX: 70, speedY: 50, gravity: 60, sizeMin: 2, sizeMax: 4, life: 0.6, count: 8 },
-        collect:     { colors: ['#FFD080', '#FFC060', '#FFE0A0'], speedX: 70, speedY: 90, gravity: 60, sizeMin: 2, sizeMax: 4, life: 0.7, count: 10 },
+        enemyHit:    { colors: ['#D0D0D0', '#C0C0C0', '#E0E0E0'], speedX: 70, speedY: 50, gravity: 60, sizeMin: 2, sizeMax: 4, life: 0.6, count: 8, shape: 'streak', fadeEase: 'easeOut' },
+        collect:     { colors: ['#FFD080', '#FFC060', '#FFE0A0'], speedX: 70, speedY: 90, gravity: 60, sizeMin: 2, sizeMax: 4, life: 0.7, count: 10, trail: 3, fadeEase: 'easeOut' },
         obstacleHit: { colors: ['#FF4444', '#FF6644', '#FFAA00'], speedX: 60, speedY: 50, gravity: 200, sizeMin: 2, sizeMax: 3, life: 0.3, count: 4 },
     },
     'Terrace': {
         jumpDust:    { colors: ['#66AA44', '#88CC66', '#448833'], speedX: 60, speedY: 40, gravity: 120, sizeMin: 2, sizeMax: 4, life: 0.5, count: 6 },
         landImpact:  { colors: ['#8B7355', '#A08060', '#7A6248'], speedX: 80, speedY: 60, gravity: 250, sizeMin: 2, sizeMax: 5, life: 0.4, count: 8 },
-        enemyHit:    { colors: ['#FFEE44', '#FFD700', '#DDCC22'], speedX: 90, speedY: 70, gravity: 100, sizeMin: 2, sizeMax: 4, life: 0.5, count: 8 },
-        collect:     { colors: ['#FFFFAA', '#FFE888', '#FFF0CC'], speedX: 50, speedY: 60, gravity: 20, sizeMin: 2, sizeMax: 4, life: 0.9, count: 10 },
+        enemyHit:    { colors: ['#FFEE44', '#FFD700', '#DDCC22'], speedX: 90, speedY: 70, gravity: 100, sizeMin: 2, sizeMax: 4, life: 0.5, count: 8, shape: 'streak', fadeEase: 'easeOut' },
+        collect:     { colors: ['#FFFFAA', '#FFE888', '#FFF0CC'], speedX: 50, speedY: 60, gravity: 20, sizeMin: 2, sizeMax: 4, life: 0.9, count: 10, trail: 3, fadeEase: 'easeOut' },
         obstacleHit: { colors: ['#FF4444', '#FF6644', '#FFAA00'], speedX: 60, speedY: 50, gravity: 200, sizeMin: 2, sizeMax: 3, life: 0.3, count: 4 },
     },
 };
@@ -252,12 +252,50 @@ export function drawTilePattern(ctx, x, y, w, h, tileSize, theme) {
     }
 }
 
-// Consistent shadow under furniture
+// Consistent shadow under furniture (gradient for soft edges, baked into cache at load time)
 export function drawFurnitureShadow(ctx, cx, floorY, radiusX, radiusY) {
-    ctx.fillStyle = 'rgba(0,0,0,0.12)';
+    const ry = radiusY || 4;
+    const grad = ctx.createRadialGradient(cx, floorY, 0, cx, floorY, radiusX);
+    grad.addColorStop(0, 'rgba(0,0,0,0.14)');
+    grad.addColorStop(0.6, 'rgba(0,0,0,0.07)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad;
     ctx.beginPath();
-    ctx.ellipse(cx, floorY, radiusX, radiusY || 4, 0, 0, Math.PI * 2);
+    ctx.ellipse(cx, floorY, radiusX, ry, 0, 0, Math.PI * 2);
     ctx.fill();
+}
+
+// Ambient occlusion — dark gradient where furniture meets floor (baked into cache)
+export function drawAmbientOcclusion(ctx, x, floorY, w, depth = 6) {
+    const grad = ctx.createLinearGradient(x, floorY - depth, x, floorY);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.1)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, floorY - depth, w, depth);
+}
+
+// Subtle side darkening for 3D depth (baked into cache)
+export function drawSideShading(ctx, x, y, w, h, alpha = 0.06) {
+    const edgeW = Math.max(3, w * 0.12);
+    const leftGrad = ctx.createLinearGradient(x, y, x + edgeW, y);
+    leftGrad.addColorStop(0, `rgba(0,0,0,${alpha})`);
+    leftGrad.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = leftGrad;
+    ctx.fillRect(x, y, edgeW, h);
+    const rightGrad = ctx.createLinearGradient(x + w - edgeW, y, x + w, y);
+    rightGrad.addColorStop(0, 'rgba(0,0,0,0)');
+    rightGrad.addColorStop(1, `rgba(0,0,0,${alpha})`);
+    ctx.fillStyle = rightGrad;
+    ctx.fillRect(x + w - edgeW, y, edgeW, h);
+}
+
+// Top-edge highlight gradient for 3D depth (baked into cache)
+export function drawTopHighlight(ctx, x, y, w, height = 3) {
+    const grad = ctx.createLinearGradient(x, y, x, y + height);
+    grad.addColorStop(0, 'rgba(255,255,255,0.2)');
+    grad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(x, y, w, height);
 }
 
 // Consistent furniture legs

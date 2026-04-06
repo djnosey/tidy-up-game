@@ -1,7 +1,7 @@
 // Miscellaneous furniture: picture frame, lamp, hanging pot, board games,
 // bathtub, toilet, sink, towel rack, plant pot, railing, clothesline
 import { roundRect, lighten, darken } from '../shared.js';
-import { getTheme, drawWoodGrain, drawMetalSurface, drawCeramicSurface, drawFabricTexture, drawFurnitureShadow } from '../level-themes.js';
+import { getTheme, drawWoodGrain, drawMetalSurface, drawCeramicSurface, drawFabricTexture, drawFurnitureShadow, drawAmbientOcclusion, drawSideShading, drawTopHighlight } from '../level-themes.js';
 
 export function drawPictureFrame(ctx, x, y, w, h) {
     const theme = getTheme();
@@ -70,6 +70,8 @@ export function drawBathtub(ctx, x, y, w, h, floorY) {
     // Faucet knobs — metal
     drawMetalSurface(ctx, x + 10, y - 10, 10, 10);
     drawMetalSurface(ctx, x + 25, y - 10, 10, 10);
+    drawSideShading(ctx, x, y, w, h + Math.min(floorY - (y+h), 30));
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawToilet(ctx, x, y, w, h, floorY) {
@@ -85,6 +87,7 @@ export function drawToilet(ctx, x, y, w, h, floorY) {
     drawCeramicSurface(ctx, x + w*0.15, y - 18, w*0.7, 20);
     // Flush handle — metal
     drawMetalSurface(ctx, x + w*0.7, y - 14, 8, 3);
+    drawAmbientOcclusion(ctx, x, floorY, w);
 }
 
 export function drawSink(ctx, x, y, w, h) {
