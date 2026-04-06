@@ -126,31 +126,10 @@ export class AudioManager {
             this.ctx.resume();
         }
 
-        // Detect memory-constrained devices — load instruments lazily instead
-        this._lowMemory = this._isLowMemoryDevice();
-
-        // Preload soundfont instruments — track completion
-        this._ready = false;
-        if (this._lowMemory) {
-            // On constrained devices, skip bulk preload — instruments load per-level
-            this._ready = true;
-            console.log('Audio: low-memory mode — lazy instrument loading');
-        } else {
-            this._initSoundfonts().then(() => {
-                this._ready = true;
-                console.log('Audio assets loaded');
-            });
-        }
-    }
-
-    _isLowMemoryDevice() {
-        // navigator.deviceMemory: Chrome/Edge/Android (GB of RAM)
-        if (navigator.deviceMemory && navigator.deviceMemory <= 2) return true;
-        // Touch-primary + small screen → likely tablet/phone
-        const isTouch = navigator.maxTouchPoints > 0;
-        const isSmallScreen = Math.max(screen.width, screen.height) <= 1400;
-        if (isTouch && isSmallScreen) return true;
-        return false;
+        // Always use lazy instrument loading — bulk preloading 21 soundfonts
+        // (~40-100MB decoded audio) crashes memory-constrained devices and
+        // provides negligible benefit since levels are played one at a time.
+        this._ready = true;
     }
 
     isReady() {
@@ -364,19 +343,11 @@ export class AudioManager {
     }
 
     async _playMidiFile(path) {
-        if (!window.MidiPlayer) return;
+        if (!window.MidiPlayer || !window.Soundfont) return;
 
-        const hasInstruments = Object.keys(this.instruments).length > 0;
-        if (!hasInstruments) {
-            if (!window.Soundfont) return;
-            if (this._lowMemory) {
-                // Load only instruments needed for this specific file
-                await this._loadInstrumentsForFile(path);
-            } else {
-                await this._initSoundfonts();
-            }
-            if (Object.keys(this.instruments).length === 0) return;
-        }
+        // Load only the instruments needed for this file (lazy, on-demand)
+        await this._loadInstrumentsForFile(path);
+        if (Object.keys(this.instruments).length === 0) return;
 
         this.loadingMusic = true;
         this.channelPrograms = {};
