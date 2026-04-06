@@ -126,12 +126,31 @@ export class AudioManager {
             this.ctx.resume();
         }
 
+        // Detect memory-constrained devices — load instruments lazily instead
+        this._lowMemory = this._isLowMemoryDevice();
+
         // Preload soundfont instruments — track completion
         this._ready = false;
-        this._initSoundfonts().then(() => {
+        if (this._lowMemory) {
+            // On constrained devices, skip bulk preload — instruments load per-level
             this._ready = true;
-            console.log('Audio assets loaded');
-        });
+            console.log('Audio: low-memory mode — lazy instrument loading');
+        } else {
+            this._initSoundfonts().then(() => {
+                this._ready = true;
+                console.log('Audio assets loaded');
+            });
+        }
+    }
+
+    _isLowMemoryDevice() {
+        // navigator.deviceMemory: Chrome/Edge/Android (GB of RAM)
+        if (navigator.deviceMemory && navigator.deviceMemory <= 2) return true;
+        // Touch-primary + small screen → likely tablet/phone
+        const isTouch = navigator.maxTouchPoints > 0;
+        const isSmallScreen = Math.max(screen.width, screen.height) <= 1400;
+        if (isTouch && isSmallScreen) return true;
+        return false;
     }
 
     isReady() {
@@ -187,6 +206,23 @@ export class AudioManager {
 
         // Preload all MIDI files so level transitions don't wait on network
         await this._preloadAllMidiFiles();
+    }
+
+    // Low-memory mode: load only the instruments needed for a specific MIDI file
+    async _loadInstrumentsForFile(path) {
+        const overrides = this.instrumentOverrides ? this.instrumentOverrides[path] : null;
+        if (!overrides) {
+            // No overrides — load a minimal default (piano)
+            await this._loadInstrument('acoustic_grand_piano');
+            return;
+        }
+        const names = new Set(Object.values(overrides));
+        // Load sequentially to avoid memory spikes on constrained devices
+        for (const name of names) {
+            if (!this.instruments[name]) {
+                await this._loadInstrument(name);
+            }
+        }
     }
 
     async _preloadAllMidiFiles() {
@@ -328,13 +364,18 @@ export class AudioManager {
     }
 
     async _playMidiFile(path) {
+        if (!window.MidiPlayer) return;
+
         const hasInstruments = Object.keys(this.instruments).length > 0;
-        if (!window.MidiPlayer || !hasInstruments) {
-            // Retry if instruments aren't loaded yet
-            if (!hasInstruments && window.Soundfont) {
+        if (!hasInstruments) {
+            if (!window.Soundfont) return;
+            if (this._lowMemory) {
+                // Load only instruments needed for this specific file
+                await this._loadInstrumentsForFile(path);
+            } else {
                 await this._initSoundfonts();
             }
-            if (!window.MidiPlayer || Object.keys(this.instruments).length === 0) return;
+            if (Object.keys(this.instruments).length === 0) return;
         }
 
         this.loadingMusic = true;
