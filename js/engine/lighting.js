@@ -45,10 +45,46 @@ export class LightingRenderer {
         const timeDelta = now - this._lightGlowLastTime;
         if (!this._lightGlowCanvas || camDelta > 2 || timeDelta > 80) {
             if (!this._lightGlowCanvas) {
-                this._lightGlowCanvas = document.createElement('canvas');
-                this._lightGlowCanvas.width = canvasW;
-                this._lightGlowCanvas.height = canvasH;
-                this._lightGlowCtx = this._lightGlowCanvas.getContext('2d');
+                try {
+                    this._lightGlowCanvas = document.createElement('canvas');
+                    this._lightGlowCanvas.width = canvasW;
+                    this._lightGlowCanvas.height = canvasH;
+                    this._lightGlowCtx = this._lightGlowCanvas.getContext('2d');
+                } catch (_) {
+                    this._lightGlowCtx = null;
+                }
+                if (!this._lightGlowCtx) {
+                    this._lightGlowCanvas = null;
+                    this._lightGlowFailed = true;
+                }
+            }
+            if (this._lightGlowFailed) {
+                // Fallback: draw light glows directly to main canvas
+                ctx.save();
+                ctx.globalCompositeOperation = 'screen';
+                for (const dec of decorations) {
+                    if (!LIGHT_TYPES.has(dec.type)) continue;
+                    const sx = dec.x - cameraX;
+                    const sy = (dec.y || 0) - cameraY;
+                    if (sx < -150 || sx > canvasW + 150) continue;
+                    const isCeiling = dec.type === 'ceiling_light';
+                    const baseRadius = isCeiling ? 120 : 80;
+                    const pulse = isCeiling ? 1 + Math.sin(nowSec * 1.5 + dec.x * 0.01) * 0.08 : 1;
+                    const flicker = !isCeiling ? 0.9 + Math.sin(nowSec * 4 + dec.x * 0.02) * 0.1 : 1;
+                    const radius = baseRadius * pulse;
+                    const centerAlpha = 0.18 * flicker;
+                    const midAlpha = 0.08 * flicker;
+                    const glow = ctx.createRadialGradient(sx, sy + 10, 0, sx, sy + 10, radius);
+                    glow.addColorStop(0, `rgba(255, 240, 200, ${centerAlpha.toFixed(3)})`);
+                    glow.addColorStop(0.5, `rgba(255, 220, 160, ${midAlpha.toFixed(3)})`);
+                    glow.addColorStop(1, 'rgba(255, 220, 160, 0)');
+                    ctx.fillStyle = glow;
+                    ctx.fillRect(sx - radius, sy + 10 - radius, radius * 2, radius * 2);
+                }
+                ctx.restore();
+                this._lightGlowLastCamX = cameraX;
+                this._lightGlowLastTime = now;
+                return;
             }
             const offCtx = this._lightGlowCtx;
             offCtx.clearRect(0, 0, canvasW, canvasH);

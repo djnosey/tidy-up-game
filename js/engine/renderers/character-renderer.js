@@ -771,6 +771,15 @@ export function drawCharacter(ctx, x, y, w, h, character, facing, animState) {
         offCanvas.height = h + CACHE_PAD_TOP + 4;
         const offCtx = offCanvas.getContext('2d');
 
+        if (!offCtx) {
+            // Fallback: render directly without caching
+            ctx.save();
+            ctx.translate(x, y);
+            _renderCharacterFull(ctx, w, h, character, facing, animState);
+            ctx.restore();
+            return;
+        }
+
         // Render full character to offscreen canvas
         offCtx.translate(2, CACHE_PAD_TOP);  // offset for padding
         _renderCharacterFull(offCtx, w, h, character, facing, animState);

@@ -182,6 +182,23 @@ class Game {
     }
 
     // Stage 1: decoration cache
+    // Try to allocate an offscreen canvas and return its 2d context.
+    // Returns null on memory-constrained devices (tablet OOM or null context).
+    _tryCreateOffscreen(w, h) {
+        try {
+            const c = document.createElement('canvas');
+            c.width = w;
+            c.height = h;
+            const ctx = c.getContext('2d');
+            if (!ctx) return null;
+            // Probe: some browsers defer allocation until first draw call
+            ctx.clearRect(0, 0, 1, 1);
+            return { canvas: c, ctx };
+        } catch (_) {
+            return null;
+        }
+    }
+
     _buildDecoCache() {
         const ANIMATED_TYPES = new Set([
             'paper_airplane', 'dust_bunny', 'dust_motes', 'steam_wisps',
@@ -189,11 +206,8 @@ class Game {
         ]);
         this._animatedDecos = [];
         this._staticDecos = [];
-        const decCanvas = document.createElement('canvas');
-        decCanvas.width = this._cacheLevelW;
-        decCanvas.height = this.canvas.height;
-        const decCtx = decCanvas.getContext('2d');
-        if (!decCtx) {
+        const offscreen = this._tryCreateOffscreen(this._cacheLevelW, this.canvas.height);
+        if (!offscreen) {
             // Tablet fallback: cache allocation failed, render live per-frame
             this._decoCache = null;
             for (const dec of this.level.decorations) {
@@ -205,6 +219,7 @@ class Game {
             }
             return;
         }
+        const decCtx = offscreen.ctx;
         for (const dec of this.level.decorations) {
             if (dec.type && ANIMATED_TYPES.has(dec.type)) {
                 this._animatedDecos.push(dec);
@@ -212,45 +227,41 @@ class Game {
                 drawDecoration(decCtx, dec, 0, 0);
             }
         }
-        this._decoCache = decCanvas;
+        this._decoCache = offscreen.canvas;
     }
 
     // Stage 2: furniture backdrop cache
     _buildFurnitureCache() {
-        const furCanvas = document.createElement('canvas');
-        furCanvas.width = this._cacheLevelW;
-        furCanvas.height = this.canvas.height;
-        const furCtx = furCanvas.getContext('2d');
-        if (!furCtx) {
+        const offscreen = this._tryCreateOffscreen(this._cacheLevelW, this.canvas.height);
+        if (!offscreen) {
             // Tablet fallback: cache allocation failed, render live per-frame
             this._furnitureCache = null;
             return;
         }
+        const furCtx = offscreen.ctx;
         const groundY = this.level.groundY;
         for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             drawPlatform(furCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color, groundY);
         }
-        this._furnitureCache = furCanvas;
+        this._furnitureCache = offscreen.canvas;
     }
 
     // Stage 3: platform surface cache
     _buildSurfaceCache() {
-        const surfCanvas = document.createElement('canvas');
-        surfCanvas.width = this._cacheLevelW;
-        surfCanvas.height = this.canvas.height;
-        const surfCtx = surfCanvas.getContext('2d');
-        if (!surfCtx) {
+        const offscreen = this._tryCreateOffscreen(this._cacheLevelW, this.canvas.height);
+        if (!offscreen) {
             // Tablet fallback: cache allocation failed, render live per-frame
             this._surfaceCache = null;
             this._surfaceCacheCtx = null;
             return;
         }
+        const surfCtx = offscreen.ctx;
         for (const plat of this.level.platforms) {
             if (plat._disabled || plat.moveX || plat.moveY || plat.crumble) continue;
             drawPlatformSurface(surfCtx, plat.x, plat.y, plat.width, plat.height, plat.label, plat.color);
         }
-        this._surfaceCache = surfCanvas;
+        this._surfaceCache = offscreen.canvas;
         this._surfaceCacheCtx = surfCtx;
     }
 
