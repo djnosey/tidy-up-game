@@ -48,10 +48,27 @@ export class ParallaxRenderer {
             // Only re-render if offset changed enough
             if (!entry.canvas || Math.abs(offset - entry.lastOffset) > this._threshold) {
                 if (!entry.canvas) {
-                    entry.canvas = document.createElement('canvas');
-                    entry.canvas.width = canvasW;
-                    entry.canvas.height = canvasH;
-                    entry.ctx = entry.canvas.getContext('2d');
+                    try {
+                        entry.canvas = document.createElement('canvas');
+                        entry.canvas.width = canvasW;
+                        entry.canvas.height = canvasH;
+                        entry.ctx = entry.canvas.getContext('2d');
+                    } catch (_) {
+                        entry.ctx = null;
+                    }
+                    if (!entry.ctx) {
+                        // Fallback: draw directly to main canvas (no caching)
+                        entry.canvas = null;
+                        entry.failed = true;
+                    }
+                }
+                if (entry.failed) {
+                    // Draw directly without caching
+                    ctx.save();
+                    layer.draw(ctx, offset, canvasW, canvasH, levelColor);
+                    ctx.restore();
+                    entry.lastOffset = offset;
+                    continue;
                 }
                 entry.ctx.clearRect(0, 0, canvasW, canvasH);
                 entry.ctx.save();
@@ -60,7 +77,14 @@ export class ParallaxRenderer {
                 entry.lastOffset = offset;
             }
 
-            ctx.drawImage(entry.canvas, 0, 0);
+            if (entry.failed) {
+                // Redraw directly every frame when cached path unavailable
+                ctx.save();
+                layer.draw(ctx, offset, canvasW, canvasH, levelColor);
+                ctx.restore();
+            } else {
+                ctx.drawImage(entry.canvas, 0, 0);
+            }
         }
     }
 }

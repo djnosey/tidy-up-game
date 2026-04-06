@@ -59,18 +59,24 @@ export function drawDropShadow(ctx, cx, floorY, radiusX, radiusY = 4, alpha = 0.
 let _shadowBitmap = null;
 function getShadowBitmap() {
     if (!_shadowBitmap) {
-        _shadowBitmap = document.createElement('canvas');
-        _shadowBitmap.width = 64;
-        _shadowBitmap.height = 16;
-        const sctx = _shadowBitmap.getContext('2d');
-        const grad = sctx.createRadialGradient(32, 8, 0, 32, 8, 32);
-        grad.addColorStop(0, 'rgba(0,0,0,0.22)');
-        grad.addColorStop(0.6, 'rgba(0,0,0,0.10)');
-        grad.addColorStop(1, 'rgba(0,0,0,0)');
-        sctx.fillStyle = grad;
-        sctx.beginPath();
-        sctx.ellipse(32, 8, 32, 8, 0, 0, Math.PI * 2);
-        sctx.fill();
+        try {
+            const c = document.createElement('canvas');
+            c.width = 64;
+            c.height = 16;
+            const sctx = c.getContext('2d');
+            if (!sctx) return null;
+            const grad = sctx.createRadialGradient(32, 8, 0, 32, 8, 32);
+            grad.addColorStop(0, 'rgba(0,0,0,0.22)');
+            grad.addColorStop(0.6, 'rgba(0,0,0,0.10)');
+            grad.addColorStop(1, 'rgba(0,0,0,0)');
+            sctx.fillStyle = grad;
+            sctx.beginPath();
+            sctx.ellipse(32, 8, 32, 8, 0, 0, Math.PI * 2);
+            sctx.fill();
+            _shadowBitmap = c;
+        } catch (_) {
+            return null;
+        }
     }
     return _shadowBitmap;
 }
@@ -78,6 +84,11 @@ function getShadowBitmap() {
 // Bitmap-blit shadow — zero gradient creation per frame
 export function drawDropShadowFast(ctx, cx, floorY, radiusX, radiusY = 4) {
     const bmp = getShadowBitmap();
+    if (!bmp) {
+        // Fallback: simple semi-transparent ellipse
+        drawDropShadow(ctx, cx, floorY, radiusX, radiusY, 0.18);
+        return;
+    }
     ctx.drawImage(bmp, cx - radiusX, floorY - radiusY, radiusX * 2, radiusY * 2);
 }
 
