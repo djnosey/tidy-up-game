@@ -182,42 +182,18 @@ class Game {
     }
 
     // Detect whether large offscreen canvases are safe to allocate.
-    // Probes once with a small test canvas; caches the result.
-    // Mobile Safari and Android WebView OOM-kill the tab before JS can
-    // catch the error, so we must avoid even attempting the allocation.
+    // Skip large offscreen caches on any touch device (tablets/phones).
+    // Three 12,580x600 canvases = ~90MB — even tablets with 4GB RAM can
+    // OOM because the browser process has far less available.
     _canUseOffscreenCache() {
         if (this._offscreenCacheOk !== undefined) return this._offscreenCacheOk;
-
-        // 1) Device-memory hint (Chrome/Edge/Android): <= 2 GB → skip
-        if (navigator.deviceMemory && navigator.deviceMemory <= 2) {
+        // Any touch-capable device → skip (covers all tablets and phones)
+        if (navigator.maxTouchPoints > 0) {
             this._offscreenCacheOk = false;
             return false;
         }
-
-        // 2) Touch-primary + small screen → likely a tablet/phone
-        const isTouch = navigator.maxTouchPoints > 0;
-        const isSmallScreen = Math.max(screen.width, screen.height) <= 1400;
-        if (isTouch && isSmallScreen) {
-            this._offscreenCacheOk = false;
-            return false;
-        }
-
-        // 3) Probe: try a moderately large canvas (2048x600 ≈ 5 MB).
-        //    If this fails, the full 12 000+ px caches certainly will.
-        try {
-            const probe = document.createElement('canvas');
-            probe.width = 2048;
-            probe.height = 600;
-            const pCtx = probe.getContext('2d');
-            if (!pCtx) { this._offscreenCacheOk = false; return false; }
-            pCtx.fillRect(0, 0, 1, 1);           // force allocation
-            probe.width = 0; probe.height = 0;    // release immediately
-            this._offscreenCacheOk = true;
-            return true;
-        } catch (_) {
-            this._offscreenCacheOk = false;
-            return false;
-        }
+        this._offscreenCacheOk = true;
+        return true;
     }
 
     _buildDecoCache() {
